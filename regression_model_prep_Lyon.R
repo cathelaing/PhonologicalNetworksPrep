@@ -1,13 +1,13 @@
-# Updated 12th May 2021
+# Updated 18th November 2022
 
 # need to start with full list of all words by age, global_network$gloss1
 
-global_distance_lyon <- feather::read_feather("Data/large_files/globaldistance_Lyon.feather")
+global_distance_lyon <- feather::read_feather("Data/globaldistance_Lyon.feather")
 
-globalthresholds_lyon <- feather::read_feather("Data/large_files/globalthresholds_lyon.feather") %>% 
+globalthresholds_lyon <- feather::read_feather("Data/globalthresholds_lyon.feather") %>% 
   filter(threshold == 0.25)
 
-globalthresholds_AOP_lyon <- feather::read_feather("Data/large_files/globalthresholds_AOP_lyon.feather") %>% 
+globalthresholds_AOP_lyon <- feather::read_feather("Data/globalthresholds_AOP_lyon.feather") %>% 
   filter(threshold == 0.25)
 
 vocabsize_lyon <- globalthresholds_lyon %>%
@@ -142,7 +142,7 @@ known_words_degree_actual <-lapply(gloss_list, FUN = function(element) {
   degrees <- actual_global_degree %>%
     filter(gloss1 %in% connections$known_word & (age < element$AOP) & Speaker == element$Speaker) %>%
     group_by(Speaker, age) %>%
-    summarise(PAT_val = mean(degree))
+    summarise(PAT_val = median(degree))
   mean_degree_list <- list(degrees)
     })
 
@@ -279,7 +279,7 @@ known_words_degree_target <-lapply(gloss_list, FUN = function(element) {
   degrees <- target_global_degree %>%
     filter(gloss1 %in% connections$known_word & (age < element$AOP) & Speaker == element$Speaker) %>%
     group_by(Speaker, age) %>%
-    summarise(PAT_val = mean(degree))
+    summarise(PAT_val = median(degree))
   mean_degree_list <- list(degrees)
 })
 

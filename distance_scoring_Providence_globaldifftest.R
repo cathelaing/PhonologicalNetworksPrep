@@ -89,23 +89,19 @@ actual_target_segments_FULL <- do.call(rbind.data.frame, sample_IPAactual_loop)
 
 # The new DF has 193681 observations, compared with 193685 in the original sample: investigate missing items
 
-#comparison_sample <- FULLsample %>% dplyr::select(ID, Speaker, Session, Gloss, IPAtarget, IPAactual, IPAtarget, IPAactual, nsyl_target, nsyl_actual,TargetCV, ActualCV)
-# comparison_final <- actual_target_segments_FULL %>% dplyr::select(ID, 
-#                                                              Speaker, 
-#                                                              Session, 
-#                                                              Gloss,
-#                                                              IPAtarget, 
-#                                                              IPAactual,
-#                                                              nsyl_target,
-#                                                              nsyl_actual,
-#                                                              Targetphon,
-#                                                              Actualphon,
-#                                                              TargetCV, 
-#                                                              ActualCV, 
-#                                                              TargetCV_edited, 
-#                                                              ActualCV_edited
-#                                                              )
-# 
+comparison_sample <- FULLsample %>% dplyr::select(ID, Speaker, Session, Gloss, IPAtarget, IPAactual, IPAtarget, IPAactual, TargetCV, ActualCV)
+comparison_final <- actual_target_segments_FULL %>% dplyr::select(ID,
+                                                             Speaker,
+                                                             Session,
+                                                             Gloss,
+                                                             IPAtarget,
+                                                             IPAactual,
+                                                             Targetphon,
+                                                             Actualphon,
+                                                             TargetCV,
+                                                             ActualCV
+                                                             )
+
 # missing <- setdiff(comparison_sample, comparison_final)  # 298 items
 
 
@@ -214,7 +210,7 @@ dist_final_df <- as.data.frame(output_full_dist)
 colnames(dist_final_df)[1] <- "unique"
 
 dist_final <- dist_final_df %>% dplyr::select(unique, -ends_with("data_type") & -ends_with(".ID") & -!contains("final_dist")) %>%
-  mutate(distance = rowSums(.[2:25])) %>%
+  mutate(distance = rowSums(.[2:9])) %>%
   dplyr::select(unique, distance) %>%
   rename("ID" = "unique")
 
@@ -250,7 +246,7 @@ comparison_data <- comparison_data %>%
   filter(!is.na(session_ordinal)) %>%
   mutate(session_ordinal = as.numeric(session_ordinal)) 
 
-write_csv(comparison_data, "Data/large_files/comparison_data.csv")
+write_csv(comparison_data, "Data/comparison_data_globaldiff.csv")
 
 # generate data for global matrix
 
@@ -262,7 +258,7 @@ distance_full <- distance_full_df %>% dplyr::select(unique, -ends_with("data_typ
   rename("ID" = "unique",
          "data_type" = "data") %>%
   left_join(comparison_data) %>%
-  feather::write_feather("Data/large_files/distance_full.feather")
+  feather::write_feather("Data/distance_full_globaldiff.feather")
 
 
 

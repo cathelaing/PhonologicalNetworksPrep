@@ -120,10 +120,11 @@ FULLsample <- rbind(sample_Alex,
 FULLsample$Gloss <- gsub("(@).*", "\\1", FULLsample$Gloss)
 FULLsample$Gloss <- str_replace_all(FULLsample$Gloss, "[^[:alnum:]]", "")
 
-FULLsample <- FULLsample %>% left_join(lexicon, by = "Gloss")
+FULLsample <- FULLsample %>% left_join(lexicon, by = "Gloss") %>%
+  filter(inCDI == TRUE)
 
 
-feather::write_feather(FULLsample, "Data/FULLsample.feather")
+feather::write_feather(FULLsample, "Data/FULLsample_Providence.feather")
 
 
 # need to also compare clean data against comparison data - some words appear to have been removed from the data and I'm not sure why

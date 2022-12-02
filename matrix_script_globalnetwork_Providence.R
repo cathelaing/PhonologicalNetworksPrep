@@ -2,21 +2,28 @@
 
 source("prelims.R")
 
-data_summ <- feather::read_feather("Data/large_files/data_summ.feather")
-distance_full <- feather::read_feather("Data/large_files/distance_full.feather")
+#data_summ <- feather::read_feather("Data/large_files/data_summ.feather")
+distance_full <- feather::read_feather("Data/distance_full_Providence.feather")
 
 # Actual data
 
 # Figure out the first production of each word in each infant's data
 
 first_instance_Actual <- distance_full %>%     # figure out which month each word was first produced
-  filter(Speaker != "Naima") %>%               # Naima's data is too big! Run that separately
+  #filter(Speaker != "Naima") %>%               # Naima's data is too big! Run that separately
   group_by(Speaker, Gloss)  %>%
   filter(data_type == "Actual") %>% 
   filter(age == min(age)) %>% 
   slice(1) %>% # takes the first occurrence if there is a tie
   ungroup() %>%
   mutate(subj_session = paste(Speaker, age, sep="_"))
+
+first_instance_base <- first_instance_Actual %>%
+  dplyr::select(Speaker, Session, Gloss, age, subj_session) %>%
+  mutate(age = as.numeric(age)) %>%
+  rename("gloss1" = "Gloss",
+         "AOP" = "age") %>%
+  write_csv("Data/first_instance_Providence.csv")
 
 ###### CREATE A SET OF LISTS THAT ARE GROUPED BY SPEAKER, OR SIMILAR
 
@@ -1454,7 +1461,7 @@ globaldistance_actual <- melt(globaldistance_actual_list) %>%
 # Target data
 
 first_instance_Target <- distance_full %>%     # figure out which month each word was first produced
-  filter(Speaker != "Naima") %>%               # Naima's data is too big! Run that separately
+  #filter(Speaker != "Naima") %>%               # Naima's data is too big! Run that separately
   group_by(Speaker, Gloss)  %>%
   filter(data_type == "Target") %>% 
   filter(age == min(age)) %>% 
@@ -2891,7 +2898,7 @@ globaldistance_target <- melt(globaldistance_target_list) %>%
   dplyr::select(-L1, -L2)
 
 globaldistance_Providence <- rbind(globaldistance_target, globaldistance_actual)
-#feather::write_feather(globaldistance_Providence, "Data/large_files/globaldistance_Providence.feather")
+#feather::write_feather(globaldistance_Providence, "Data/globaldistance_Providence.feather")
 
 
 

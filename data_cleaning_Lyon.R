@@ -129,17 +129,19 @@ FULLsample_Lyon$IPAtarget <- gsub('*', '', FULLsample_Lyon$IPAtarget)
 lexique <- read.csv("Data/lexique_checks_done.csv", fileEncoding="Windows-1252") %>%
    dplyr::select(-lemma1) %>% rename("trans" = "Gloss", 
                                      "Gloss" = "Target")
-# 
-# lexique <- lexique %>% filter(Gloss %in% FULLsample_Lyon$Gloss) %>%
-#   distinct(Gloss, .keep_all = TRUE)
 
-#ws_fr <- read.csv("Data/ws_french.csv", fileEncoding="Windows-1252")
+lexique <- lexique %>% filter(Gloss %in% FULLsample_Lyon$Gloss) %>%
+  distinct(Gloss, .keep_all = TRUE)
 
+lexique_sub <- lexique %>% dplyr::select(Gloss)
+
+ws_fr <- read_csv("Data/wordbank_item_data.csv") %>% dplyr::select(item_definition, category)
 
 FULLsample_Lyon <- FULLsample_Lyon %>% left_join(lexique, by = "Gloss") %>%
   dplyr::select(-X) %>%
-  distinct(ID, .keep_all = T)
-
+  mutate(inCDI = ifelse(Gloss %in% ws_fr$item_definition, T, F)) %>%
+  distinct(ID, .keep_all = T) %>%
+  filter(inCDI == TRUE)
 
 #feather::write_feather(FULLsample_Lyon, "Data/FULLsample_Lyon.feather")
 FULLsample_Lyon <- feather::read_feather("Data/FULLsample_Lyon.feather")

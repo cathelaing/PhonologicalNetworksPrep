@@ -3,7 +3,7 @@
 source("prelims.R")
 
 #data_summ <- feather::read_feather("Data/large_files/data_summ_Lyon.feather")
-distance_full <- feather::read_feather("Data/large_files/distance_full_Lyon.feather")
+distance_full <- feather::read_feather("Data/distance_full_Lyon.feather")
 
 # Actual data
 
@@ -16,6 +16,13 @@ first_instance_Actual <- distance_full %>%     # figure out which month each wor
   slice(1) %>% # takes the first occurrence if there is a tie
   ungroup() %>%
   mutate(subj_session = paste(Speaker, age, sep="_"))
+
+first_instance_base <- first_instance_Actual %>%
+  dplyr::select(Speaker, Session, Gloss, age, subj_session) %>%
+  mutate(age = as.numeric(age)) %>%
+  rename("gloss1" = "Gloss",
+         "AOP" = "age") %>%
+  write_csv("Data/first_instance_Lyon.csv")
 
 ###### CREATE A SET OF LISTS THAT ARE GROUPED BY SPEAKER, OR SIMILAR
 
@@ -2507,6 +2514,6 @@ globaldistance_Lyon_target <- melt(globaldistance_target_list) %>%
   dplyr::select(-L1, -L2)
 
 globaldistance_Lyon <- rbind(globaldistance_Lyon_target, globaldistance_Lyon_actual)
-feather::write_feather(globaldistance_Lyon, "Data/large_files/globaldistance_Lyon.feather")
+feather::write_feather(globaldistance_Lyon, "Data/globaldistance_Lyon.feather")
 
 

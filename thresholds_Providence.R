@@ -6,7 +6,7 @@
 
 source("prelims.R")
 
-globaldistance_Providence_actual <- feather::read_feather("Data/globaldistance_Providence_full.feather") %>% filter(data_type == "actual")
+globaldistance_Providence_actual <- feather::read_feather("Data/globaldistance_Providence.feather") %>% filter(data_type == "actual")
 
 ################################## INITIAL THRESHOLD DATASET: ACTUAL FORMS ###########################
  
@@ -31,7 +31,7 @@ globaldistance_list_providence_actual_degree <- globaldistance_list_providence_a
   dplyr::select(-remove, -threshold, -variable)
 
 #feather::write_feather(globaldistance_list_providence_actual_degree, "Data/actual_globaldistance_list_degree_providence.feather")
-globaldistance_list_providence_actual_degree <- feather::read_feather("Data/actual_globaldistance_list_degree_providence.feather")
+#globaldistance_list_providence_actual_degree <- feather::read_feather("Data/actual_globaldistance_list_degree_providence.feather")
 
 
 #globaldistance_list_providence_actual_degree %>% filter(Speaker == "Alex" & age == 16) %>% distinct(gloss1)
@@ -40,12 +40,13 @@ actual_globalthresholds_base_providence <- globaldistance_list_providence_actual
   rename("degree" = "value") %>%
   separate(L1, c("l1", "threshold"), sep = "_") %>%
   dplyr::select(-l1, -variable) %>%
-  mutate(data_type = "actual") %>%
-  feather::write_feather("Data/large_files/actual_globalthresholds_base_providence.feather")
+  mutate(data_type = "actual",
+         age = as.numeric(age)) %>%
+  feather::write_feather("Data/actual_globalthresholds_base_providence.feather")
 
 #actual_globalthresholds_base %>% filter(Speaker == "Alex" & age == 17 & threshold == 0.25)
 
-data_summ <- feather::read_feather("Data/large_files/data_summ.feather")
+#data_summ <- feather::read_feather("Data/large_files/data_summ.feather")
 
 # Now figure out AOP (age of production) data 
 
@@ -61,10 +62,11 @@ data_summ <- feather::read_feather("Data/large_files/data_summ.feather")
 #          "AOP" = "age")
 # 
 # feather::write_feather(first_instance_base, "Data/first_instance_base.feather")
-first_instance_base <- feather::read_feather("Data/first_instance_base.feather")
+first_instance_base <- read_csv("Data/first_instance_Providence.csv")
 
 
 actual_globalthresholds_p <- actual_globalthresholds_base_providence %>%
+  mutate(age = as.numeric(age)) %>%
   left_join(first_instance_base) %>%
   distinct(Speaker, AOP, gloss1, threshold, .keep_all = TRUE)
 
@@ -122,7 +124,7 @@ actual_globalthresholds_corr_df <-actual_globalthresholds_corr_df %>%
 
 # Do all the same again for Target forms
 
-globaldistance_Providence_target <- feather::read_feather("Data/large_files/globaldistance_Providence_full.feather") %>% filter(data_type == "target")
+globaldistance_Providence_target <- feather::read_feather("Data/globaldistance_Providence.feather") %>% filter(data_type == "target")
 
 thresholds <- seq(from = 0, to = 1, by = 0.01)  # create empty list
 
@@ -142,7 +144,8 @@ target_globalthresholds_providence_base <- target_globaldistance_providence_list
   rename("degree" = "value") %>%
   separate(L1, c("l1", "threshold"), sep = "_") %>%
   dplyr::select(-l1, -variable) %>%
-  mutate(data_type = "target")
+  mutate(data_type = "target",
+         age = as.numeric(age))
 
 target_globalthresholds_providence <- target_globalthresholds_providence_base %>%
   left_join(first_instance_base) %>%
@@ -204,7 +207,7 @@ globalthresholds_providence <- rbind(target_globalthresholds_providence, actual_
 globalthresholds_AOP_providence <- rbind(target_globalthresholds_AOP_providence, actual_globalthresholds_AOP_providence)
 
 feather::write_feather(globalthresholds_corr_providence, "Data/globalthresholds_corr_providence.feather") # correlation output data
-feather::write_feather(globalthresholds_providence, "Data/large_files/globalthresholds_providence.feather") # all types at all ages, plus AOP data
-#feather::write_feather(globaldistance, "Data/large_files/globaldistance.feather") # distance between each word pair at each age
-feather::write_feather(globalthresholds_AOP_providence, "Data/large_files/globalthresholds_AOP_providence.feather") # AOP for full network, taken at last month of data (30 months)
+feather::write_feather(globalthresholds_providence, "Data/globalthresholds_providence.feather") # all types at all ages, plus AOP data
+#feather::write_feather(globaldistance, "Data/globaldistance.feather") # distance between each word pair at each age
+feather::write_feather(globalthresholds_AOP_providence, "Data/globalthresholds_AOP_providence.feather") # AOP for full network, taken at last month of data (30 months)
 

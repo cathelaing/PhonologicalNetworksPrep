@@ -6,9 +6,9 @@ source("prelims.R")
 
 # Load data
 
-globaldistance_providence <- feather::read_feather("Data/large_files/globaldistance_Providence_full.feather")
+globaldistance_providence <- feather::read_feather("Data/globaldistance_Providence.feather")
 
-first_instance <- feather::read_feather("Data/first_instance_base.feather")
+first_instance <- read_csv("Data/first_instance_Providence.csv")
 
 networksize <- globaldistance_providence %>%         # create a mock dataset that imitates the size of the network at each month
   group_by(Speaker, age) %>%

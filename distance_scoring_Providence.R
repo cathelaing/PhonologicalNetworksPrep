@@ -2,7 +2,7 @@
 
 # This data takes the sample generated in data_cleaning.R and creates a series of phonetic distance values for each word in the dataframe
 
-FULLsample <- feather::read_feather("Data/FULLsample.feather")
+FULLsample <- feather::read_feather("Data/FULLsample_Providence.feather")
 
 
 FULLsample$Session <- gsub("^[^.]*.", "", FULLsample$Session) # create variable to show session number in only numeric form
@@ -343,7 +343,7 @@ comparison_data <- comparison_data %>%
   filter(!is.na(session_ordinal)) %>%
   mutate(session_ordinal = as.numeric(session_ordinal)) 
 
-write_csv(comparison_data, "Data/large_files/comparison_data.csv")
+write_csv(comparison_data, "Data/comparison_data_Providence.csv")
 
 # generate data for global matrix
 
@@ -355,7 +355,7 @@ distance_full <- distance_full_df %>% dplyr::select(unique, -ends_with("data_typ
   rename("ID" = "unique",
          "data_type" = "data") %>%
   left_join(comparison_data) %>%
-  feather::write_feather("Data/large_files/distance_full.feather")
+  feather::write_feather("Data/distance_full_Providence.feather")
 
 
 

@@ -396,5 +396,5 @@ distance_full <- distance_full_df %>% dplyr::select(unique, -ends_with("data_typ
   rename("ID" = "unique",
          "data_type" = "data") %>%
   left_join(comparison_data) %>%
-feather::write_feather("Data/large_files/distance_full_Lyon.feather")
+feather::write_feather("Data/distance_full_Lyon.feather")
 

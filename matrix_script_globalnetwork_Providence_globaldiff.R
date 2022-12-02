@@ -47,8 +47,6 @@ first_instance_list_A <- lapply(data_list_A, FUN = function(element) {
     filter(Speaker == element$Speaker & age <= element$age)
 })
 
-data_list_A[[8]]
-
 #for each Consonant for each unique Gloss in each list
 #compare C1 sonorant with C1 sonorant etc for all different words within the same list
 # and all different words within different lists

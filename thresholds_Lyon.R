@@ -6,7 +6,7 @@
 
 source("prelims.R")
 
-globaldistance_lyon_actual <- feather::read_feather("Data/large_files/globaldistance_Lyon.feather") %>% 
+globaldistance_lyon_actual <- feather::read_feather("Data/globaldistance_Lyon.feather") %>% 
   filter(data_type == "actual")
 
 ################################## INITIAL THRESHOLD DATASET: ACTUAL FORMS ###########################
@@ -41,9 +41,7 @@ actual_globalthresholds_base_lyon <- globaldistance_list_lyon_actual_melted %>%
   dplyr::select(-l1, -variable) %>%
   mutate(data_type = "actual")
 
-#actual_globalthresholds_base %>% filter(Speaker == "Alex" & age == 17 & threshold == 0.25)
-
-data_summ_Lyon <- feather::read_feather("Data/large_files/data_summ_Lyon.feather")
+#data_summ_Lyon <- feather::read_feather("Data/large_files/data_summ_Lyon.feather")
 
 # Now figure out AOP (age of production) data 
 
@@ -60,7 +58,7 @@ data_summ_Lyon <- feather::read_feather("Data/large_files/data_summ_Lyon.feather
 # 
 # feather::write_feather(first_instance_base, "Data/first_instance_base_Lyon.feather")
 
-first_instance_base_Lyon <- feather::read_feather("Data/first_instance_base_Lyon.feather")
+first_instance_base_Lyon <- read_csv("Data/first_instance_Lyon.csv")
 
 actual_globalthresholds_l <- actual_globalthresholds_base_lyon %>%
   left_join(first_instance_base_Lyon) %>%
@@ -120,7 +118,7 @@ actual_globalthresholds_corr_df <-actual_globalthresholds_corr_df %>%
 
 # Do all the same again for Target forms
 
-globaldistance_lyon_target <- feather::read_feather("Data/large_files/globaldistance_lyon.feather") %>% filter(data_type == "target")
+globaldistance_lyon_target <- feather::read_feather("Data/globaldistance_lyon.feather") %>% filter(data_type == "target")
 
 thresholds <- seq(from = 0, to = 1, by = 0.01)  # create empty list
 
@@ -205,7 +203,7 @@ globalthresholds_lyon <- rbind(target_globalthresholds_lyon, actual_globalthresh
 globalthresholds_AOP_lyon <- rbind(target_globalthresholds_AOP_lyon, actual_globalthresholds_AOP_lyon)
 
 feather::write_feather(globalthresholds_corr_lyon, "Data/globalthresholds_corr_lyon.feather") # correlation output data
-feather::write_feather(globalthresholds_lyon, "Data/large_files/globalthresholds_lyon.feather") # all types at all ages, plus AOP data
+feather::write_feather(globalthresholds_lyon, "Data/globalthresholds_lyon.feather") # all types at all ages, plus AOP data
 #feather::write_feather(globaldistance, "Data/large_files/globaldistance.feather") # distance between each word pair at each age
 feather::write_feather(globalthresholds_AOP_lyon, "Data/globalthresholds_AOP_lyon.feather") # AOP for full network, taken at last month of data (30 months)
 

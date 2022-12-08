@@ -4,7 +4,7 @@
 # It calculates the degree for each word pair across a set of thresholds from E=0.1-1 in relation to age, vocab size, and age of production (global network)
 # It then runs correlations between degree and AOP
 
-source("prelims.R")
+#source("prelims.R")
 
 globaldistance_Providence_actual <- feather::read_feather("Data/globaldistance_Providence.feather") %>% filter(data_type == "actual")
 
@@ -44,36 +44,14 @@ actual_globalthresholds_base_providence <- globaldistance_list_providence_actual
          age = as.numeric(age)) %>%
   feather::write_feather("Data/actual_globalthresholds_base_providence.feather")
 
-#actual_globalthresholds_base %>% filter(Speaker == "Alex" & age == 17 & threshold == 0.25)
-
-#data_summ <- feather::read_feather("Data/large_files/data_summ.feather")
-
-# Now figure out AOP (age of production) data 
-
-# first_instance <- data_summ %>%
-#   group_by(Speaker, Gloss) %>%
-#   filter(age == min(age)) %>%
-#   slice(1) %>% # takes the first occurrence if there is a tie
-#   ungroup()
-# 
-# first_instance_base <- first_instance %>%    # first instance of each word in the data
-#   select(Speaker, age, Gloss) %>%
-#   rename("gloss1" = "Gloss",
-#          "AOP" = "age")
-# 
-# feather::write_feather(first_instance_base, "Data/first_instance_base.feather")
 first_instance_base <- read_csv("Data/first_instance_Providence.csv")
 
-
-actual_globalthresholds_p <- actual_globalthresholds_base_providence %>%
-  mutate(age = as.numeric(age)) %>%
-  left_join(first_instance_base) %>%
-  distinct(Speaker, AOP, gloss1, threshold, .keep_all = TRUE)
-
 actual_globalthresholds_providence <- actual_globalthresholds_base_providence %>%
+  filter(threshold == .25) %>%
   left_join(first_instance_base)
 
 actual_globalthresholds_AOP_providence <- actual_globalthresholds_base_providence %>%
+  #filter(threshold == .25) %>%
   left_join(first_instance_base)  %>%
   group_by(Speaker) %>%
   filter(age == max(age))
@@ -138,8 +116,6 @@ target_globaldistance_providence_list <- lapply(thresholds, function(t) {
 
 target_globaldistance_providence_list_melted <- melt(target_globaldistance_providence_list)
 
-#target_globaldistance_providence_list_melted %>% filter(Speaker == "Alex" & age == 17) %>% distinct(gloss1)
-
 target_globalthresholds_providence_base <- target_globaldistance_providence_list_melted %>%
   rename("degree" = "value") %>%
   separate(L1, c("l1", "threshold"), sep = "_") %>%
@@ -148,8 +124,9 @@ target_globalthresholds_providence_base <- target_globaldistance_providence_list
          age = as.numeric(age))
 
 target_globalthresholds_providence <- target_globalthresholds_providence_base %>%
-  left_join(first_instance_base) %>%
-  distinct(Speaker, AOP, gloss1, threshold, .keep_all = TRUE)
+  filter(threshold == .25) %>%
+  left_join(first_instance_base) #%>%
+  #distinct(Speaker, AOP, gloss1, threshold, .keep_all = TRUE)
 
 target_globalthresholds_AOP_providence <- target_globalthresholds_providence_base %>%
   left_join(first_instance_base)  %>%

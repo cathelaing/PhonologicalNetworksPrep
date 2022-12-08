@@ -1,12 +1,13 @@
 # Updated 3rd April 2021
 
-source("prelims.R")
+#source("prelims.R")
 
 ################################## SET UP #######################################
 
 # Load data
 
 globaldistance_providence <- feather::read_feather("Data/globaldistance_Providence.feather")
+globalthresholds_providence <- feather::read_feather("Data/globalthresholds_Providence.feather")
 
 first_instance <- read_csv("Data/first_instance_Providence.csv")
 
@@ -74,8 +75,8 @@ globaldistance_degree_target <- globalthresholds_providence %>%         # create
   left_join(first_instance) %>%
   rename("from" = "gloss1") %>%
   mutate(AOP = as.numeric(AOP),
-         degree = as.numeric(degree)) %>%
-  left_join(WPs) #%>%
+         degree = as.numeric(degree))# %>%
+  #left_join(WPs) #%>%
   #feather::write_feather("Data/globaldistance_degree_target_RED.feather")
  # feather::write_feather("Data/globaldistance_degree_target_providence.feather")
 
@@ -85,8 +86,8 @@ globaldistance_degree_actual <- globalthresholds_providence %>%        # create 
   left_join(first_instance) %>%
   rename("from" = "gloss1") %>%
   mutate(AOP = as.numeric(AOP),
-         degree = as.numeric(degree)) %>%
-  left_join(WPs)# %>%
+         degree = as.numeric(degree))# %>%
+  #left_join(WPs)# %>%
   #feather::write_feather("Data/globaldistance_degree_actual_RED.feather") 
   #feather::write_feather("Data/globaldistance_degree_actual_providence.feather")
 
@@ -112,7 +113,7 @@ globalgraphdata_actual <- lapply(age_list, FUN = function(element) {
   net_plot_threshold <- delete.edges(net_plot, which(E(net_plot)$weight > cut.off))    # delete edges with a threshold above .25
   })
 
-plot(globalgraphdata_actual$William_18)
+#plot(globalgraphdata_actual$William_18)
 
 globalgraphdata_target <- lapply(age_list, FUN = function(element) {
   edges_net <- globaldistance_target_base %>% filter(Speaker == element$Speaker & age == element$age) %>% distinct(word_pair, distance, .keep_all = TRUE)
@@ -173,10 +174,6 @@ globalpathlength <- globalpathlength %>%
          lowerQuantile = NA,
          upperQuantile = NA)
 
-#globalpathlength_alldata <- rbind(globalpathlength, PAT_modelled_data)
-
-#feather::write_feather(globalpathlength_alldata, "Data/globalpathlength_alldataRED_providence.feather")
-#feather::write_feather(globalpathlength_alldata, "Data/globalpathlength_alldata_providence.feather")
 feather::write_feather(globalpathlength, "Data/globalpathlength_providence.feather")
 
 
@@ -350,8 +347,7 @@ globalWattsStrogatz <- rbind(global_WattsStrogatz_data_target, global_WattsStrog
          lowerQuantile = NA,
          upperQuantile = NA)
 
-globalsmallworlddata_comparison <- rbind(globalsmallworlddata, globalWattsStrogatz, globalErdosRenyi) %>%
-  left_join(WPs)
+globalsmallworlddata_comparison <- rbind(globalsmallworlddata, globalWattsStrogatz, globalErdosRenyi)
 
 #feather::write_feather(globalsmallworlddata_comparison, "Data/globalsmallworlddata_comparison_RED_providence.feather")
 feather::write_feather(globalsmallworlddata_comparison, "Data/globalsmallworlddata_comparison_providence.feather")

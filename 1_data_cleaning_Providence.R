@@ -55,8 +55,6 @@ sample_Naima18 <- read_csv("Data/Phon_outputs/Report_Naima18.csv") # Naima's dat
 sample_Naima24 <- read_csv("Data/Phon_outputs/Report_Naima24.csv") %>% dplyr::select(-`IPA Target Stress`, -`IPA Actual Stress`, -`Stress Match`)
 sample_Naima27 <- read_csv("Data/Phon_outputs/Report_Naima27.csv")
 sample_Naima30 <- read_csv("Data/Phon_outputs/Report_Naima30.csv")
-sample_Naima35 <- read_csv("Data/Phon_outputs/Report_Naima35.csv")
-sample_Naima46 <- read_csv("Data/Phon_outputs/Report_Naima46.csv")
 
 remove.list <- paste(c(            # Create a list of tokens to remove from the dataset, which is called using grepl further down
   '@l',       # remove all tokens of alphabetic letters - these all have very similr prosodic structures (n=1492)
@@ -76,9 +74,7 @@ FULLsample <- rbind(sample_Alex,
                     sample_Naima18,
                     sample_Naima24,
                     sample_Naima27,
-                    sample_Naima30,
-                    sample_Naima35,
-                    sample_Naima46) %>%
+                    sample_Naima30) %>%
   dplyr::select(Speaker,
                 Age,
                 Session, 

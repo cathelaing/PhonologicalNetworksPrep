@@ -1,16 +1,16 @@
 # Updated 3rd May 2021
 
-source("prelims.R")
+#source("prelims.R")
 
 ################################## SET UP #######################################
 
 # Load data
 
-globaldistance_lyon <- feather::read_feather("Data/large_files/globaldistance_Lyon.feather")
-globalthresholds_lyon <- feather::read_feather("Data/large_files/globalthresholds_Lyon.feather")  %>% 
+globaldistance_lyon <- feather::read_feather("Data/globaldistance_Lyon.feather")
+globalthresholds_lyon <- feather::read_feather("Data/globalthresholds_Lyon.feather")  %>% 
   filter(threshold == 0.25)
 
-first_instance <- feather::read_feather("Data/first_instance_base_Lyon.feather")
+first_instance <- read_csv("Data/first_instance_Lyon.csv")
 
 networksize <- globaldistance_lyon %>%         # create a mock dataset that imitates the size of the network at each month
   group_by(Speaker, age) %>%

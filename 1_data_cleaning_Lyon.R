@@ -111,7 +111,7 @@ FULLsample_Lyon$Gloss <- gsub('@o', '', FULLsample_Lyon$Gloss)
 FULLsample_Lyon$IPAtarget <- gsub('*', '', FULLsample_Lyon$IPAtarget)
 
 
-#lexique <- FULLsample_Lyon %>% distinct(Gloss) %>% write_csv("Data/lexique.csv")  # create set of French types
+#lexique <- FULLsample_Lyon %>% distinct(Gloss) %>% write_csv("Data/lexique_updated.csv")  # create set of French types
 
 #write.csv(lexique, "Data/lexique.csv", fileEncoding="Windows-1252") # export and translate using Google docs, hand-translate anything that Docs struggles with
 
@@ -126,25 +126,35 @@ FULLsample_Lyon$IPAtarget <- gsub('*', '', FULLsample_Lyon$IPAtarget)
 # lexique_checks <- lexique_fr %>% left_join(lexicon_en) 
 #write.csv(lexique_checks, "Data/lexique_checks.csv", fileEncoding="Windows-1252") # export for manual checking
 
-lexique <- read.csv("Data/lexique_checks_done.csv", fileEncoding="Windows-1252") %>%
-   dplyr::select(-lemma1) %>% rename("trans" = "Gloss", 
-                                     "Gloss" = "Target")
+# lexique <- read.csv("Data/lexique_checks_done.csv", fileEncoding="Windows-1252") %>%
+#    dplyr::select(-lemma1) %>% rename("trans" = "Gloss", 
+#                                      "Gloss" = "Target")
 
-lexique <- lexique %>% filter(Gloss %in% FULLsample_Lyon$Gloss) %>%
-  distinct(Gloss, .keep_all = TRUE)
+# lexique <- lexique %>% filter(Gloss %in% FULLsample_Lyon$Gloss) %>%
+#   distinct(Gloss, .keep_all = TRUE)
 
-lexique_sub <- lexique %>% dplyr::select(Gloss)
+#lexique_sub <- lexique %>% dplyr::select(Gloss)
 
-ws_fr <- read_csv("Data/wordbank_item_data.csv") %>% dplyr::select(item_definition, category)
+# ws_fr1 <- read_csv("Data/wordbank_item_data.csv")# %>% dplyr::select(item_definition, category)
+# ws_fr2 <- read_csv("Data/ws_french.csv")# %>% dplyr::select(item_definition, category)
+# 
+# ws_fr <- rbind(ws_fr1, ws_fr2) %>%
+#   distinct(item_definition, .keep_all = T) %>%
+#   write_csv("Data/french_CDI.csv")
 
-FULLsample_Lyon <- FULLsample_Lyon %>% left_join(lexique, by = "Gloss") %>%
-  dplyr::select(-X) %>%
+ws_fr <- read_csv("Data/french_CDI.csv")# %>% dplyr::select(item_definition, category)
+
+
+FULLsample_Lyon <- FULLsample_Lyon %>% #left_join(lexique, by = "Gloss") %>%
+  #dplyr::select(-X) %>%
   mutate(inCDI = ifelse(Gloss %in% ws_fr$item_definition, T, F)) %>%
-  distinct(ID, .keep_all = T) %>%
+  #distinct(Gloss, .keep_all = T) %>%
+  #write_csv("checkme.csv")
+  #distinct(ID, .keep_all = T) %>%
   filter(inCDI == TRUE)
 
-#feather::write_feather(FULLsample_Lyon, "Data/FULLsample_Lyon.feather")
-FULLsample_Lyon <- feather::read_feather("Data/FULLsample_Lyon.feather")
+feather::write_feather(FULLsample_Lyon, "Data/FULLsample_Lyon.feather")
+#FULLsample_Lyon <- feather::read_feather("Data/FULLsample_Lyon.feather")
 
 
 # need to also compare clean data against comparison data - some words appear to have been removed from the data and I'm not sure why

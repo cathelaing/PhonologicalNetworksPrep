@@ -296,8 +296,8 @@ mean_degree_full_target <- melt(known_words_degree_target) %>%
 
 feather::write_feather(mean_degree_full_target, "Data/mean_degree_full_target_lyon.feather")
 
-# mean_degree_full_target <- feather::read_feather("Data/mean_degree_full_target_lyon.feather")
-# mean_degree_full_actual <- feather::read_feather("Data/mean_degree_full_actual_lyon.feather")
+#mean_degree_full_target <- feather::read_feather("Data/mean_degree_full_target_lyon.feather")
+#mean_degree_full_actual <- feather::read_feather("Data/mean_degree_full_actual_lyon.feather")
 
 global_network <- globalthresholds_AOP_lyon %>% 
   rename("PAQ_val" = "degree") %>%
@@ -307,7 +307,7 @@ mean_degree_full <- rbind(mean_degree_full_actual, mean_degree_full_target)
 
 comparison_data <- read_csv("Data/comparison_data_lyon.csv") %>%
   distinct(Gloss, Speaker, .keep_all=T) %>%
-  dplyr::select(Gloss, Speaker, Targetphon) %>%
+  dplyr::select(Gloss, Speaker, Targetphon, nsyl_target) %>%
   rename("gloss1" = "Gloss")
 
 global_network_split <- global_network %>%

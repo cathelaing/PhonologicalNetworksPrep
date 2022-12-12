@@ -330,7 +330,7 @@ mean_degree_full <- rbind(mean_degree_full_actual, mean_degree_full_target)
 
 comparison_data <- read_csv("Data/comparison_data_providence.csv") %>%
   distinct(Gloss, Speaker, .keep_all=T) %>%
-  dplyr::select(Gloss, Speaker, Targetphon) %>%
+  dplyr::select(Gloss, Speaker, Targetphon, nsyl_target) %>%
   rename("gloss1" = "Gloss")
 
 global_network_split <- global_network %>%

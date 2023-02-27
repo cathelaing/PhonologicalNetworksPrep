@@ -1,4 +1,4 @@
-# Updated 18th November 2022
+# Updated 25th February 2023
 
 # need to start with full list of all words by age, global_network$gloss1
 
@@ -19,10 +19,20 @@ vocabsize_lyon <- feather::read_feather("Data/globalthresholds_AOP_lyon.feather"
 
 ages <- global_distance_lyon %>% filter(data_type == "target") %>% distinct(Speaker, gloss1, age)
 
-AOP_summ <- globalthresholds_AOP_lyon %>%
+AOP_summ_actual <- globalthresholds_AOP_lyon %>%
   mutate(Speaker_AOP = paste(Speaker, AOP, sep="_"),
          AOP = as.numeric((AOP))) %>%
   filter(data_type == "actual")
+
+AOP_summ_target <- globalthresholds_AOP_lyon %>%
+  mutate(Speaker_AOP = paste(Speaker, AOP, sep="_"),
+         AOP = as.numeric((AOP))) %>%
+  filter(data_type == "target")
+
+AOP_summ <- rbind(AOP_summ_actual, AOP_summ_target) %>% distinct(Speaker, gloss1, .keep_all = T)
+
+target_actual_diff <- rbind(AOP_summ_actual, AOP_summ_target) %>% group_by(Speaker, gloss1) %>% tally() %>% filter(n == 1)
+
 
 AOP_list <- AOP_summ %>%
   split(., f = .$Speaker_AOP)
@@ -87,7 +97,6 @@ feather::write_feather(connected_words_melted_actual, "Data/connected_words_melt
 
 connected_words_melted_actual <- feather::read_feather("Data/connected_words_melted_actual_lyon.feather") %>% mutate(age = as.numeric(age))
 
-
 # Mean degree of each word in terms of all the words that it connects to
 
 gloss_summ <- globalthresholds_AOP_lyon %>%
@@ -101,9 +110,9 @@ gloss_list <- gloss_summ %>%        # create a list of all words connected to th
 connected_degree_list <- vector("list", length(gloss_list))
 
 connected_degree_actual <-lapply(gloss_list, FUN = function(element) {
-  AOP_data <- AOP_summ %>% filter(gloss1 == element$gloss1)
-  first_prod <- AOP_data$AOP
-  connections <- global_distance_lyon %>%
+  AOP_data <- AOP_summ %>% filter(Speaker == element$Speaker & gloss1 == element$gloss1)  # select each word produced by each speaker
+  first_prod <- AOP_data$AOP                                                              # select the age at which it was first produced
+  connections <- global_distance_lyon %>%                                          # select every word pair that contains the selected word
     filter(Speaker == element$Speaker  & data_type == "actual" &
              (gloss1  == element$gloss1 | gloss2 == element$gloss1) &
              distance_norm <= 0.25) %>%
@@ -120,32 +129,29 @@ connected_degree_actual <-lapply(gloss_list, FUN = function(element) {
 connected_degree_actual_melted <- melt(connected_degree_actual) %>%
   filter(variable == "distance_norm") %>% rename("Speaker_gloss" = "L1",
                                                  "distance_norm" = "value") %>%
-  dplyr::select(-keep_meA, -keep_meB, -variable, -L2)
+  dplyr::select(-keep_meA, -keep_meB, -variable, -L2) %>%
+  mutate(age = as.numeric(age))
 
 feather::write_feather(connected_degree_actual_melted, "Data/connected_degree_actual_melted_lyon.feather")
 
-# connected_degree_actual_melted <- feather::read_feather("Data/connected_degree_actual_melted_lyon.feather") %>%
-#   mutate(age = as.numeric(age))
-
-rlist::list.save(connected_degree_actual, "Data/connected_degree_actual_lyon.rdata")
-
-#connected_degree_actual <- rlist::list.load("Data/connected_degree_actual.rdata")
-
-actual_global_degree <- feather::read_feather("Data/actual_globaldistance_list_degree_lyon.feather") %>%
+actual_global_degree <- globalthresholds_lyon %>% 
+  filter(data_type == "actual") %>%
+  dplyr::select(Speaker, age, gloss1, degree) %>%
   mutate(age = as.numeric(age))
 
 known_degree_list <- vector("list", length(gloss_list))
 
-known_words_degree_actual <-lapply(gloss_list, FUN = function(element) {
-  connections <- connected_degree_actual_melted %>%
+known_words_degree_actual <-lapply(gloss_list, FUN = function(element) {        
+  connections <- connected_degree_actual_melted %>%                       
     filter(Speaker_gloss == element$Speaker_gloss)
+  min_age <- ages %>% filter(Speaker == element$Speaker & age == min(age))
   degrees <- actual_global_degree %>%
     filter(gloss1 %in% connections$known_word & (age < element$AOP) & Speaker == element$Speaker) %>%
     group_by(Speaker, age) %>%
     summarise(PAT_val = median(degree),
               PAT_val_m = mean(degree))
-  mean_degree_list <- list(degrees)
-    })
+  known_degree_list <- list(degrees)    # should be degrees
+})
 
 AOP_summ_red <- AOP_summ %>% dplyr::select(Speaker, gloss1, AOP)
 
@@ -153,14 +159,40 @@ AOP_summ_red <- AOP_summ %>% dplyr::select(Speaker, gloss1, AOP)
 
 vocabsize_sub <- vocabsize_lyon %>% distinct(Speaker, AOP, vocab_month)
 
-mean_degree_full_actual <- melt(known_words_degree_actual) %>%
+mean_degree_full_actual_init <- melt(known_words_degree_actual) %>%      # establish mean degree for each word at each timepoint
   group_by(L1, variable) %>%
   mutate(rn = row_number()) %>%
   pivot_wider(names_from = variable, values_from = value) %>%
   separate(L1, into = c("remove", "gloss1"), sep = "_") %>%
-  dplyr::select(-remove, -L2, -rn) %>%
-  left_join(AOP_summ_red)%>%
-  mutate(data_type = "actual") 
+  dplyr::select(-remove, -L2, -rn)
+
+# note that this only works for words that would connect to at least one other word at each timepoint, so there
+# are some missing datapoints. Deal with this now:
+
+min_ages <- ages %>% group_by(Speaker) %>% summarise(min_age = min(age)) %>%    # establish minimum age for each infant in the dataset
+  mutate(min_age = as.numeric(min_age))
+
+all_mean_degree_data_actual <- vector("list", length(2151))    # create an empty list for the missing datapoints
+
+for (i in unique(mean_degree_full_actual_init$Speaker)) {
+  mean_degree_full_actual_missing <- mean_degree_full_actual_init %>%  
+    filter(Speaker == i) %>%                                                         # for each speaker
+    group_by(gloss1) %>%                                                             # identify the words
+    complete(gloss1, age = (min_ages$min_age[which(min_ages$Speaker == i)]):         # that don't have an initial timepoint at 
+               (AOP_summ$AOP[which(Speaker == i & gloss1 == gloss1)])) %>%           # the child's minimum age, and complete the gaps
+    mutate(remove = ifelse(!(age %in% AOP_summ$AOP[which(AOP_summ$Speaker == i)]), T, F)) %>%  # remove ages that don't have recordings
+    filter(remove != T) %>% 
+    ungroup() %>%
+    mutate(PAT_val = ifelse(is.na(PAT_val), 0, PAT_val),                            # create PAT vals for these missing data points
+           PAT_val_m = ifelse(is.na(PAT_val_m), 0, PAT_val_m)) %>%                  # these are 0 by default as they don't connect to anything
+    fill(Speaker, .direction = "down") #%>%                                          # fill in the Speaker info 
+  all_mean_degree_data_actual[[i]] <- mean_degree_full_actual_missing
+}
+
+mean_degree_full_actual <- bind_rows(all_mean_degree_data_actual) %>%
+  left_join(AOP_summ_red) %>%
+  dplyr::select(-remove) %>%
+  mutate(data_type = "actual")
 
 feather::write_feather(mean_degree_full_actual, "Data/mean_degree_full_actual_lyon.feather")
 
@@ -182,22 +214,20 @@ prepared_data_target <- setNames(prepared_data_target, paste0(names))
 
 prepared_df_target <- melt(prepared_data_target)
 
-timepoint_df_target <- prepared_df_target %>% filter(L2 == 1) %>% 
-  dplyr::select(value, L1) %>% 
+timepoint_df_target <- prepared_df_target %>% filter(L2 == 1) %>%
+  dplyr::select(value, L1) %>%
   rename("timepoint" = "value",
          "Speaker_AOP" = "L1")
 
-known_target <- prepared_df_target %>% filter(L2 == 2) %>% 
-  dplyr::select(value, Speaker, gloss1, variable, L1) %>% 
+known_target <- prepared_df_target %>% filter(L2 == 2) %>%
+  dplyr::select(value, Speaker, gloss1, variable, L1) %>%
   pivot_wider(names_from = variable, values_from = value) %>%
   rename("Speaker_AOP" = "L1")
 
 unknown_target <- prepared_df_target %>% filter(L2 == 3) %>%
-  dplyr::select(value, Speaker, gloss1, variable, L1) %>% 
+  dplyr::select(value, Speaker, gloss1, variable, L1) %>%
   pivot_wider(names_from = variable, values_from = value) %>%
   rename("Speaker_AOP" = "L1")
-
-output_connected_target <- vector("list", length(79)) #Prep a list to store your corr.test results
 
 known_list_target <- vector("list", length(79))
 
@@ -221,8 +251,7 @@ connected_words_melted_target <- melt(connected_words_red_target) %>%
 
 feather::write_feather(connected_words_melted_target, "Data/connected_words_melted_target_lyon.feather")
 
-#connected_words_melted_target <- feather::read_feather("Data/connected_words_melted_target_lyon.feather") %>% mutate(age = as.numeric(age))
-
+connected_words_melted_target <- feather::read_feather("Data/connected_words_melted_target_lyon.feather") %>% mutate(age = as.numeric(age))
 
 # Mean degree of each word in terms of all the words that it connects to
 
@@ -237,9 +266,9 @@ gloss_list <- gloss_summ %>%        # create a list of all words connected to th
 connected_degree_list <- vector("list", length(gloss_list))
 
 connected_degree_target <-lapply(gloss_list, FUN = function(element) {
-  AOP_data <- AOP_summ %>% filter(gloss1 == element$gloss1)
-  first_prod <- AOP_data$AOP
-  connections <- global_distance_lyon %>%
+  AOP_data <- AOP_summ %>% filter(Speaker == element$Speaker & gloss1 == element$gloss1)  # select each word produced by each speaker
+  first_prod <- AOP_data$AOP                                                              # select the age at which it was first produced
+  connections <- global_distance_lyon %>%                                          # select every word pair that contains the selected word
     filter(Speaker == element$Speaker  & data_type == "target" &
              (gloss1  == element$gloss1 | gloss2 == element$gloss1) &
              distance_norm <= 0.25) %>%
@@ -256,43 +285,70 @@ connected_degree_target <-lapply(gloss_list, FUN = function(element) {
 connected_degree_target_melted <- melt(connected_degree_target) %>%
   filter(variable == "distance_norm") %>% rename("Speaker_gloss" = "L1",
                                                  "distance_norm" = "value") %>%
-  dplyr::select(-keep_meA, -keep_meB, -variable, -L2)
+  dplyr::select(-keep_meA, -keep_meB, -variable, -L2) %>%
+  mutate(age = as.numeric(age))
 
 feather::write_feather(connected_degree_target_melted, "Data/connected_degree_target_melted_lyon.feather")
 
-# connected_degree_target_melted <- feather::read_feather("Data/connected_degree_target_melted_lyon.feather") %>%
-#   mutate(age = as.numeric(age))
-
 target_global_degree <- globalthresholds_lyon %>% 
-  filter(data_type == "target") %>% 
-  mutate(age = as.numeric(age)) %>%
-  dplyr::select(Speaker, age, gloss1, degree)
-
-rlist::list.save(connected_degree_target, "Data/connected_degree_target_lyon.rdata")
-
-#connected_degree_target <- rlist::list.load("Data/connected_degree_target_lyon.rdata")
+  filter(data_type == "target") %>%
+  dplyr::select(Speaker, age, gloss1, degree) %>%
+  mutate(age = as.numeric(age))
 
 known_degree_list <- vector("list", length(gloss_list))
 
-known_words_degree_target <-lapply(gloss_list, FUN = function(element) {
-  connections <- connected_degree_target_melted %>%
+known_words_degree_target <-lapply(gloss_list, FUN = function(element) {        
+  connections <- connected_degree_target_melted %>%                       
     filter(Speaker_gloss == element$Speaker_gloss)
+  min_age <- ages %>% filter(Speaker == element$Speaker & age == min(age))
   degrees <- target_global_degree %>%
     filter(gloss1 %in% connections$known_word & (age < element$AOP) & Speaker == element$Speaker) %>%
     group_by(Speaker, age) %>%
     summarise(PAT_val = median(degree),
               PAT_val_m = mean(degree))
-  mean_degree_list <- list(degrees)
+  known_degree_list <- list(degrees)    # should be degrees
 })
 
-mean_degree_full_target <- melt(known_words_degree_target) %>%
+AOP_summ_red <- AOP_summ %>% dplyr::select(Speaker, gloss1, AOP)
+
+# Need to figure out vocabsize for Lyon kids #
+
+vocabsize_sub <- vocabsize_lyon %>% distinct(Speaker, AOP, vocab_month)
+
+mean_degree_full_target_init <- melt(known_words_degree_target) %>%      # establish mean degree for each word at each timepoint
   group_by(L1, variable) %>%
   mutate(rn = row_number()) %>%
   pivot_wider(names_from = variable, values_from = value) %>%
   separate(L1, into = c("remove", "gloss1"), sep = "_") %>%
-  dplyr::select(-remove, -L2, -rn) %>%
-  left_join(AOP_summ_red)%>%
-  mutate(data_type = "target") 
+  dplyr::select(-remove, -L2, -rn)
+
+# note that this only works for words that would connect to at least one other word at each timepoint, so there
+# are some missing datapoints. Deal with this now:
+
+min_ages <- ages %>% group_by(Speaker) %>% summarise(min_age = min(age)) %>%    # establish minimum age for each infant in the dataset
+  mutate(min_age = as.numeric(min_age))
+
+all_mean_degree_data_target <- vector("list", length(2151))    # create an empty list for the missing datapoints
+
+for (i in unique(mean_degree_full_target_init$Speaker)) {
+  mean_degree_full_target_missing <- mean_degree_full_target_init %>%  
+    filter(Speaker == i) %>%                                                         # for each speaker
+    group_by(gloss1) %>%                                                             # identify the words
+    complete(gloss1, age = (min_ages$min_age[which(min_ages$Speaker == i)]):         # that don't have an initial timepoint at 
+               (AOP_summ$AOP[which(Speaker == i & gloss1 == gloss1)])) %>%           # the child's minimum age, and complete the gaps
+    mutate(remove = ifelse(!(age %in% AOP_summ$AOP[which(AOP_summ$Speaker == i)]), T, F)) %>%  # remove ages that don't have recordings
+    filter(remove != T) %>% 
+    ungroup() %>%
+    mutate(PAT_val = ifelse(is.na(PAT_val), 0, PAT_val),                            # create PAT vals for these missing data points
+           PAT_val_m = ifelse(is.na(PAT_val_m), 0, PAT_val_m)) %>%                  # these are 0 by default as they don't connect to anything
+    fill(Speaker, .direction = "down") #%>%                                          # fill in the Speaker info 
+  all_mean_degree_data_target[[i]] <- mean_degree_full_target_missing
+}
+
+mean_degree_full_target <- bind_rows(all_mean_degree_data_target) %>%
+  left_join(AOP_summ_red) %>%
+  dplyr::select(-remove) %>%
+  mutate(data_type = "target")
 
 feather::write_feather(mean_degree_full_target, "Data/mean_degree_full_target_lyon.feather")
 
@@ -315,7 +371,7 @@ global_network_split <- global_network %>%
   rename("PAQ_target" = "target",
          "PAQ_actual" = "actual")
 
-#test <- global_network_split %>% filter(is.na(PAQ_actual) | is.na(PAQ_target))
+# global_network_split %>% filter(is.na(PAQ_actual) | is.na(PAQ_target))  # 30 datapoints
 
 regression_data <- mean_degree_full %>% left_join(global_network_split) %>%
   group_by(Speaker, gloss1, data_type) %>%

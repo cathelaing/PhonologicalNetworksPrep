@@ -136,11 +136,13 @@ ggplot(sample_IPAtarget_Lyon, aes(x = nsyl_actual)) + geom_histogram(binwidth = 
 
 sample_IPAtarget_Lyon %>% group_by(nsyl_actual) %>% tally()
 
-2206/127480 # 2% 3 syllables
+1092/75038 # 0.01% 3 syllables
+56/75038 # <.001% 4 syl
+4/75038 # negligible 5 syls or more
 
-# remove all words with 3 syllables or more from the data
+# remove all words with 6 syllables or more from the data (apareil photo is only 5-syl word)
 
-sample_IPAtarget_Lyon <- sample_IPAtarget_Lyon %>% filter(nsyl_actual <3)
+sample_IPAtarget_Lyon <- sample_IPAtarget_Lyon %>% filter(nsyl_actual <6)
 
 # Now each segment of each word needs to be separated in order to compare target forms with actual productions
 # This process is done by syllable number, starting with target forms and then considering actual forms in relation to these
@@ -195,19 +197,9 @@ sample_IPAactual_loop <- lapply(sample_IPAtarget_loop, FUN = function(element) {
 
 actual_target_IPA_FULL_Lyon <- do.call(rbind.data.frame, sample_IPAactual_loop)
 
-actual_target_IPA_FULL_Lyon %>% filter(nsyl_actual > 5 & nsyl_target < 5) # check for any errors in the data
-
-# 2 words are clearly mistranscribed (la in target, 10-syl actual); filter these out
-
-actual_target_IPA_FULL_Lyon <- actual_target_IPA_FULL_Lyon %>% 
-  mutate(filter_out = ifelse(nsyl_actual == 10 & nsyl_target == 1, T, F)) %>% 
-  filter(filter_out == F) %>% dplyr::select(-filter_out)
-
 #########
 
-# The new DF has 127488 observations, matching the original sample
-
-comparison_sample <- FULLsample_Lyon %>% dplyr::select(ID, Speaker, Session, Gloss, IPAtarget, IPAactual, IPAtarget, IPAactual, TargetCV, ActualCV)
+#comparison_sample <- FULLsample_Lyon %>% dplyr::select(ID, Speaker, Session, Gloss, IPAtarget, IPAactual, IPAtarget, IPAactual, TargetCV, ActualCV)
 comparison_final <- actual_target_IPA_FULL_Lyon %>% dplyr::select(ID, 
                                                              Speaker, 
                                                              Session, 
@@ -222,6 +214,7 @@ comparison_final <- actual_target_IPA_FULL_Lyon %>% dplyr::select(ID,
                                                              ActualCV
                                                              )
 
+#setdiff(comparison_sample$IPAactual, comparison_final$IPAactual) # 2 items difference, both due to syllable count
 feather::write_feather(actual_target_IPA_FULL_Lyon, "Data/actual_target_IPA_FULL_Lyon.feather")
 
 ##########

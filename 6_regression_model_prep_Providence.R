@@ -125,7 +125,6 @@ gloss_list <- gloss_summ %>%        # create a list of all words connected to th
 
 connected_degree_list <- vector("list", length(gloss_list))
 
-# ADDED FILTER FOR SPEAKER HERE - ADD TO LYON AND TARGET (CHECK FIRST)
 connected_degree_actual <-lapply(gloss_list, FUN = function(element) {
   AOP_data <- AOP_summ %>% filter(Speaker == element$Speaker & gloss1 == element$gloss1)  # select each word produced by each speaker
   first_prod <- AOP_data$AOP                                                              # select the age at which it was first produced
@@ -199,15 +198,16 @@ for (i in unique(mean_degree_full_actual_init$Speaker)) {
     filter(Speaker == i) %>%                                                         # for each speaker
     group_by(gloss1) %>%                                                             # identify the words
     complete(gloss1, age = (min_ages$min_age[which(min_ages$Speaker == i)]):         # that don't have an initial timepoint at 
-               (AOP_summ$AOP[which(Speaker == i & gloss1 == gloss1)])) %>%           # the child's minimum age, and complete the gaps
+               (AOP_summ$AOP[which(AOP_summ$Speaker == i & AOP_summ$gloss1 == gloss1)])) %>%           # the child's minimum age, and complete the gaps
     mutate(remove = ifelse(!(age %in% AOP_summ$AOP[which(AOP_summ$Speaker == i)]), T, F)) %>%  # remove ages that don't have recordings
     filter(remove != T) %>% 
     ungroup() %>%
-     mutate(PAT_val = ifelse(is.na(PAT_val), 0, PAT_val),                            # create PAT vals for these missing data points
-            PAT_val_m = ifelse(is.na(PAT_val_m), 0, PAT_val_m)) %>%                  # these are 0 by default as they don't connect to anything
-    fill(Speaker, .direction = "down") #%>%                                          # fill in the Speaker info 
+    mutate(PAT_val = ifelse(is.na(PAT_val), 0, PAT_val),                            # create PAT vals for these missing data points
+           PAT_val_m = ifelse(is.na(PAT_val_m), 0, PAT_val_m)) %>%                  # these are 0 by default as they don't connect to anything
+    fill(Speaker, .direction = "down") %>%                                          # fill in the Speaker info 
+    fill(Speaker, .direction = "up") 
   all_mean_degree_data_actual[[i]] <- mean_degree_full_actual_missing
-  }
+}
 
 mean_degree_full_actual <- bind_rows(all_mean_degree_data_actual) %>%
   left_join(AOP_summ_red) %>%
@@ -313,8 +313,7 @@ connected_degree_target_melted <- melt(connected_degree_target) %>%
 
 feather::write_feather(connected_degree_target_melted, "Data/connected_degree_target_melted_providence.feather")
 
-# connected_degree_target_melted <- feather::read_feather("Data/connected_degree_target_melted_providence.feather") %>%
-#   mutate(age = as.numeric(age))
+# connected_degree_target_melted <- feather::read_feather("Data/connected_degree_target_melted_providence.feather")
 
 # target_global_degree <- feather::read_feather("Data/target_globaldistance_list_degree_providence.feather") %>%
 #   mutate(age = as.numeric(age))
@@ -355,13 +354,14 @@ for (i in unique(mean_degree_full_target_init$Speaker)) {
     filter(Speaker == i) %>%                                                         # for each speaker
     group_by(gloss1) %>%                                                             # identify the words
     complete(gloss1, age = (min_ages$min_age[which(min_ages$Speaker == i)]):         # that don't have an initial timepoint at 
-               (AOP_summ$AOP[which(Speaker == i & gloss1 == gloss1)])) %>%           # the child's minimum age, and complete the gaps
+               (AOP_summ$AOP[which(AOP_summ$Speaker == i & AOP_summ$gloss1 == gloss1)])) %>%           # the child's minimum age, and complete the gaps
     mutate(remove = ifelse(!(age %in% AOP_summ$AOP[which(AOP_summ$Speaker == i)]), T, F)) %>%  # remove ages that don't have recordings
     filter(remove != T) %>% 
     ungroup() %>%
     mutate(PAT_val = ifelse(is.na(PAT_val), 0, PAT_val),                            # create PAT vals for these missing data points
            PAT_val_m = ifelse(is.na(PAT_val_m), 0, PAT_val_m)) %>%                  # these are 0 by default as they don't connect to anything
-    fill(Speaker, .direction = "down")                                         # fill in the Speaker info 
+    fill(Speaker, .direction = "down") %>%                                          # fill in the Speaker info 
+    fill(Speaker, .direction = "up") 
   all_mean_degree_data_target[[i]] <- mean_degree_full_target_missing
 }
 

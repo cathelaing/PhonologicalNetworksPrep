@@ -1,4 +1,4 @@
-# Updated 3rd November 2022
+# Updated Updated 24th February 2023
 
 # This data takes the sample generated in data_cleaning.R and creates a series of phonetic distance values for each word in the dataframe
 
@@ -121,7 +121,12 @@ ggplot(sample_IPAtarget, aes(x = nsyl_actual)) + geom_histogram(binwidth = 0.5) 
 
 sample_IPAtarget %>% group_by(nsyl_actual) %>% tally()
 
-1547/147988 #1% 3 syls
+397/76148 #<1% 3 syls
+15/76148 # <.0001% 4+ syls
+
+# remove any words with more than 4 syls in Actual
+
+sample_IPAtarget <- sample_IPAtarget %>% filter(nsyl_actual <= 4)
 
 # Now each segment of each word needs to be separated in order to compare target forms with actual productions
 # This process is done by syllable number, starting with target forms and then considering actual forms in relation to these
@@ -129,22 +134,20 @@ sample_IPAtarget %>% group_by(nsyl_actual) %>% tally()
 # For example: monosyllabic target /kat/ is separated into /k/~/a/~/t/ and then child's actual production is considered in relation to this
 # Actual production might be a monosyllable ([kat]), or a disyllable [kaka] or multisyllabic [kakaka]. In each of these cases, /k/~/a/~/t/ as generated below
 # is compared against the segments from the actual form 
-# First all target monosyllables are compared with all target forms (from 1-6 syllables, V- and C-intial separately)
-# Then disyllables (compared with 1-6 syllable forms, V- and C-initial), trisyllables, etc. up to 6-syllable words
-# Words beyond 6 syllables tended to be produced with vocal play, and so were excluded from the analysis
+# First all target monosyllables are compared with all target forms (from 1-4 syllables, V- and C-intial separately)
+# Then disyllables (compared with 1-4 syllable forms, V- and C-initial), trisyllables, etc. up to 4-syllable words
+# Words beyond 4 syllables tended to be produced with vocal play, and so were excluded from the analysis
 
 
 nsyl_target_list <- sample_IPAtarget %>%
   split(., f = .$nsyl_target)
 
 sample_IPAtarget_loop <- lapply(nsyl_target_list, FUN = function(element) {
-  split_syl <- element %>% separate(Vremoved_target, c("S1C1_target", "S2C1_target", "S3C1_target", "S4C1_target", "S5C1_target", "S6C1_target", "SFC1_target"), "V") 
+  split_syl <- element %>% separate(Vremoved_target, c("S1C1_target", "S2C1_target", "S3C1_target", "S4C1_target", "SFC1_target"), "V") 
   split_clust <- split_syl %>% separate(S1C1_target, c("TS1C1", "TS1C2", "TS1C3", "TS1C4", "TS1C5"), sep = "(?<=.)") %>%
     separate(S2C1_target, c("TS2C1", "TS2C2", "TS2C3", "TS2C4", "TS2C5"), sep = "(?<=.)") %>%
     separate(S3C1_target, c("TS3C1", "TS3C2", "TS3C3", "TS3C4", "TS3C5"), sep = "(?<=.)") %>%
     separate(S4C1_target, c("TS4C1", "TS4C2", "TS4C3", "TS4C4", "TS4C5"), sep = "(?<=.)") %>%
-    separate(S5C1_target, c("TS5C1", "TS5C2", "TS5C3", "TS5C4", "TS5C5"), sep = "(?<=.)") %>%
-    separate(S6C1_target, c("TS6C1", "TS6C2", "TS6C3", "TS6C4", "TS6C5"), sep = "(?<=.)") %>%
     separate(SFC1_target, c("TSFC1", "TSFC2", "TSFC3", "TSFC4", "TSFC5"), sep = "(?<=.)")
 })
 
@@ -158,22 +161,18 @@ Cinitial <- sample_IPAtarget %>% filter(stringr::str_detect(ActualCV, "^C")|stri
 
 sample_IPAactual_loop <- lapply(sample_IPAtarget_loop, FUN = function(element) {
   split_syl_Cinit <- element %>% filter(ActualCV %in% Cinitial$ActualCV) %>%
-    separate(Vremoved_actual, c("S1C1_actual", "S2C1_actual", "S3C1_actual", "S4C1_actual", "S5C1_actual", "S6C1_actual", "SFC1_actual"), "V")
+    separate(Vremoved_actual, c("S1C1_actual", "S2C1_actual", "S3C1_actual", "S4C1_actual", "SFC1_actual"), "V")
   split_clust_Cinit <- split_syl_Cinit %>% separate(S1C1_actual, c("AS1C1", "AS1C2", "AS1C3", "AS1C4", "AS1C5"), sep = "(?<=.)") %>%
     separate(S2C1_actual, c("AS2C1", "AS2C2", "AS2C3", "AS2C4", "AS2C5"), sep = "(?<=.)") %>%
     separate(S3C1_actual, c("AS3C1", "AS3C2", "AS3C3", "AS3C4", "AS3C5"), sep = "(?<=.)") %>%
     separate(S4C1_actual, c("AS4C1", "AS4C2", "AS4C3", "AS4C4", "AS4C5"), sep = "(?<=.)") %>%
-    separate(S5C1_actual, c("AS5C1", "AS5C2", "AS5C3", "AS5C4", "AS5C5"), sep = "(?<=.)") %>%
-    separate(S6C1_actual, c("AS6C1", "AS6C2", "AS6C3", "AS6C4", "AS6C5"), sep = "(?<=.)") %>%
     separate(SFC1_actual, c("ASFC1", "ASFC2", "ASFC3", "ASFC4", "ASFC5"), sep = "(?<=.)")
   split_syl_Vinit <- element %>% filter(ActualCV %in% Vinitial$ActualCV) %>%
-    separate(Vremoved_actual, c("S1C1_actual", "S2C1_actual", "S3C1_actual", "S4C1_actual", "S5C1_actual", "S6C1_actual", "SFC1_actual"), "V")
+    separate(Vremoved_actual, c("S1C1_actual", "S2C1_actual", "S3C1_actual", "S4C1_actual", "SFC1_actual"), "V")
   split_clust_Vinit <- split_syl_Vinit %>% separate(S1C1_actual, c("AS1C1", "AS1C2", "AS1C3", "AS1C4", "AS1C5"), sep = "(?<=.)") %>%
     separate(S2C1_actual, c("AS2C1", "AS2C2", "AS2C3", "AS2C4", "AS2C5"), sep = "(?<=.)") %>%
     separate(S3C1_actual, c("AS3C1", "AS3C2", "AS3C3", "AS3C4", "AS3C5"), sep = "(?<=.)") %>%
     separate(S4C1_actual, c("AS4C1", "AS4C2", "AS4C3", "AS4C4", "AS4C5"), sep = "(?<=.)") %>%
-    separate(S5C1_actual, c("AS5C1", "AS5C2", "AS5C3", "AS5C4", "AS5C5"), sep = "(?<=.)") %>%
-    separate(S6C1_actual, c("AS6C1", "AS6C2", "AS6C3", "AS6C4", "AS6C5"), sep = "(?<=.)") %>%
     separate(SFC1_actual, c("ASFC1", "ASFC2", "ASFC3", "ASFC4", "ASFC5"), sep = "(?<=.)")
   sample_IPA_CVinit <- rbind(split_clust_Vinit, split_clust_Cinit)
 })
@@ -182,9 +181,9 @@ actual_target_IPA_FULL <- do.call(rbind.data.frame, sample_IPAactual_loop)
 
 #########
 
-# The new DF has 193681 observations, compared with 193685 in the original sample: investigate missing items
+# investigate missing items
 
-#comparison_sample <- FULLsample %>% dplyr::select(ID, Speaker, Session, Gloss, IPAtarget, IPAactual, IPAtarget, IPAactual, nsyl_target, nsyl_actual,TargetCV, ActualCV)
+#comparison_sample <- FULLsample %>% dplyr::select(ID, Speaker, Session, Gloss, IPAtarget, IPAactual, IPAtarget, IPAactual, TargetCV, ActualCV)
 comparison_final <- actual_target_IPA_FULL %>% dplyr::select(ID, 
                                                              Speaker, 
                                                              Session, 
@@ -200,11 +199,11 @@ comparison_final <- actual_target_IPA_FULL %>% dplyr::select(ID,
                                                              TargetCV_edited, 
                                                              ActualCV_edited
                                                              )
-# 
-# missing <- setdiff(comparison_sample, comparison_final)  # 298 items
+ 
+#missing <- setdiff(comparison_sample$IPAactual, comparison_final$IPAactual)  # 298 items
 
 
-# Four missing items are instances of vocal play with multisyllable reducplication in the actual form - should be omitted from analysis anyway
+# Three missing items are instances of vocal play with multisyllable reducplication in the actual form - should be omitted from analysis anyway
 
 ##########
 
@@ -244,7 +243,6 @@ distinctive.feature.matrix <- tribble(~Symbol, ~Sonorant, ~Consonantal, ~Voice, 
                                       "ʔ", -1, 0, 0, -1, 0, -1, -1, 1, -1, 1, 0)    # added manually as not defined in original. Drew from Cambridge Handboo of Phonology and
                                                                                     # similarities with /h/
 
-# stuck here because the two lists don't match in size
 
 colnames_target <- actual_target_IPA_FULL %>% dplyr::select(ID, starts_with("TS"))
 colnames(colnames_target) <- sub("T","",colnames(colnames_target))

@@ -4,7 +4,7 @@
 # It calculates the degree for each word pair across a set of thresholds from E=0.1-1 in relation to age, vocab size, and age of production (global network)
 # It then runs correlations between degree and AOP
 
-source("prelims.R")
+#source("prelims.R")
 
 globaldistance_lyon_actual <- feather::read_feather("Data/globaldistance_Lyon.feather") %>% 
   filter(data_type == "actual")

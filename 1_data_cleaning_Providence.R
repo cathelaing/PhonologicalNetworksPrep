@@ -117,7 +117,9 @@ FULLsample$Gloss <- gsub("(@).*", "\\1", FULLsample$Gloss)
 FULLsample$Gloss <- str_replace_all(FULLsample$Gloss, "[^[:alnum:]]", "")
 
 FULLsample <- FULLsample %>% left_join(lexicon, by = "Gloss") %>%
-  filter(inCDI == TRUE)
+  filter(inCDI == TRUE) %>%
+  dplyr::select(-Gloss) %>%
+  rename("Gloss" = "gloss1")
 
 
 feather::write_feather(FULLsample, "Data/FULLsample_Providence.feather")

@@ -1,4 +1,4 @@
-# Updated 30th April 2021
+# Updated 24th February 2023
 
 # This script prepares the data for analysis from each of the global distance matrices
 # It calculates the degree for each word pair across a set of thresholds from E=0.1-1 in relation to age, vocab size, and age of production (global network)
@@ -167,10 +167,10 @@ target_globalthresholds_corr_df$estimate <- format(round(target_globalthresholds
 
 target_globalthresholds_corr_df <- target_globalthresholds_corr_df %>% dplyr::select(threshold, p.value, estimate)
 
-# ggplot(target_globalthresholds_corr_df, aes(x = threshold, y = as.numeric(estimate))) +
-#   geom_point() +
-#   #ylim(0, 1) +
-#   theme_bw()
+ggplot(target_globalthresholds_corr_df, aes(x = threshold, y = as.numeric(estimate))) +
+  geom_point() +
+  #ylim(0, 1) +
+  theme_bw()
 
 target_globalthresholds_corr_df <-target_globalthresholds_corr_df %>%
   mutate(data_type = "target")

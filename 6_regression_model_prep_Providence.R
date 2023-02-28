@@ -198,7 +198,7 @@ for (i in unique(mean_degree_full_actual_init$Speaker)) {
     filter(Speaker == i) %>%                                                         # for each speaker
     group_by(gloss1) %>%                                                             # identify the words
     complete(gloss1, age = (min_ages$min_age[which(min_ages$Speaker == i)]):         # that don't have an initial timepoint at 
-               (AOP_summ$AOP[which(AOP_summ$Speaker == i & AOP_summ$gloss1 == gloss1)])) %>%           # the child's minimum age, and complete the gaps
+               (AOP_summ$AOP[which(AOP_summ$Speaker == i & AOP_summ$gloss1 == gloss1)])) %>%         # the child's minimum age, and complete the gaps
     mutate(remove = ifelse(!(age %in% AOP_summ$AOP[which(AOP_summ$Speaker == i)]), T, F)) %>%  # remove ages that don't have recordings
     filter(remove != T) %>% 
     ungroup() %>%
@@ -313,7 +313,7 @@ connected_degree_target_melted <- melt(connected_degree_target) %>%
 
 feather::write_feather(connected_degree_target_melted, "Data/connected_degree_target_melted_providence.feather")
 
-# connected_degree_target_melted <- feather::read_feather("Data/connected_degree_target_melted_providence.feather")
+#connected_degree_target_melted <- feather::read_feather("Data/connected_degree_target_melted_providence.feather")
 
 # target_global_degree <- feather::read_feather("Data/target_globaldistance_list_degree_providence.feather") %>%
 #   mutate(age = as.numeric(age))
@@ -396,7 +396,8 @@ global_network_split <- global_network %>%
 
 regression_data <- mean_degree_full %>% left_join(global_network_split) %>%
   group_by(Speaker, gloss1, data_type) %>%
-  mutate(learned_next = ifelse(age == max(age), 1, 0)) %>%
+  mutate(learned_next = ifelse(age == AOP-1, 1, 0)) %>%
+  filter(age != AOP) %>%
   left_join(comparison_data) %>%
   left_join(vocabsize_sub) %>%
   ungroup() %>%

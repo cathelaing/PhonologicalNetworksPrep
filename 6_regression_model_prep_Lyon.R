@@ -358,8 +358,8 @@ mean_degree_full_target <- bind_rows(all_mean_degree_data_target) %>%
 
 feather::write_feather(mean_degree_full_target, "Data/mean_degree_full_target_lyon.feather")
 
-#mean_degree_full_target <- feather::read_feather("Data/mean_degree_full_target_lyon.feather")
-#mean_degree_full_actual <- feather::read_feather("Data/mean_degree_full_actual_lyon.feather")
+mean_degree_full_target <- feather::read_feather("Data/mean_degree_full_target_lyon.feather")
+mean_degree_full_actual <- feather::read_feather("Data/mean_degree_full_actual_lyon.feather")
 
 global_network <- globalthresholds_AOP_lyon %>% 
   rename("PAQ_val" = "degree") %>%
@@ -381,7 +381,8 @@ global_network_split <- global_network %>%
 
 regression_data <- mean_degree_full %>% left_join(global_network_split) %>%
   group_by(Speaker, gloss1, data_type) %>%
-  mutate(learned_next = ifelse(age == max(age), 1, 0)) %>%
+  mutate(learned_next = ifelse(age == AOP-1, 1, 0)) %>%
+  filter(age != AOP) %>%
   left_join(comparison_data) %>%
   left_join(vocabsize_sub) %>%
   ungroup() %>%

@@ -358,8 +358,8 @@ mean_degree_full_target <- bind_rows(all_mean_degree_data_target) %>%
 
 feather::write_feather(mean_degree_full_target, "Data/mean_degree_full_target_lyon.feather")
 
-mean_degree_full_target <- feather::read_feather("Data/mean_degree_full_target_lyon.feather")
-mean_degree_full_actual <- feather::read_feather("Data/mean_degree_full_actual_lyon.feather")
+#mean_degree_full_target <- feather::read_feather("Data/mean_degree_full_target_lyon.feather")
+#mean_degree_full_actual <- feather::read_feather("Data/mean_degree_full_actual_lyon.feather")
 
 global_network <- globalthresholds_AOP_lyon %>% 
   rename("PAQ_val" = "degree") %>%
@@ -397,6 +397,16 @@ regression_data <- mean_degree_full %>% left_join(global_network_split) %>%
 
 #regression_data %>% filter(is.na(PAQ_target))
 
+session_data <- read_csv("Data/comparison_data_lyon.csv") %>%    # need to add ordinal session numbers for GAMMs
+  group_by(Speaker, age) %>%
+  tally() %>%
+  filter(n > 1) %>%
+  dplyr::select(Speaker, age) %>%
+  group_by(Speaker, age) %>% 
+  tally() %>%
+  mutate(session_ordinal = row_number()) %>%
+  dplyr::select(-n)
+
 freq_lyon <- read_csv("Data/freq_lyon.csv")
 # chi_freq_bychi <- read_csv("Data/chi_freq_bychi.csv")
 # chi_freq_byword <- read_csv("Data/chi_freq_byword.csv")
@@ -410,6 +420,7 @@ FULLsample_var <- feather::read_feather("Data/FULLsample_Lyon.feather") %>%
 regression_data <- regression_data %>%
   left_join(freq_lyon) %>%
   left_join(FULLsample_var) %>%
+  left_join(session_data) %>%
   mutate(total_freq = ifelse(is.na(total_freq), 0, total_freq)) %>%
   mutate(freq_scaled = c(scale(total_freq, center = TRUE, scale = TRUE)),
          vocab_scaled = c(scale(vocab_month, center = TRUE, scale = TRUE)),

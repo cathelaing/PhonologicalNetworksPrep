@@ -409,10 +409,21 @@ regression_data <- mean_degree_full %>% left_join(global_network_split) %>%
          PAT_scaled_m = c(scale(PAT_val_m, center = TRUE, scale = TRUE)),
          PAQ_scaled_target = c(scale(PAQ_target, center = TRUE, scale = TRUE)),
          PAQ_scaled_actual = c(scale(PAQ_actual, center = TRUE, scale = TRUE)))
+  
 
 chi_freq <- read_csv("Data/freq_providence.csv")
 # chi_freq_bychi <- read_csv("Data/chi_freq_bychi.csv")
 # chi_freq_byword <- read_csv("Data/chi_freq_byword.csv")
+
+session_data <- read_csv("Data/comparison_data_providence.csv") %>%    # need to add ordinal session numbers for GAMMs
+  group_by(Speaker, age) %>%
+  tally() %>%
+  filter(n > 1) %>%
+  dplyr::select(Speaker, age) %>%
+  group_by(Speaker, age) %>% 
+  tally() %>%
+  mutate(session_ordinal = row_number()) %>%
+  dplyr::select(-n)
 
 FULLsample_var <- feather::read_feather("Data/FULLsample_Providence.feather") %>% 
   group_by(Speaker, Gloss) %>% 
@@ -423,6 +434,7 @@ FULLsample_var <- feather::read_feather("Data/FULLsample_Providence.feather") %>
 regression_data <- regression_data %>%
   left_join(chi_freq) %>%
   left_join(FULLsample_var) %>%
+  left_join(session_data) %>%
   mutate(total_freq = ifelse(is.na(total_freq), 0, total_freq)) %>%
   mutate(freq_scaled = c(scale(total_freq, center = TRUE, scale = TRUE)),
          vocab_scaled = c(scale(vocab_month, center = TRUE, scale = TRUE)),

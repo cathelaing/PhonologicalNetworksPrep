@@ -1,6 +1,6 @@
-# Updated 19th April 2021
+# Updated 23rd February 2023
 
-source("prelims.R")
+#source("prelims.R")
 
 #data_summ <- feather::read_feather("Data/large_files/data_summ_Lyon.feather")
 distance_full <- feather::read_feather("Data/distance_full_Lyon.feather")
@@ -24,7 +24,8 @@ first_instance_Actual <- distance_full %>%     # figure out which month each wor
   group_by(Speaker, Gloss)  %>%
   filter(data_type == "Actual") %>% 
   filter(age == min(age)) %>% 
-  slice(1) %>% # takes the first occurrence if there is a tie
+  summarise_if(is.numeric, mean) %>% # for instances where a word is produced more than once, take mean value of each distinctive feature
+  #slice(1) %>% # takes the first occurrence if there is a tie
   ungroup() %>%
   mutate(subj_session = paste(Speaker, age, sep="_"))
 
@@ -1275,7 +1276,8 @@ first_instance_Target <- distance_full %>%     # figure out which month each wor
   group_by(Speaker, Gloss)  %>%
   filter(data_type == "Target") %>% 
   filter(age == min(age)) %>% 
-  slice(1) %>% # takes the first occurrence if there is a tie
+  summarise_if(is.numeric, mean) %>% # for instances where a word is produced more than once, take mean value of each distinctive feature
+  #slice(1) %>% # takes the first occurrence if there is a tie
   ungroup() %>%
   mutate(subj_session = paste(Speaker, age, sep="_"))
 ###### CREATE A SET OF LISTS THAT ARE GROUPED BY SPEAKER, OR SIMILAR

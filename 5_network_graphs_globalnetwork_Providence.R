@@ -1,4 +1,4 @@
-# Updated 3rd April 2021
+# Updated 24th February 2023
 
 #source("prelims.R")
 
@@ -126,8 +126,8 @@ globalgraphdata_target <- lapply(age_list, FUN = function(element) {
 # plot(globalgraphdata_actual$Alex_19)
 # plot(globalgraphdata_target$Alex_20)
 
-save(globalgraphdata_actual, file="Data/globalgraphdata_actual_providence.Rdata")
-save(globalgraphdata_target, file="Data/globalgraphdata_target_providence.Rdata")
+# save(globalgraphdata_actual, file="Data/globalgraphdata_actual_providence.Rdata")
+# save(globalgraphdata_target, file="Data/globalgraphdata_target_providence.Rdata")
 
 
 ######################## Calculating small-world properties - age data #####################
@@ -162,8 +162,6 @@ globalpathlength_target_base <- melt(globalpathlength_target) %>%
   mutate(data_type = "target") 
 
 globalpathlength <- rbind(globalpathlength_actual_base, globalpathlength_target_base)
-
-
 
 globalpathlength <- globalpathlength %>% 
   mutate(age = as.numeric(age)) %>%

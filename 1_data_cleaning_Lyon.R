@@ -1,4 +1,4 @@
-# Updated 22nd March 2021
+# Updated 25th February 2023
 
 source("prelims.R")
 
@@ -142,16 +142,14 @@ FULLsample_Lyon$IPAtarget <- gsub('*', '', FULLsample_Lyon$IPAtarget)
 #   distinct(item_definition, .keep_all = T) %>%
 #   write_csv("Data/french_CDI.csv")
 
-ws_fr <- read_csv("Data/french_CDI.csv")# %>% dplyr::select(item_definition, category)
+ws_fr <- read_csv("Data/french_CDI.csv") %>% dplyr::select(item_definition, category, Gloss) %>%
+  rename("gloss1" = "Gloss",
+         "Gloss" = "item_definition")
 
-
-FULLsample_Lyon <- FULLsample_Lyon %>% #left_join(lexique, by = "Gloss") %>%
-  #dplyr::select(-X) %>%
-  mutate(inCDI = ifelse(Gloss %in% ws_fr$item_definition, T, F)) %>%
-  #distinct(Gloss, .keep_all = T) %>%
-  #write_csv("checkme.csv")
-  #distinct(ID, .keep_all = T) %>%
-  filter(inCDI == TRUE)
+FULLsample_Lyon <- FULLsample_Lyon %>% left_join(ws_fr, by = "Gloss") %>%
+  filter(!is.na(gloss1)) %>%
+  dplyr::select(-Gloss) %>%
+  rename("Gloss" = "gloss1")
 
 feather::write_feather(FULLsample_Lyon, "Data/FULLsample_Lyon.feather")
 #FULLsample_Lyon <- feather::read_feather("Data/FULLsample_Lyon.feather")

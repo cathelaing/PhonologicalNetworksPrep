@@ -407,7 +407,8 @@ session_data <- read_csv("Data/comparison_data_lyon.csv") %>%    # need to add o
   mutate(session_ordinal = row_number()) %>%
   dplyr::select(-n)
 
-freq_lyon <- read_csv("Data/freq_lyon.csv")
+freq_lyon <- read_csv("Data/freq_lyon.csv") %>% 
+  mutate(Speaker = ifelse(Speaker == "Theotime", "Tim", Speaker))
 # chi_freq_bychi <- read_csv("Data/chi_freq_bychi.csv")
 # chi_freq_byword <- read_csv("Data/chi_freq_byword.csv")
 

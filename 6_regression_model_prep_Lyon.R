@@ -407,7 +407,12 @@ session_data <- read_csv("Data/comparison_data_lyon.csv") %>%    # need to add o
   mutate(session_ordinal = row_number()) %>%
   dplyr::select(-n)
 
+<<<<<<< HEAD
 freq_lyon <- read_csv("Data/freq_lyon.csv")
+=======
+freq_lyon <- read_csv("Data/freq_lyon.csv") %>% 
+  mutate(Speaker = ifelse(Speaker == "Theotime", "Tim", Speaker))
+>>>>>>> 560d7a75bcc84d14ff62bf7dab09d816e5355192
 # chi_freq_bychi <- read_csv("Data/chi_freq_bychi.csv")
 # chi_freq_byword <- read_csv("Data/chi_freq_byword.csv")
 

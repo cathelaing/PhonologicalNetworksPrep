@@ -44,7 +44,10 @@ a
 sample_IPAtarget$Vremoved_target <- gsub("VVV", "V", sample_IPAtarget$Vremoved_target)  # remove triphthongs to count as single vowel (following Monaghan et al 2010 but also because we're not looking at vowels here)
 sample_IPAtarget$Vremoved_target <- gsub("VV", "V", sample_IPAtarget$Vremoved_target)  # remove diphthongs to count as single vowel (following Monaghan et al 2010 but also because we're not looking at vowels here)
 sample_IPAtarget <- sample_IPAtarget %>% mutate(nsyl_target = stringr::str_count(Vremoved_target, "V"),
-                                                nsyl_target = ifelse(nsyl_target == 0, 1, nsyl_target))
+                                                nsyl_target = ifelse(nsyl_target == 0, 1, nsyl_target),
+                                                remove = ifelse(Gloss == "yes" & nsyl_target ==3, T, F)) %>%   # remove mis-transcribed words
+  filter(remove == F) %>%
+  dplyr::select(-remove)
 
 
 # substitute all actual vowels for generic V because I don't care about vowels here either
@@ -156,7 +159,7 @@ Gloss <- c("pumpkin", "empty", "penguin", "bathtub", "dancing", "windy",
 
 Vremoved_target_new <- c("pVmp-kVn", "Vmp-tV", "pVŋg-wVn", "bVθ-tVb", "dVns-Vŋ", "wɪVnd-V", 
                        "stVnd-Vŋ", "hVld-Vŋ", "sVnd-bVks", "sVnd-wVʧ", "kVnd-iVz", "fVnd-Vŋ", "pVŋg-wVnz", "bVmp-Vŋ", "dVmp-Vŋ", "bVks-əVz", "vV-kjVm", "plVnt-Vŋ", "fVks-Vŋ", "vV-kjVmz", "tVst-Vd", "plVnt-Vd", 
-                       "kVmp-Vŋ", "pVp-sVkVlz", "pVp-sVkVl", "sVnd-wVʧ", "Vt-sVd", "Vn-tV", "Vt-sVdz")
+                       "kVmp-Vŋ", "pVp-sVkVlz", "pVp-sVkVl", "sVnd-wVʧVz", "Vt-sVd", "Vn-tV", "Vt-sVdz")
 
 split_clust <- data.frame(Gloss, Vremoved_target_new)
 
@@ -263,9 +266,6 @@ actual_target_IPA_FULL <- target_sample %>% left_join(actual_sample)
 
 #########
 
-# The new DF has 193681 observations, compared with 193685 in the original sample: investigate missing items
-
-#comparison_sample <- FULLsample %>% dplyr::select(ID, Speaker, Session, Gloss, IPAtarget, IPAactual, IPAtarget, IPAactual, nsyl_target, nsyl_actual,TargetCV, ActualCV)
 comparison_final <- actual_target_IPA_FULL %>% dplyr::select(ID, 
                                                              Speaker, 
                                                              Session, 
@@ -281,12 +281,6 @@ comparison_final <- actual_target_IPA_FULL %>% dplyr::select(ID,
                                                              TargetCV_edited, 
                                                              ActualCV_edited
                                                              )
-# 
-# missing <- setdiff(comparison_sample, comparison_final)  # 298 items
-
-
-# Four missing items are instances of vocal play with multisyllable reducplication in the actual form - should be omitted from analysis anyway
-
 ##########
 
 

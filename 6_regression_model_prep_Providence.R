@@ -193,6 +193,8 @@ min_ages <- ages %>% group_by(Speaker) %>% summarise(min_age = min(age)) %>%    
 
 all_mean_degree_data_actual <- vector("list", length(2151))    # create an empty list for the missing datapoints
 
+### STOPPED WORKING HERE
+
 for (i in unique(mean_degree_full_actual_init$Speaker)) {
   mean_degree_full_actual_missing <- mean_degree_full_actual_init %>%  
     filter(Speaker == i) %>%                                                         # for each speaker

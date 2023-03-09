@@ -17,6 +17,7 @@
 #install.packages("ggraph")
 #install.packages("wesanderson")
 # install.packages("effects")
+# install.packages("reshape2")
 
 library(tidyverse)
 library(stringi)
@@ -44,6 +45,7 @@ library(linguisticsdown)
 library(ggridges)
 library(wesanderson)
 library(igraph)
+library(reshape2)
 
 
 

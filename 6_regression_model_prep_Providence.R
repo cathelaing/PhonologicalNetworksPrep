@@ -58,33 +58,43 @@ global_distance_summ <- global_distance_providence %>%
 
 # create dfs of known and unknown words; this doesn't include words that don't connect at a threshold of >.25
 
-output <- vector("list", length(81)) #Prep a list to store your corr.test results
 names <- names(AOP_list)
- 
-prepared_data_actual <- lapply(AOP_list, FUN = function(element) {                                         
-  data <- globalthresholds_AOP_providence %>% filter(data_type == "actual" & Speaker == element$Speaker)   
-  timepoint <- data %>% filter(AOP == element$AOP)                              # select the timepoint for each network
-  timepoint <- timepoint$AOP
-  unknown <- data %>% filter(AOP > timepoint)                                   # filter so that only to-be-learned words are included
-  known <- data %>% filter(AOP <= timepoint)                          # also create df for known words
-  output <- list(timepoint, known, unknown)                           # merge into a list for working on further
-})
+output_list <- list()
 
-prepared_data_actual <- setNames(prepared_data_actual, paste0(names))
+for(i in seq_along(1:length(AOP_list))){    # NEED TO CHANGE THIS ABOVE AND IN LYON DATA
+  
+  element <- AOP_list[[i]]
+  # you got a vector as output as element$Speaker: we assume it is always made of equal elements
+  data <- globalthresholds_AOP_providence %>% filter(data_type == "actual" & Speaker == element$Speaker[1])
+  # you got a vector as output: we assume it is always made of equal elements with [1]
+  timepoint <- data %>% filter(AOP == element$AOP[1]) 
+  
+  if(nrow(timepoint) <1){print(sprintf("problems in %s iteration",i))} else {
+    
+    # you got a vector as output: we assume it is always made of equal elements with [1]
+    timepoint <-  (timepoint$AOP[1]) 
+    unknown <- data %>% filter(AOP > timepoint)                                   
+    known <- data %>% filter(AOP <= timepoint)                 
+    output <- list(known, unknown)
+    
+    output_list[[i]] <- output
+    print(i)
+    
+  }
+}
+
+prepared_data_actual <- setNames(output_list, paste0(names))
+
+prepared_data_actual <- prepared_data_actual %>% discard(is.null)
 
 prepared_df_actual <- melt(prepared_data_actual)
 
-timepoint_df_actual <- prepared_df_actual %>% filter(L2 == 1) %>%
-  dplyr::select(value, L1) %>%
-  rename("timepoint" = "value",
-         "Speaker_AOP" = "L1")
-
-known_actual <- prepared_df_actual %>% filter(L2 == 2) %>%
+known_actual <- prepared_df_actual %>% filter(L2 == 1) %>%
   dplyr::select(value, Speaker, gloss1, variable, L1) %>%
   pivot_wider(names_from = variable, values_from = value) %>%
   rename("Speaker_AOP" = "L1")
 
-unknown_actual <- prepared_df_actual %>% filter(L2 == 3) %>%
+unknown_actual <- prepared_df_actual %>% filter(L2 == 2) %>%
   dplyr::select(value, Speaker, gloss1, variable, L1) %>%
   pivot_wider(names_from = variable, values_from = value) %>%
   rename("Speaker_AOP" = "L1")
@@ -193,8 +203,6 @@ min_ages <- ages %>% group_by(Speaker) %>% summarise(min_age = min(age)) %>%    
 
 all_mean_degree_data_actual <- vector("list", length(2151))    # create an empty list for the missing datapoints
 
-### STOPPED WORKING HERE
-
 for (i in unique(mean_degree_full_actual_init$Speaker)) {
   mean_degree_full_actual_missing <- mean_degree_full_actual_init %>%  
     filter(Speaker == i) %>%                                                         # for each speaker
@@ -220,33 +228,43 @@ feather::write_feather(mean_degree_full_actual, "Data/mean_degree_full_actual_pr
 
 ## TARGET DATA
 
-output <- vector("list", length(81)) #Prep a list to store your corr.test results
 names <- names(AOP_list)
+output_list <- list()
 
-prepared_data_target <- lapply(AOP_list, FUN = function(element) {
-  data <- globalthresholds_AOP_providence %>% filter(data_type == "target" & Speaker == element$Speaker)
-  timepoint <- data %>% filter(AOP == element$AOP)                              # select the timepoint for each network
-  timepoint <- timepoint$AOP
-  unknown <- data %>% filter(AOP > timepoint)                                   # filter so that only to-be-learned words are included
-  known <- data %>% filter(AOP <= timepoint)                          # also create df for known words
-  output <- list(timepoint, known, unknown)                           # merge into a list for working on further
-})
+for(i in seq_along(1:length(AOP_list))){    # NEED TO CHANGE THIS ABOVE AND IN LYON DATA
+  
+  element <- AOP_list[[i]]
+  # you got a vector as output as element$Speaker: we assume it is always made of equal elements
+  data <- globalthresholds_AOP_providence %>% filter(data_type == "target" & Speaker == element$Speaker[1])
+  # you got a vector as output: we assume it is always made of equal elements with [1]
+  timepoint <- data %>% filter(AOP == element$AOP[1]) 
+  
+  if(nrow(timepoint) <1){print(sprintf("problems in %s iteration",i))} else {
+    
+    # you got a vector as output: we assume it is always made of equal elements with [1]
+    timepoint <-  (timepoint$AOP[1]) 
+    unknown <- data %>% filter(AOP > timepoint)                                   
+    known <- data %>% filter(AOP <= timepoint)                 
+    output <- list(known, unknown)
+    
+    output_list[[i]] <- output
+    print(i)
+    
+  }
+}
 
-prepared_data_target <- setNames(prepared_data_target, paste0(names))
+prepared_data_target <- setNames(output_list, paste0(names))
+
+prepared_data_target <- prepared_data_target %>% discard(is.null)
 
 prepared_df_target <- melt(prepared_data_target)
 
-timepoint_df_target <- prepared_df_target %>% filter(L2 == 1) %>% 
-  dplyr::select(value, L1) %>% 
-  rename("timepoint" = "value",
-         "Speaker_AOP" = "L1")
-
-known_target <- prepared_df_target %>% filter(L2 == 2) %>% 
+known_target <- prepared_df_target %>% filter(L2 == 1) %>% 
   dplyr::select(value, Speaker, gloss1, variable, L1) %>% 
   pivot_wider(names_from = variable, values_from = value) %>%
   rename("Speaker_AOP" = "L1")
 
-unknown_target <- prepared_df_target %>% filter(L2 == 3) %>%
+unknown_target <- prepared_df_target %>% filter(L2 == 2) %>%
   dplyr::select(value, Speaker, gloss1, variable, L1) %>% 
   pivot_wider(names_from = variable, values_from = value) %>%
   rename("Speaker_AOP" = "L1")
@@ -268,7 +286,7 @@ for (i in unique(known_target$Speaker_AOP)) {
   known_list_target[[i]] <- connected_words
 }
 
-connected_words_red_target <- known_list_target[c(2:79)]
+connected_words_red_target <- known_list_target[c(2:81)]
 connected_words_melted_target <- melt(connected_words_red_target) %>%
   filter(variable == "distance_norm") %>%
   mutate(age = as.numeric(age))
@@ -286,7 +304,6 @@ gloss_summ <- globalthresholds_AOP_providence %>%
 
 gloss_list <- gloss_summ %>%        # create a list of all words connected to the speaker who produces them
   split(., f = .$Speaker_gloss)
-
 
 connected_degree_list <- vector("list", length(gloss_list))
 

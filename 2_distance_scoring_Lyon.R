@@ -1,4 +1,4 @@
-# Updated 30th March 2021
+# Updated 10th March 2023
 # This data takes the sample generated in data_cleaning.R and creates a series of phonetic distance values for each word in the dataframe
 
 # This script generates the following files:
@@ -9,7 +9,8 @@
 #############################
 
 
-FULLsample_Lyon <- feather::read_feather("Data/FULLsample_Lyon.feather")
+FULLsample_Lyon <- feather::read_feather("Data/FULLsample_Lyon.feather") %>%
+  mutate(IPAtarget = ifelse(Gloss == "appareil photo", "apaʁɛjfoto", IPAtarget))
 
 
 FULLsample_Lyon$Session <- gsub("^[^.]*.", "", FULLsample_Lyon$Session) # create variable to show session number in only numeric form
@@ -134,13 +135,7 @@ ggplot(sample_IPAtarget_Lyon, aes(x = nsyl_target)) + geom_histogram(binwidth = 
 ggplot(sample_IPAtarget_Lyon, aes(x = nsyl_actual)) + geom_histogram(binwidth = 0.5)  +
   scale_y_sqrt()
 
-sample_IPAtarget_Lyon %>% group_by(nsyl_actual) %>% tally()
-
-1092/75038 # 0.01% 3 syllables
-56/75038 # <.001% 4 syl
-4/75038 # negligible 5 syls or more
-
-# remove all words with 6 syllables or more from the data (apareil photo is only 5-syl word)
+sample_IPAtarget_Lyon %>% group_by(nsyl_actual) %>% tally()  # some 10-syl words which are vocal play - remove anything above 5 syls (apareil photo)
 
 sample_IPAtarget_Lyon <- sample_IPAtarget_Lyon %>% filter(nsyl_actual <6)
 
@@ -158,14 +153,26 @@ nsyl_target_list <- sample_IPAtarget_Lyon %>%
   split(., f = .$nsyl_target)
 
 sample_IPAtarget_loop <- lapply(nsyl_target_list, FUN = function(element) {
-  split_syl <- element %>% separate(Vremoved_target, c("S1C1_target", "S2C1_target", "S3C1_target", "S4C1_target", "S5C1_target", "SFC1_target"), "V") 
-  split_clust <- split_syl %>% separate(S1C1_target, c("TS1C1", "TS1C2", "TS1C3", "TS1C4"), sep = "(?<=.)") %>%
-    separate(S2C1_target, c("TS2C1", "TS2C2", "TS2C3", "TS2C4"), sep = "(?<=.)") %>%
-    separate(S3C1_target, c("TS3C1", "TS3C2", "TS3C3", "TS3C4"), sep = "(?<=.)") %>%
-    separate(S4C1_target, c("TS4C1", "TS4C2", "TS4C3", "TS4C4"), sep = "(?<=.)") %>%
-    separate(S5C1_target, c("TS5C1", "TS5C2", "TS5C3", "TS5C4"), sep = "(?<=.)") %>%
-    separate(SFC1_target, c("TSFC1", "TSFC2", "TSFC3", "TSFC4"), sep = "(?<=.)")
-})
+  split_syl <- element %>% separate(Vremoved_target, c("S1C1_target", "S2C1_target", "S3C1_target", "S4C1_target", "S5C1_target"), "V")
+  split_syl2 <- split_syl %>%
+    mutate(SFC1_target = ifelse(nsyl_target == 1 & !is.na(S2C1_target), S2C1_target, 0),     # create a category that is just codas 
+           S2C1_target = ifelse(nsyl_target == 1 & !is.na(SFC1_target), 0, S2C1_target),     # codas will always be aligned with codas
+           SFC1_target = ifelse(nsyl_target == 2 & !is.na(S3C1_target), S3C1_target, SFC1_target),
+           S3C1_target = ifelse(nsyl_target == 2 & !is.na(SFC1_target), 0, S3C1_target),
+           SFC1_target = ifelse(nsyl_target == 3 & !is.na(S4C1_target), S4C1_target, SFC1_target),
+           S4C1_target = ifelse(nsyl_target == 3 & !is.na(SFC1_target), 0, S4C1_target),
+           SFC1_target = ifelse(nsyl_target == 4 & !is.na(S5C1_target), S5C1_target, SFC1_target),
+           S5C1_target = ifelse(nsyl_target == 4 & !is.na(SFC1_target), 0, S5C1_target))
+  split_clust <- split_syl2 %>% separate(S1C1_target, c("TS1C1", "TS1C2", "TS1C3"), sep = "(?<=.)") %>%
+    separate(S2C1_target, c("TS2C1", "TS2C2", "TS2C3"), sep = "(?<=.)") %>%
+    separate(S3C1_target, c("TS3C1", "TS3C2", "TS3C3"), sep = "(?<=.)") %>%
+    separate(S4C1_target, c("TS4C1", "TS4C2", "TS4C3"), sep = "(?<=.)") %>%
+    separate(S5C1_target, c("TS5C1", "TS5C2", "TS5C3"), sep = "(?<=.)") %>%
+    separate(SFC1_target, c("TSFC1", "TSFC2", "TSFC3"), sep = "(?<=.)")
+  })
+
+#checks <- do.call(rbind.data.frame, sample_IPAtarget_loop) %>% filter(!(TS1C2 %in% c("w", "l", "p", "j"))) #rw, au revoir, apareil photo
+
 
 
 # Now add segmental info re infants' actual productions to each DF

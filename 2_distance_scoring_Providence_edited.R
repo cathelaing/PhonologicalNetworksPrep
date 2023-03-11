@@ -1,4 +1,4 @@
-# Updated 8th March 2023
+# Updated 8th March 2023   ## need to check all of this - error in separating clusters; 4syls have been included
 
 # This data takes the sample generated in data_cleaning.R and creates a series of phonetic distance values for each word in the dataframe
 
@@ -182,7 +182,7 @@ sample_IPAtarget_loop_base <- lapply(nsyl_target_list, FUN = function(element) {
             SFC1_target = ifelse(nsyl_target == 2 & !is.na(S3C1_target), S3C1_target, SFC1_target),
             S3C1_target = ifelse(nsyl_target == 2 & !is.na(SFC1_target), 0, S3C1_target),
             SFC1_target = ifelse(nsyl_target == 3 & !is.na(S4C1_target), S4C1_target, SFC1_target),
-            S4C1_target = ifelse(nsyl_target == 3 & !is.na(SFC1_target), 0, S3C1_target))
+            S4C1_target = ifelse(nsyl_target == 3 & !is.na(SFC1_target), 0, S4C1_target))
        split_clust <- split_syl2 %>% separate(S1C1_target, c("TS1C1", "TS1C2", "TS1C3"), sep = "(?<=.)") %>%
          separate(S2C1_target, c("TS2C1", "TS2C2", "TS2C3"), sep = "(?<=.)") %>%
          separate(S3C1_target, c("TS3C1", "TS3C2", "TS3C3"), sep = "(?<=.)") %>%
@@ -199,7 +199,7 @@ sample_IPAtarget_loop_complex <- lapply(nsyl_target_list_complex, FUN = function
     mutate(SFC1_target = ifelse(nsyl_target == 2 & !is.na(S3C1_target), S3C1_target, 0),
            S3C1_target = ifelse(nsyl_target == 2 & !is.na(SFC1_target), 0, S3C1_target),
            SFC1_target = ifelse(nsyl_target == 3 & !is.na(S4C1_target), S4C1_target, SFC1_target),
-           S4C1_target = ifelse(nsyl_target == 3 & !is.na(SFC1_target), 0, S3C1_target)) %>%
+           S4C1_target = ifelse(nsyl_target == 3 & !is.na(SFC1_target), 0, S4C1_target)) %>%
     separate(S1C1_target, c("S1C1_target", "S1CF_target"), "V")
   split_clust <- split_syl %>% separate(S1C1_target, c("TS1C1", "TS1C2", "TS1C3"), sep = "(?<=.)") %>%
     separate(S1CF_target, c("TS1CF1", "TS1CF2", "TS1CF3"), sep = "(?<=.)") %>%
@@ -238,7 +238,7 @@ sample_IPAactual_loop <- lapply(nsyl_actual_list, FUN = function(element) {
          SFC1_actual = ifelse(nsyl_actual == 2 & !is.na(S3C1_actual), S3C1_actual, SFC1_actual),
          S3C1_actual = ifelse(nsyl_actual == 2 & !is.na(SFC1_actual), 0, S3C1_actual),
          SFC1_actual = ifelse(nsyl_actual == 3 & !is.na(S4C1_actual), S4C1_actual, SFC1_actual),
-         S4C1_actual = ifelse(nsyl_actual == 3 & !is.na(SFC1_actual), 0, S3C1_actual))
+         S4C1_actual = ifelse(nsyl_actual == 3 & !is.na(SFC1_actual), 0, S4C1_actual))
   split_clust_Cinit <- split_syl_Cinit %>% separate(S1C1_actual, c("AS1C1", "AS1C2", "AS1C3"), sep = "(?<=.)") %>%
        separate(S2C1_actual, c("AS2C1", "AS2C2", "AS2C3"), sep = "(?<=.)") %>%
        separate(S3C1_actual, c("AS3C1", "AS3C2", "AS3C3"), sep = "(?<=.)") %>%
@@ -250,7 +250,7 @@ sample_IPAactual_loop <- lapply(nsyl_actual_list, FUN = function(element) {
            SFC1_actual = ifelse(nsyl_actual == 2 & !is.na(S3C1_actual), S3C1_actual, SFC1_actual),
            S3C1_actual = ifelse(nsyl_actual == 2 & !is.na(SFC1_actual), 0, S3C1_actual),
            SFC1_actual = ifelse(nsyl_actual == 3 & !is.na(S4C1_actual), S4C1_actual, SFC1_actual),
-           S4C1_actual = ifelse(nsyl_actual == 3 & !is.na(SFC1_actual), 0, S3C1_actual))
+           S4C1_actual = ifelse(nsyl_actual == 3 & !is.na(SFC1_actual), 0, S4C1_actual))
   split_clust_Vinit <- split_syl_Vinit %>% separate(S1C1_actual, c("AS1C1", "AS1C2", "AS1C3"), sep = "(?<=.)") %>%
     separate(S2C1_actual, c("AS2C1", "AS2C2", "AS2C3"), sep = "(?<=.)") %>%
     separate(S3C1_actual, c("AS3C1", "AS3C2", "AS3C3"), sep = "(?<=.)") %>%

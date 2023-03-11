@@ -1,6 +1,6 @@
 # Updated 25th February 2023
 
-source("prelims.R")
+source("0_prelims.R")
 
 # This script takes the .csv files generated in Phon and cleans up the data to include only the words used in the analysis
 
@@ -154,5 +154,3 @@ FULLsample_Lyon <- FULLsample_Lyon %>% left_join(ws_fr, by = "Gloss") %>%
 feather::write_feather(FULLsample_Lyon, "Data/FULLsample_Lyon.feather")
 #FULLsample_Lyon <- feather::read_feather("Data/FULLsample_Lyon.feather")
 
-
-# need to also compare clean data against comparison data - some words appear to have been removed from the data and I'm not sure why

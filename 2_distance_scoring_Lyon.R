@@ -10,7 +10,13 @@
 
 
 FULLsample_Lyon <- feather::read_feather("Data/FULLsample_Lyon.feather") %>%
-  mutate(IPAtarget = ifelse(Gloss == "appareil photo", "apaʁɛjfoto", IPAtarget))
+  mutate(IPAtarget = ifelse(Gloss == "appareil photo", "apaʁɛjfoto", IPAtarget),
+         IPAtarget= ifelse(Gloss == "bébé", "bebe", IPAtarget),
+         IPAtarget = ifelse(Gloss == "hélicoptère", "elikɔptɛʁ", IPAtarget),
+         Gloss = ifelse(IPAtarget == "ʒaʁiv", "arriver", Gloss),
+        # IPAtarget = ifelse(Gloss == "regarder", "ʁəgaʁd", IPAtarget),
+         IPAtarget = ifelse(Gloss == "argent", "laʁʒɑ", IPAtarget),
+         IPAtarget = ifelse(Gloss == "au revoir", "avwaʁ", IPAtarget))
 
 
 FULLsample_Lyon$Session <- gsub("^[^.]*.", "", FULLsample_Lyon$Session) # create variable to show session number in only numeric form
@@ -149,10 +155,40 @@ sample_IPAtarget_Lyon <- sample_IPAtarget_Lyon %>% filter(nsyl_actual <6)
 # Then disyllables (compared with 1-6 syllable forms, V- and C-initial), trisyllables, etc. up to 6-syllable words
 # Words beyond 6 syllables tended to be produced with vocal play, and so were excluded from the analysis
 
+Gloss <- c("appareil photo", "tracteur", "tortue", "maintenant", "parti", "merci", "pourquoi", "tartine", "histoire", 
+           "fermer", "garçon", "bavoir", "marteau", "derrière", "fourchette", "porter", "mouchoir", "jardin", "marcher", 
+           "serviette", "fourmi", "dormir", "dormi", "docteur", "hélicoptère", "verser", "argent", "dernière", "renverser", 
+           "s'endormi", "couverture", "endormi", "parler")
+
+split_clust_base <- data.frame(Gloss)#, Vremoved_target_new)
+
+vremoved <- sample_IPAtarget_Lyon %>% dplyr::select(Gloss, Vremoved_target) %>%filter(Gloss %in% split_clust$Gloss) %>% distinct(Gloss, .keep_all = T)
+
+split_clust_base <- split_clust_base %>% left_join(vremoved)
+
+split_clust_base$Vremoved_target
+
+Vremoved_target_new <- c("VpVʁVj-fVtV", "tʁVk-tVʁ", "tVʁ-tV", "mVt-nV", "pVʁ-tV",  "mVʁ-sV","pVʁ-kwV","tVʁ-tVn", "Vst-wVʁ",  "fVʁ-mV", "ɡVʁ-sV",
+  "bVv-wVʁ",  "mVʁ-tV", "dVʁ-jVʁ", "fVʁ-ʃVt", "pVʁ-tV", "mVʃ-wVʁ", "ʒVʁ-dVn", "mVʁ-ʃV", "sVʁ-vjVt", "fVʁ-mV", "dVʁ-mVʁ", "dVʁ-mV", "dVk-tVʁ",
+  "VlVkVp-tVʁ", "vVʁ-sV", "lVʁ-ʒV", "dVʁ-njV", "ʁVvVʁ-sV", "sVdVʁ-mV", "kVvVʁ-tVʁ", "VdVʁ-mV", "pVʁ-lV")
+
+split_clust <- data.frame(Gloss, Vremoved_target_new)
+
+# need to make sure this only applies to multisyllabic words, since words with 1 syl will be structured correctly in the base code
+
+sample_IPAtarget_complex <- split_clust %>%
+  left_join(sample_IPAtarget_Lyon, multiple = "all") %>%
+  filter(nsyl_target > 1) %>%
+    filter(Gloss %in% split_clust$Gloss)
+
 nsyl_target_list <- sample_IPAtarget_Lyon %>%
+  filter(!(IPAtarget %in% sample_IPAtarget_complex$IPAtarget)) %>%
   split(., f = .$nsyl_target)
 
-sample_IPAtarget_loop <- lapply(nsyl_target_list, FUN = function(element) {
+# nsyl_target_list <- sample_IPAtarget_Lyon %>%
+#   split(., f = .$nsyl_target)
+
+sample_IPAtarget_loop_base <- lapply(nsyl_target_list, FUN = function(element) {
   split_syl <- element %>% separate(Vremoved_target, c("S1C1_target", "S2C1_target", "S3C1_target", "S4C1_target", "S5C1_target"), "V")
   split_syl2 <- split_syl %>%
     mutate(SFC1_target = ifelse(nsyl_target == 1 & !is.na(S2C1_target), S2C1_target, 0),     # create a category that is just codas 
@@ -171,8 +207,61 @@ sample_IPAtarget_loop <- lapply(nsyl_target_list, FUN = function(element) {
     separate(SFC1_target, c("TSFC1", "TSFC2", "TSFC3"), sep = "(?<=.)")
   })
 
-#checks <- do.call(rbind.data.frame, sample_IPAtarget_loop) %>% filter(!(TS1C2 %in% c("w", "l", "p", "j"))) #rw, au revoir, apareil photo
 
+nsyl_target_list_complex <- sample_IPAtarget_complex %>%
+  split(., f = .$nsyl_target)
+
+sample_IPAtarget_loop_complex <- lapply(nsyl_target_list_complex, FUN = function(element) {
+  split_syl <- element %>% separate(Vremoved_target_new, c("before", "after"), "-") %>%
+     separate(before, c("S1C1_target", "S2C1_target",  "S3C1_target", "S4C1_target"), "V") %>%
+    # start by looking at 'before' segment of word, i.e. before syllable boundary
+    mutate(S1CF_target = ifelse(nsyl_target == 2 & !is.na(S2C1_target), S2C1_target, 0),
+          S2C1_target = ifelse(nsyl_target == 2 & !is.na(S1CF_target), 0, S2C1_target),
+          S2CF_target = ifelse(nsyl_target == 3 & !is.na(S3C1_target), S3C1_target, 0),
+          S3C1_target = ifelse(nsyl_target == 3 & !is.na(S2CF_target), 0, S3C1_target),
+          S3CF_target = ifelse(nsyl_target == 4 & !is.na(S3C1_target), S4C1_target, 0),
+          S4C1_target = ifelse(nsyl_target == 4 & !is.na(S3CF_target), 0, S4C1_target),
+          S3CF_target = ifelse(nsyl_target == 5 & !is.na(S4C1_target), S4C1_target, S3CF_target),    # special case for appareil photo, due to being v-initial
+          S4C1_target = ifelse(nsyl_target == 5 & !is.na(S3CF_target), 0, S4C1_target))
+    # now look at 'after' segment
+  after_syls <- split_syl %>% 
+     separate(after, c("after1", "after2"), "V") %>%
+    mutate(S2C1_target = ifelse(nsyl_target == 2 & S2C1_target == 0, after1, S2C1_target),
+           S3C1_target = ifelse(nsyl_target == 3 & S3C1_target == 0, after1, S3C1_target),
+           S4C1_target = ifelse(nsyl_target == 4 & S4C1_target == 0, after1, S4C1_target),
+           S4C1_target = ifelse(nsyl_target == 5 & S4C1_target == 0, after1, S4C1_target),
+           S5C1_target = ifelse(nsyl_target == 5, after2, 0),
+           SFC1_target = ifelse(S5C1_target == 0 & !is.na(after2), after2, 0)) %>%
+    dplyr::select(-after1, -after2) %>%
+    separate(S1C1_target, c("TS1C1", "TS1C2", "TS1C3"), sep = "(?<=.)") %>%
+    separate(S1CF_target, c("TS1CF1", "TS1CF2", "TS1CF3"), sep = "(?<=.)") %>%
+    separate(S2C1_target, c("TS2C1", "TS2C2", "TS2C3"), sep = "(?<=.)") %>%
+    separate(S2CF_target, c("TS2CF1", "TS2CF2", "TS2CF3"), sep = "(?<=.)") %>%
+    separate(S3C1_target, c("TS3C1", "TS3C2", "TS3C3"), sep = "(?<=.)") %>%
+    separate(S3CF_target, c("TS3CF1", "TS3CF2", "TS3CF3"), sep = "(?<=.)") %>%
+    separate(S4C1_target, c("TS4C1", "TS4C2", "TS4C3"), sep = "(?<=.)") %>%
+    separate(S5C1_target, c("TS5C1", "TS5C2", "TS5C3"), sep = "(?<=.)") %>%
+    separate(SFC1_target, c("TSFC1", "TSFC2", "TSFC3"), sep = "(?<=.)")
+            })
+
+#check <- do.call(rbind.data.frame, sample_IPAtarget_loop_complex)# %>% filter(nsyl_target >3)
+
+target_list_base <- do.call(rbind.data.frame, sample_IPAtarget_loop_base) %>% mutate(TS1CF1 = "",
+                                                                                     TS1CF2 = "",
+                                                                                     TS1CF3 = "",
+                                                                                     TS2CF1 = "",
+                                                                                     TS2CF2 = "",
+                                                                                     TS2CF3 = "",
+                                                                                     TS3CF1 = "",
+                                                                                     TS3CF2 = "",
+                                                                                     TS3CF3 = "")
+
+target_list_complex <- do.call(rbind.data.frame, sample_IPAtarget_loop_complex) %>% dplyr::select(-Vremoved_target)
+
+# base <- data.frame(names(target_list_base))
+# complex <- data.frame(names(target_list_complex))
+
+target_sample <- rbind(target_list_base, target_list_complex)
 
 
 # Now add segmental info re infants' actual productions to each DF
@@ -180,9 +269,12 @@ sample_IPAtarget_loop <- lapply(nsyl_target_list, FUN = function(element) {
 Vinitial <- sample_IPAtarget_Lyon%>% filter(stringr::str_detect(ActualCV, "^V")) # DF for looking at V-intial structures only
 Cinitial <- sample_IPAtarget_Lyon%>% filter(stringr::str_detect(ActualCV, "^C")|stringr::str_detect(ActualCV, "^G"))    # DF for looking at C-intial structures only
 
+nsyl_actual_list <- sample_IPAtarget_Lyon %>%
+  split(., f = .$nsyl_actual)
+
 # Remember to merge these subsets together once DF is organized
 
-sample_IPAactual_loop <- lapply(sample_IPAtarget_loop, FUN = function(element) {
+sample_IPAactual_loop <- lapply(nsyl_actual_list, FUN = function(element) {
   split_syl_Cinit <- element %>% filter(ActualCV %in% Cinitial$ActualCV) %>%
     separate(Vremoved_actual, c("S1C1_actual", "S2C1_actual", "S3C1_actual", "S4C1_actual", "S5C1_actual", "S5CF_actual"), "V")
   split_clust_Cinit <- split_syl_Cinit %>% separate(S1C1_actual, c("AS1C1", "AS1C2", "AS1C3", "AS1C4"), sep = "(?<=.)") %>%
@@ -202,7 +294,12 @@ sample_IPAactual_loop <- lapply(sample_IPAtarget_loop, FUN = function(element) {
   sample_IPA_CVinit <- rbind(split_clust_Vinit, split_clust_Cinit)
 })
 
-actual_target_IPA_FULL_Lyon <- do.call(rbind.data.frame, sample_IPAactual_loop)
+actual_sample <- do.call(rbind.data.frame, sample_IPAactual_loop) %>% mutate(AS1CF1 = "",
+                                                                             AS1CF2 = "",
+                                                                             AS1CF3 = "")
+
+actual_target_IPA_FULL_Lyon <- target_sample %>% left_join(actual_sample)
+
 
 #########
 
@@ -282,6 +379,8 @@ distinctive.feature.matrix <- tribble(~Symbol, ~Sonorant, ~Consonantal, ~Voice, 
                                       "ʔ", -1, 0, 0, -1, 0, -1, -1, 1, -1, 1, 0)    # added manually as not defined in original. Drew from Cambridge Handbook of Phonology and
                                                                                     # similarities with /h/
 
+# check that /g/ of regarder has been coded properly
+
 
 colnames_target <- actual_target_IPA_FULL_Lyon %>% dplyr::select(ID, starts_with("TS"))
 colnames(colnames_target) <- sub("T","",colnames(colnames_target))
@@ -307,6 +406,8 @@ output_actual <- lapply(actual_list, FUN = function(element) {
     replace(is.na(.), 0) %>%
     mutate(data_type = "Actual")
 })
+
+## need to add C4 to target data. too tired to do that now!!
 
 output_full <- mapply(rbind,output_target,output_actual,SIMPLIFY=FALSE) # below I'll convert this into a DF for generating the global matrix
 

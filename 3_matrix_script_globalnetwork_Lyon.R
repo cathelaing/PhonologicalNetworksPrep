@@ -234,7 +234,151 @@ global_matrix_actual <- lapply(first_instance_list_A, FUN = function(element) {
     radical_mat.S1C4
   
   rownames(mat.S1C4) <- element$Gloss
-  colnames(mat.S1C4) <- element$Gloss
+  colnames(mat.S1C4) <- element$Gloss  
+  
+  sonorant_vec.S1CF1 <- element$S1CF1.Sonorant
+  sonorant_mat.S1CF1 <- (sonorant_vec.S1CF1 %*% t(ones) - ones %*% t(sonorant_vec.S1CF1))^2
+  
+  consonantal_vec.S1CF1 <- element$S1CF1.Consonantal
+  consonantal_mat.S1CF1 <- (consonantal_vec.S1CF1 %*% t(ones) - ones %*% t(consonantal_vec.S1CF1))^2
+  
+  voice_vec.S1CF1 <- element$S1CF1.Voice
+  voice_mat.S1CF1 <- (voice_vec.S1CF1 %*% t(ones) - ones %*% t(voice_vec.S1CF1))^2
+  
+  nasal_vec.S1CF1 <- element$S1CF1.Nasal
+  nasal_mat.S1CF1 <- (nasal_vec.S1CF1 %*% t(ones) - ones %*% t(nasal_vec.S1CF1))^2
+  
+  degree_vec.S1CF1 <- element$S1CF1.Degree
+  degree_mat.S1CF1 <- (degree_vec.S1CF1 %*% t(ones) - ones %*% t(degree_vec.S1CF1))^2
+  
+  labial_vec.S1CF1 <- element$S1CF1.Labial
+  labial_mat.S1CF1 <- (labial_vec.S1CF1 %*% t(ones) - ones %*% t(labial_vec.S1CF1))^2
+  
+  palatal_vec.S1CF1 <- element$S1CF1.Palatal
+  palatal_mat.S1CF1 <- (palatal_vec.S1CF1 %*% t(ones) - ones %*% t(palatal_vec.S1CF1))^2
+  
+  pharyngeal_vec.S1CF1 <- element$S1CF1.Pharyngeal
+  pharyngeal_mat.S1CF1 <- (pharyngeal_vec.S1CF1 %*% t(ones) - ones %*% t(pharyngeal_vec.S1CF1))^2
+  
+  round_vec.S1CF1 <- element$S1CF1.Round
+  round_mat.S1CF1 <- (round_vec.S1CF1 %*% t(ones) - ones %*% t(round_vec.S1CF1))^2
+  
+  tongue_vec.S1CF1 <- element$S1CF1.Tongue
+  tongue_mat.S1CF1 <- (tongue_vec.S1CF1 %*% t(ones) - ones %*% t(tongue_vec.S1CF1))^2
+  
+  radical_vec.S1CF1 <- element$S1CF1.Radical
+  radical_mat.S1CF1 <- (radical_vec.S1CF1 %*% t(ones) - ones %*% t(radical_vec.S1CF1))^2
+  
+  mat.S1CF1 <- sonorant_mat.S1CF1 + 
+    consonantal_mat.S1CF1 + 
+    voice_mat.S1CF1 + 
+    nasal_mat.S1CF1 + 
+    degree_mat.S1CF1 + 
+    labial_mat.S1CF1 + 
+    palatal_mat.S1CF1 + 
+    pharyngeal_mat.S1CF1 + 
+    round_mat.S1CF1 + 
+    tongue_mat.S1CF1 + 
+    radical_mat.S1CF1
+  
+  rownames(mat.S1CF1) <- element$Gloss
+  colnames(mat.S1CF1) <- element$Gloss
+  
+  sonorant_vec.S1CF2 <- element$S1CF2.Sonorant
+  sonorant_mat.S1CF2 <- (sonorant_vec.S1CF2 %*% t(ones) - ones %*% t(sonorant_vec.S1CF2))^2
+  
+  consonantal_vec.S1CF2 <- element$S1CF2.Consonantal
+  consonantal_mat.S1CF2 <- (consonantal_vec.S1CF2 %*% t(ones) - ones %*% t(consonantal_vec.S1CF2))^2
+  
+  voice_vec.S1CF2 <- element$S1CF2.Voice
+  voice_mat.S1CF2 <- (voice_vec.S1CF2 %*% t(ones) - ones %*% t(voice_vec.S1CF2))^2
+  
+  nasal_vec.S1CF2 <- element$S1CF2.Nasal
+  nasal_mat.S1CF2 <- (nasal_vec.S1CF2 %*% t(ones) - ones %*% t(nasal_vec.S1CF2))^2
+  
+  degree_vec.S1CF2 <- element$S1CF2.Degree
+  degree_mat.S1CF2 <- (degree_vec.S1CF2 %*% t(ones) - ones %*% t(degree_vec.S1CF2))^2
+  
+  labial_vec.S1CF2 <- element$S1CF2.Labial
+  labial_mat.S1CF2 <- (labial_vec.S1CF2 %*% t(ones) - ones %*% t(labial_vec.S1CF2))^2
+  
+  palatal_vec.S1CF2 <- element$S1CF2.Palatal
+  palatal_mat.S1CF2 <- (palatal_vec.S1CF2 %*% t(ones) - ones %*% t(palatal_vec.S1CF2))^2
+  
+  pharyngeal_vec.S1CF2 <- element$S1CF2.Pharyngeal
+  pharyngeal_mat.S1CF2 <- (pharyngeal_vec.S1CF2 %*% t(ones) - ones %*% t(pharyngeal_vec.S1CF2))^2
+  
+  round_vec.S1CF2 <- element$S1CF2.Round
+  round_mat.S1CF2 <- (round_vec.S1CF2 %*% t(ones) - ones %*% t(round_vec.S1CF2))^2
+  
+  tongue_vec.S1CF2 <- element$S1CF2.Tongue
+  tongue_mat.S1CF2 <- (tongue_vec.S1CF2 %*% t(ones) - ones %*% t(tongue_vec.S1CF2))^2
+  
+  radical_vec.S1CF2 <- element$S1CF2.Radical
+  radical_mat.S1CF2 <- (radical_vec.S1CF2 %*% t(ones) - ones %*% t(radical_vec.S1CF2))^2
+  
+  mat.S1CF2 <- sonorant_mat.S1CF2 + 
+    consonantal_mat.S1CF2 + 
+    voice_mat.S1CF2 + 
+    nasal_mat.S1CF2 + 
+    degree_mat.S1CF2 + 
+    labial_mat.S1CF2 + 
+    palatal_mat.S1CF2 + 
+    pharyngeal_mat.S1CF2 + 
+    round_mat.S1CF2 + 
+    tongue_mat.S1CF2 + 
+    radical_mat.S1CF2
+  
+  rownames(mat.S1CF2) <- element$Gloss
+  colnames(mat.S1CF2) <- element$Gloss
+  
+  sonorant_vec.S1CF3 <- element$S1CF3.Sonorant
+  sonorant_mat.S1CF3 <- (sonorant_vec.S1CF3 %*% t(ones) - ones %*% t(sonorant_vec.S1CF3))^2
+  
+  consonantal_vec.S1CF3 <- element$S1CF3.Consonantal
+  consonantal_mat.S1CF3 <- (consonantal_vec.S1CF3 %*% t(ones) - ones %*% t(consonantal_vec.S1CF3))^2
+  
+  voice_vec.S1CF3 <- element$S1CF3.Voice
+  voice_mat.S1CF3 <- (voice_vec.S1CF3 %*% t(ones) - ones %*% t(voice_vec.S1CF3))^2
+  
+  nasal_vec.S1CF3 <- element$S1CF3.Nasal
+  nasal_mat.S1CF3 <- (nasal_vec.S1CF3 %*% t(ones) - ones %*% t(nasal_vec.S1CF3))^2
+  
+  degree_vec.S1CF3 <- element$S1CF3.Degree
+  degree_mat.S1CF3 <- (degree_vec.S1CF3 %*% t(ones) - ones %*% t(degree_vec.S1CF3))^2
+  
+  labial_vec.S1CF3 <- element$S1CF3.Labial
+  labial_mat.S1CF3 <- (labial_vec.S1CF3 %*% t(ones) - ones %*% t(labial_vec.S1CF3))^2
+  
+  palatal_vec.S1CF3 <- element$S1CF3.Palatal
+  palatal_mat.S1CF3 <- (palatal_vec.S1CF3 %*% t(ones) - ones %*% t(palatal_vec.S1CF3))^2
+  
+  pharyngeal_vec.S1CF3 <- element$S1CF3.Pharyngeal
+  pharyngeal_mat.S1CF3 <- (pharyngeal_vec.S1CF3 %*% t(ones) - ones %*% t(pharyngeal_vec.S1CF3))^2
+  
+  round_vec.S1CF3 <- element$S1CF3.Round
+  round_mat.S1CF3 <- (round_vec.S1CF3 %*% t(ones) - ones %*% t(round_vec.S1CF3))^2
+  
+  tongue_vec.S1CF3 <- element$S1CF3.Tongue
+  tongue_mat.S1CF3 <- (tongue_vec.S1CF3 %*% t(ones) - ones %*% t(tongue_vec.S1CF3))^2
+  
+  radical_vec.S1CF3 <- element$S1CF3.Radical
+  radical_mat.S1CF3 <- (radical_vec.S1CF3 %*% t(ones) - ones %*% t(radical_vec.S1CF3))^2
+  
+  mat.S1CF3 <- sonorant_mat.S1CF3 + 
+    consonantal_mat.S1CF3 + 
+    voice_mat.S1CF3 + 
+    nasal_mat.S1CF3 + 
+    degree_mat.S1CF3 + 
+    labial_mat.S1CF3 + 
+    palatal_mat.S1CF3 + 
+    pharyngeal_mat.S1CF3 + 
+    round_mat.S1CF3 + 
+    tongue_mat.S1CF3 + 
+    radical_mat.S1CF3
+  
+  rownames(mat.S1CF3) <- element$Gloss
+  colnames(mat.S1CF3) <- element$Gloss
   
   sonorant_vec.S2C1 <- element$S2C1.Sonorant
   sonorant_mat.S2C1 <- (sonorant_vec.S2C1 %*% t(ones) - ones %*% t(sonorant_vec.S2C1))^2
@@ -428,6 +572,150 @@ global_matrix_actual <- lapply(first_instance_list_A, FUN = function(element) {
   rownames(mat.S2C4) <- element$Gloss
   colnames(mat.S2C4) <- element$Gloss
   
+  sonorant_vec.S2CF1 <- element$S2CF1.Sonorant
+  sonorant_mat.S2CF1 <- (sonorant_vec.S2CF1 %*% t(ones) - ones %*% t(sonorant_vec.S2CF1))^2
+  
+  consonantal_vec.S2CF1 <- element$S2CF1.Consonantal
+  consonantal_mat.S2CF1 <- (consonantal_vec.S2CF1 %*% t(ones) - ones %*% t(consonantal_vec.S2CF1))^2
+  
+  voice_vec.S2CF1 <- element$S2CF1.Voice
+  voice_mat.S2CF1 <- (voice_vec.S2CF1 %*% t(ones) - ones %*% t(voice_vec.S2CF1))^2
+  
+  nasal_vec.S2CF1 <- element$S2CF1.Nasal
+  nasal_mat.S2CF1 <- (nasal_vec.S2CF1 %*% t(ones) - ones %*% t(nasal_vec.S2CF1))^2
+  
+  degree_vec.S2CF1 <- element$S2CF1.Degree
+  degree_mat.S2CF1 <- (degree_vec.S2CF1 %*% t(ones) - ones %*% t(degree_vec.S2CF1))^2
+  
+  labial_vec.S2CF1 <- element$S2CF1.Labial
+  labial_mat.S2CF1 <- (labial_vec.S2CF1 %*% t(ones) - ones %*% t(labial_vec.S2CF1))^2
+  
+  palatal_vec.S2CF1 <- element$S2CF1.Palatal
+  palatal_mat.S2CF1 <- (palatal_vec.S2CF1 %*% t(ones) - ones %*% t(palatal_vec.S2CF1))^2
+  
+  pharyngeal_vec.S2CF1 <- element$S2CF1.Pharyngeal
+  pharyngeal_mat.S2CF1 <- (pharyngeal_vec.S2CF1 %*% t(ones) - ones %*% t(pharyngeal_vec.S2CF1))^2
+  
+  round_vec.S2CF1 <- element$S2CF1.Round
+  round_mat.S2CF1 <- (round_vec.S2CF1 %*% t(ones) - ones %*% t(round_vec.S2CF1))^2
+  
+  tongue_vec.S2CF1 <- element$S2CF1.Tongue
+  tongue_mat.S2CF1 <- (tongue_vec.S2CF1 %*% t(ones) - ones %*% t(tongue_vec.S2CF1))^2
+  
+  radical_vec.S2CF1 <- element$S2CF1.Radical
+  radical_mat.S2CF1 <- (radical_vec.S2CF1 %*% t(ones) - ones %*% t(radical_vec.S2CF1))^2
+  
+  mat.S2CF1 <- sonorant_mat.S2CF1 + 
+    consonantal_mat.S2CF1 + 
+    voice_mat.S2CF1 + 
+    nasal_mat.S2CF1 + 
+    degree_mat.S2CF1 + 
+    labial_mat.S2CF1 + 
+    palatal_mat.S2CF1 + 
+    pharyngeal_mat.S2CF1 + 
+    round_mat.S2CF1 + 
+    tongue_mat.S2CF1 + 
+    radical_mat.S2CF1
+  
+  rownames(mat.S2CF1) <- element$Gloss
+  colnames(mat.S2CF1) <- element$Gloss
+  
+  sonorant_vec.S2CF2 <- element$S2CF2.Sonorant
+  sonorant_mat.S2CF2 <- (sonorant_vec.S2CF2 %*% t(ones) - ones %*% t(sonorant_vec.S2CF2))^2
+  
+  consonantal_vec.S2CF2 <- element$S2CF2.Consonantal
+  consonantal_mat.S2CF2 <- (consonantal_vec.S2CF2 %*% t(ones) - ones %*% t(consonantal_vec.S2CF2))^2
+  
+  voice_vec.S2CF2 <- element$S2CF2.Voice
+  voice_mat.S2CF2 <- (voice_vec.S2CF2 %*% t(ones) - ones %*% t(voice_vec.S2CF2))^2
+  
+  nasal_vec.S2CF2 <- element$S2CF2.Nasal
+  nasal_mat.S2CF2 <- (nasal_vec.S2CF2 %*% t(ones) - ones %*% t(nasal_vec.S2CF2))^2
+  
+  degree_vec.S2CF2 <- element$S2CF2.Degree
+  degree_mat.S2CF2 <- (degree_vec.S2CF2 %*% t(ones) - ones %*% t(degree_vec.S2CF2))^2
+  
+  labial_vec.S2CF2 <- element$S2CF2.Labial
+  labial_mat.S2CF2 <- (labial_vec.S2CF2 %*% t(ones) - ones %*% t(labial_vec.S2CF2))^2
+  
+  palatal_vec.S2CF2 <- element$S2CF2.Palatal
+  palatal_mat.S2CF2 <- (palatal_vec.S2CF2 %*% t(ones) - ones %*% t(palatal_vec.S2CF2))^2
+  
+  pharyngeal_vec.S2CF2 <- element$S2CF2.Pharyngeal
+  pharyngeal_mat.S2CF2 <- (pharyngeal_vec.S2CF2 %*% t(ones) - ones %*% t(pharyngeal_vec.S2CF2))^2
+  
+  round_vec.S2CF2 <- element$S2CF2.Round
+  round_mat.S2CF2 <- (round_vec.S2CF2 %*% t(ones) - ones %*% t(round_vec.S2CF2))^2
+  
+  tongue_vec.S2CF2 <- element$S2CF2.Tongue
+  tongue_mat.S2CF2 <- (tongue_vec.S2CF2 %*% t(ones) - ones %*% t(tongue_vec.S2CF2))^2
+  
+  radical_vec.S2CF2 <- element$S2CF2.Radical
+  radical_mat.S2CF2 <- (radical_vec.S2CF2 %*% t(ones) - ones %*% t(radical_vec.S2CF2))^2
+  
+  mat.S2CF2 <- sonorant_mat.S2CF2 + 
+    consonantal_mat.S2CF2 + 
+    voice_mat.S2CF2 + 
+    nasal_mat.S2CF2 + 
+    degree_mat.S2CF2 + 
+    labial_mat.S2CF2 + 
+    palatal_mat.S2CF2 + 
+    pharyngeal_mat.S2CF2 + 
+    round_mat.S2CF2 + 
+    tongue_mat.S2CF2 + 
+    radical_mat.S2CF2
+  
+  rownames(mat.S2CF2) <- element$Gloss
+  colnames(mat.S2CF2) <- element$Gloss
+  
+  sonorant_vec.S2CF3 <- element$S2CF3.Sonorant
+  sonorant_mat.S2CF3 <- (sonorant_vec.S2CF3 %*% t(ones) - ones %*% t(sonorant_vec.S2CF3))^2
+  
+  consonantal_vec.S2CF3 <- element$S2CF3.Consonantal
+  consonantal_mat.S2CF3 <- (consonantal_vec.S2CF3 %*% t(ones) - ones %*% t(consonantal_vec.S2CF3))^2
+  
+  voice_vec.S2CF3 <- element$S2CF3.Voice
+  voice_mat.S2CF3 <- (voice_vec.S2CF3 %*% t(ones) - ones %*% t(voice_vec.S2CF3))^2
+  
+  nasal_vec.S2CF3 <- element$S2CF3.Nasal
+  nasal_mat.S2CF3 <- (nasal_vec.S2CF3 %*% t(ones) - ones %*% t(nasal_vec.S2CF3))^2
+  
+  degree_vec.S2CF3 <- element$S2CF3.Degree
+  degree_mat.S2CF3 <- (degree_vec.S2CF3 %*% t(ones) - ones %*% t(degree_vec.S2CF3))^2
+  
+  labial_vec.S2CF3 <- element$S2CF3.Labial
+  labial_mat.S2CF3 <- (labial_vec.S2CF3 %*% t(ones) - ones %*% t(labial_vec.S2CF3))^2
+  
+  palatal_vec.S2CF3 <- element$S2CF3.Palatal
+  palatal_mat.S2CF3 <- (palatal_vec.S2CF3 %*% t(ones) - ones %*% t(palatal_vec.S2CF3))^2
+  
+  pharyngeal_vec.S2CF3 <- element$S2CF3.Pharyngeal
+  pharyngeal_mat.S2CF3 <- (pharyngeal_vec.S2CF3 %*% t(ones) - ones %*% t(pharyngeal_vec.S2CF3))^2
+  
+  round_vec.S2CF3 <- element$S2CF3.Round
+  round_mat.S2CF3 <- (round_vec.S2CF3 %*% t(ones) - ones %*% t(round_vec.S2CF3))^2
+  
+  tongue_vec.S2CF3 <- element$S2CF3.Tongue
+  tongue_mat.S2CF3 <- (tongue_vec.S2CF3 %*% t(ones) - ones %*% t(tongue_vec.S2CF3))^2
+  
+  radical_vec.S2CF3 <- element$S2CF3.Radical
+  radical_mat.S2CF3 <- (radical_vec.S2CF3 %*% t(ones) - ones %*% t(radical_vec.S2CF3))^2
+  
+  mat.S2CF3 <- sonorant_mat.S2CF3 + 
+    consonantal_mat.S2CF3 + 
+    voice_mat.S2CF3 + 
+    nasal_mat.S2CF3 + 
+    degree_mat.S2CF3 + 
+    labial_mat.S2CF3 + 
+    palatal_mat.S2CF3 + 
+    pharyngeal_mat.S2CF3 + 
+    round_mat.S2CF3 + 
+    tongue_mat.S2CF3 + 
+    radical_mat.S2CF3
+  
+  rownames(mat.S2CF3) <- element$Gloss
+  colnames(mat.S2CF3) <- element$Gloss
+  
   sonorant_vec.S3C1 <- element$S3C1.Sonorant
   sonorant_mat.S3C1 <- (sonorant_vec.S3C1 %*% t(ones) - ones %*% t(sonorant_vec.S3C1))^2
   
@@ -619,6 +907,150 @@ global_matrix_actual <- lapply(first_instance_list_A, FUN = function(element) {
   
   rownames(mat.S3C4) <- element$Gloss
   colnames(mat.S3C4) <- element$Gloss
+  
+  sonorant_vec.S3CF1 <- element$S3CF1.Sonorant
+  sonorant_mat.S3CF1 <- (sonorant_vec.S3CF1 %*% t(ones) - ones %*% t(sonorant_vec.S3CF1))^2
+  
+  consonantal_vec.S3CF1 <- element$S3CF1.Consonantal
+  consonantal_mat.S3CF1 <- (consonantal_vec.S3CF1 %*% t(ones) - ones %*% t(consonantal_vec.S3CF1))^2
+  
+  voice_vec.S3CF1 <- element$S3CF1.Voice
+  voice_mat.S3CF1 <- (voice_vec.S3CF1 %*% t(ones) - ones %*% t(voice_vec.S3CF1))^2
+  
+  nasal_vec.S3CF1 <- element$S3CF1.Nasal
+  nasal_mat.S3CF1 <- (nasal_vec.S3CF1 %*% t(ones) - ones %*% t(nasal_vec.S3CF1))^2
+  
+  degree_vec.S3CF1 <- element$S3CF1.Degree
+  degree_mat.S3CF1 <- (degree_vec.S3CF1 %*% t(ones) - ones %*% t(degree_vec.S3CF1))^2
+  
+  labial_vec.S3CF1 <- element$S3CF1.Labial
+  labial_mat.S3CF1 <- (labial_vec.S3CF1 %*% t(ones) - ones %*% t(labial_vec.S3CF1))^2
+  
+  palatal_vec.S3CF1 <- element$S3CF1.Palatal
+  palatal_mat.S3CF1 <- (palatal_vec.S3CF1 %*% t(ones) - ones %*% t(palatal_vec.S3CF1))^2
+  
+  pharyngeal_vec.S3CF1 <- element$S3CF1.Pharyngeal
+  pharyngeal_mat.S3CF1 <- (pharyngeal_vec.S3CF1 %*% t(ones) - ones %*% t(pharyngeal_vec.S3CF1))^2
+  
+  round_vec.S3CF1 <- element$S3CF1.Round
+  round_mat.S3CF1 <- (round_vec.S3CF1 %*% t(ones) - ones %*% t(round_vec.S3CF1))^2
+  
+  tongue_vec.S3CF1 <- element$S3CF1.Tongue
+  tongue_mat.S3CF1 <- (tongue_vec.S3CF1 %*% t(ones) - ones %*% t(tongue_vec.S3CF1))^2
+  
+  radical_vec.S3CF1 <- element$S3CF1.Radical
+  radical_mat.S3CF1 <- (radical_vec.S3CF1 %*% t(ones) - ones %*% t(radical_vec.S3CF1))^2
+  
+  mat.S3CF1 <- sonorant_mat.S3CF1 + 
+    consonantal_mat.S3CF1 + 
+    voice_mat.S3CF1 + 
+    nasal_mat.S3CF1 + 
+    degree_mat.S3CF1 + 
+    labial_mat.S3CF1 + 
+    palatal_mat.S3CF1 + 
+    pharyngeal_mat.S3CF1 + 
+    round_mat.S3CF1 + 
+    tongue_mat.S3CF1 + 
+    radical_mat.S3CF1
+  
+  rownames(mat.S3CF1) <- element$Gloss
+  colnames(mat.S3CF1) <- element$Gloss
+  
+  sonorant_vec.S3CF2 <- element$S3CF2.Sonorant
+  sonorant_mat.S3CF2 <- (sonorant_vec.S3CF2 %*% t(ones) - ones %*% t(sonorant_vec.S3CF2))^2
+  
+  consonantal_vec.S3CF2 <- element$S3CF2.Consonantal
+  consonantal_mat.S3CF2 <- (consonantal_vec.S3CF2 %*% t(ones) - ones %*% t(consonantal_vec.S3CF2))^2
+  
+  voice_vec.S3CF2 <- element$S3CF2.Voice
+  voice_mat.S3CF2 <- (voice_vec.S3CF2 %*% t(ones) - ones %*% t(voice_vec.S3CF2))^2
+  
+  nasal_vec.S3CF2 <- element$S3CF2.Nasal
+  nasal_mat.S3CF2 <- (nasal_vec.S3CF2 %*% t(ones) - ones %*% t(nasal_vec.S3CF2))^2
+  
+  degree_vec.S3CF2 <- element$S3CF2.Degree
+  degree_mat.S3CF2 <- (degree_vec.S3CF2 %*% t(ones) - ones %*% t(degree_vec.S3CF2))^2
+  
+  labial_vec.S3CF2 <- element$S3CF2.Labial
+  labial_mat.S3CF2 <- (labial_vec.S3CF2 %*% t(ones) - ones %*% t(labial_vec.S3CF2))^2
+  
+  palatal_vec.S3CF2 <- element$S3CF2.Palatal
+  palatal_mat.S3CF2 <- (palatal_vec.S3CF2 %*% t(ones) - ones %*% t(palatal_vec.S3CF2))^2
+  
+  pharyngeal_vec.S3CF2 <- element$S3CF2.Pharyngeal
+  pharyngeal_mat.S3CF2 <- (pharyngeal_vec.S3CF2 %*% t(ones) - ones %*% t(pharyngeal_vec.S3CF2))^2
+  
+  round_vec.S3CF2 <- element$S3CF2.Round
+  round_mat.S3CF2 <- (round_vec.S3CF2 %*% t(ones) - ones %*% t(round_vec.S3CF2))^2
+  
+  tongue_vec.S3CF2 <- element$S3CF2.Tongue
+  tongue_mat.S3CF2 <- (tongue_vec.S3CF2 %*% t(ones) - ones %*% t(tongue_vec.S3CF2))^2
+  
+  radical_vec.S3CF2 <- element$S3CF2.Radical
+  radical_mat.S3CF2 <- (radical_vec.S3CF2 %*% t(ones) - ones %*% t(radical_vec.S3CF2))^2
+  
+  mat.S3CF2 <- sonorant_mat.S3CF2 + 
+    consonantal_mat.S3CF2 + 
+    voice_mat.S3CF2 + 
+    nasal_mat.S3CF2 + 
+    degree_mat.S3CF2 + 
+    labial_mat.S3CF2 + 
+    palatal_mat.S3CF2 + 
+    pharyngeal_mat.S3CF2 + 
+    round_mat.S3CF2 + 
+    tongue_mat.S3CF2 + 
+    radical_mat.S3CF2
+  
+  rownames(mat.S3CF2) <- element$Gloss
+  colnames(mat.S3CF2) <- element$Gloss
+  
+  sonorant_vec.S3CF3 <- element$S3CF3.Sonorant
+  sonorant_mat.S3CF3 <- (sonorant_vec.S3CF3 %*% t(ones) - ones %*% t(sonorant_vec.S3CF3))^2
+  
+  consonantal_vec.S3CF3 <- element$S3CF3.Consonantal
+  consonantal_mat.S3CF3 <- (consonantal_vec.S3CF3 %*% t(ones) - ones %*% t(consonantal_vec.S3CF3))^2
+  
+  voice_vec.S3CF3 <- element$S3CF3.Voice
+  voice_mat.S3CF3 <- (voice_vec.S3CF3 %*% t(ones) - ones %*% t(voice_vec.S3CF3))^2
+  
+  nasal_vec.S3CF3 <- element$S3CF3.Nasal
+  nasal_mat.S3CF3 <- (nasal_vec.S3CF3 %*% t(ones) - ones %*% t(nasal_vec.S3CF3))^2
+  
+  degree_vec.S3CF3 <- element$S3CF3.Degree
+  degree_mat.S3CF3 <- (degree_vec.S3CF3 %*% t(ones) - ones %*% t(degree_vec.S3CF3))^2
+  
+  labial_vec.S3CF3 <- element$S3CF3.Labial
+  labial_mat.S3CF3 <- (labial_vec.S3CF3 %*% t(ones) - ones %*% t(labial_vec.S3CF3))^2
+  
+  palatal_vec.S3CF3 <- element$S3CF3.Palatal
+  palatal_mat.S3CF3 <- (palatal_vec.S3CF3 %*% t(ones) - ones %*% t(palatal_vec.S3CF3))^2
+  
+  pharyngeal_vec.S3CF3 <- element$S3CF3.Pharyngeal
+  pharyngeal_mat.S3CF3 <- (pharyngeal_vec.S3CF3 %*% t(ones) - ones %*% t(pharyngeal_vec.S3CF3))^2
+  
+  round_vec.S3CF3 <- element$S3CF3.Round
+  round_mat.S3CF3 <- (round_vec.S3CF3 %*% t(ones) - ones %*% t(round_vec.S3CF3))^2
+  
+  tongue_vec.S3CF3 <- element$S3CF3.Tongue
+  tongue_mat.S3CF3 <- (tongue_vec.S3CF3 %*% t(ones) - ones %*% t(tongue_vec.S3CF3))^2
+  
+  radical_vec.S3CF3 <- element$S3CF3.Radical
+  radical_mat.S3CF3 <- (radical_vec.S3CF3 %*% t(ones) - ones %*% t(radical_vec.S3CF3))^2
+  
+  mat.S3CF3 <- sonorant_mat.S3CF3 + 
+    consonantal_mat.S3CF3 + 
+    voice_mat.S3CF3 + 
+    nasal_mat.S3CF3 + 
+    degree_mat.S3CF3 + 
+    labial_mat.S3CF3 + 
+    palatal_mat.S3CF3 + 
+    pharyngeal_mat.S3CF3 + 
+    round_mat.S3CF3 + 
+    tongue_mat.S3CF3 + 
+    radical_mat.S3CF3
+  
+  rownames(mat.S3CF3) <- element$Gloss
+  colnames(mat.S3CF3) <- element$Gloss
   
   sonorant_vec.S4C1 <- element$S4C1.Sonorant
   sonorant_mat.S4C1 <- (sonorant_vec.S4C1 %*% t(ones) - ones %*% t(sonorant_vec.S4C1))^2
@@ -1200,14 +1632,23 @@ global_matrix_actual <- lapply(first_instance_list_A, FUN = function(element) {
     sqrt(mat.S1C2[,]) + 
     sqrt(mat.S1C3[,]) + 
     sqrt(mat.S1C4[,]) + 
+    sqrt(mat.S1CF1[,]) + 
+    sqrt(mat.S1CF2[,]) + 
+    sqrt(mat.S1CF3[,]) +
     sqrt(mat.S2C1[,]) + 
     sqrt(mat.S2C2[,]) + 
     sqrt(mat.S2C3[,]) + 
-    sqrt(mat.S2C4[,]) + 
+    sqrt(mat.S2C4[,]) +    
+    sqrt(mat.S2CF1[,]) + 
+    sqrt(mat.S2CF2[,]) + 
+    sqrt(mat.S2CF3[,]) + 
     sqrt(mat.S3C1[,]) +
     sqrt(mat.S3C2[,]) + 
     sqrt(mat.S3C3[,]) + 
     sqrt(mat.S3C4[,]) + 
+    sqrt(mat.S3CF1[,]) + 
+    sqrt(mat.S3CF2[,]) + 
+    sqrt(mat.S3CF3[,]) +
     sqrt(mat.S4C1[,]) + 
     sqrt(mat.S4C2[,]) + 
     sqrt(mat.S4C3[,]) + 
@@ -1485,7 +1926,151 @@ global_matrix_target <- lapply(first_instance_list_T, FUN = function(element) {
     radical_mat.S1C4
   
   rownames(mat.S1C4) <- element$Gloss
-  colnames(mat.S1C4) <- element$Gloss
+  colnames(mat.S1C4) <- element$Gloss  
+  
+  sonorant_vec.S1CF1 <- element$S1CF1.Sonorant
+  sonorant_mat.S1CF1 <- (sonorant_vec.S1CF1 %*% t(ones) - ones %*% t(sonorant_vec.S1CF1))^2
+  
+  consonantal_vec.S1CF1 <- element$S1CF1.Consonantal
+  consonantal_mat.S1CF1 <- (consonantal_vec.S1CF1 %*% t(ones) - ones %*% t(consonantal_vec.S1CF1))^2
+  
+  voice_vec.S1CF1 <- element$S1CF1.Voice
+  voice_mat.S1CF1 <- (voice_vec.S1CF1 %*% t(ones) - ones %*% t(voice_vec.S1CF1))^2
+  
+  nasal_vec.S1CF1 <- element$S1CF1.Nasal
+  nasal_mat.S1CF1 <- (nasal_vec.S1CF1 %*% t(ones) - ones %*% t(nasal_vec.S1CF1))^2
+  
+  degree_vec.S1CF1 <- element$S1CF1.Degree
+  degree_mat.S1CF1 <- (degree_vec.S1CF1 %*% t(ones) - ones %*% t(degree_vec.S1CF1))^2
+  
+  labial_vec.S1CF1 <- element$S1CF1.Labial
+  labial_mat.S1CF1 <- (labial_vec.S1CF1 %*% t(ones) - ones %*% t(labial_vec.S1CF1))^2
+  
+  palatal_vec.S1CF1 <- element$S1CF1.Palatal
+  palatal_mat.S1CF1 <- (palatal_vec.S1CF1 %*% t(ones) - ones %*% t(palatal_vec.S1CF1))^2
+  
+  pharyngeal_vec.S1CF1 <- element$S1CF1.Pharyngeal
+  pharyngeal_mat.S1CF1 <- (pharyngeal_vec.S1CF1 %*% t(ones) - ones %*% t(pharyngeal_vec.S1CF1))^2
+  
+  round_vec.S1CF1 <- element$S1CF1.Round
+  round_mat.S1CF1 <- (round_vec.S1CF1 %*% t(ones) - ones %*% t(round_vec.S1CF1))^2
+  
+  tongue_vec.S1CF1 <- element$S1CF1.Tongue
+  tongue_mat.S1CF1 <- (tongue_vec.S1CF1 %*% t(ones) - ones %*% t(tongue_vec.S1CF1))^2
+  
+  radical_vec.S1CF1 <- element$S1CF1.Radical
+  radical_mat.S1CF1 <- (radical_vec.S1CF1 %*% t(ones) - ones %*% t(radical_vec.S1CF1))^2
+  
+  mat.S1CF1 <- sonorant_mat.S1CF1 + 
+    consonantal_mat.S1CF1 + 
+    voice_mat.S1CF1 + 
+    nasal_mat.S1CF1 + 
+    degree_mat.S1CF1 + 
+    labial_mat.S1CF1 + 
+    palatal_mat.S1CF1 + 
+    pharyngeal_mat.S1CF1 + 
+    round_mat.S1CF1 + 
+    tongue_mat.S1CF1 + 
+    radical_mat.S1CF1
+  
+  rownames(mat.S1CF1) <- element$Gloss
+  colnames(mat.S1CF1) <- element$Gloss
+  
+  sonorant_vec.S1CF2 <- element$S1CF2.Sonorant
+  sonorant_mat.S1CF2 <- (sonorant_vec.S1CF2 %*% t(ones) - ones %*% t(sonorant_vec.S1CF2))^2
+  
+  consonantal_vec.S1CF2 <- element$S1CF2.Consonantal
+  consonantal_mat.S1CF2 <- (consonantal_vec.S1CF2 %*% t(ones) - ones %*% t(consonantal_vec.S1CF2))^2
+  
+  voice_vec.S1CF2 <- element$S1CF2.Voice
+  voice_mat.S1CF2 <- (voice_vec.S1CF2 %*% t(ones) - ones %*% t(voice_vec.S1CF2))^2
+  
+  nasal_vec.S1CF2 <- element$S1CF2.Nasal
+  nasal_mat.S1CF2 <- (nasal_vec.S1CF2 %*% t(ones) - ones %*% t(nasal_vec.S1CF2))^2
+  
+  degree_vec.S1CF2 <- element$S1CF2.Degree
+  degree_mat.S1CF2 <- (degree_vec.S1CF2 %*% t(ones) - ones %*% t(degree_vec.S1CF2))^2
+  
+  labial_vec.S1CF2 <- element$S1CF2.Labial
+  labial_mat.S1CF2 <- (labial_vec.S1CF2 %*% t(ones) - ones %*% t(labial_vec.S1CF2))^2
+  
+  palatal_vec.S1CF2 <- element$S1CF2.Palatal
+  palatal_mat.S1CF2 <- (palatal_vec.S1CF2 %*% t(ones) - ones %*% t(palatal_vec.S1CF2))^2
+  
+  pharyngeal_vec.S1CF2 <- element$S1CF2.Pharyngeal
+  pharyngeal_mat.S1CF2 <- (pharyngeal_vec.S1CF2 %*% t(ones) - ones %*% t(pharyngeal_vec.S1CF2))^2
+  
+  round_vec.S1CF2 <- element$S1CF2.Round
+  round_mat.S1CF2 <- (round_vec.S1CF2 %*% t(ones) - ones %*% t(round_vec.S1CF2))^2
+  
+  tongue_vec.S1CF2 <- element$S1CF2.Tongue
+  tongue_mat.S1CF2 <- (tongue_vec.S1CF2 %*% t(ones) - ones %*% t(tongue_vec.S1CF2))^2
+  
+  radical_vec.S1CF2 <- element$S1CF2.Radical
+  radical_mat.S1CF2 <- (radical_vec.S1CF2 %*% t(ones) - ones %*% t(radical_vec.S1CF2))^2
+  
+  mat.S1CF2 <- sonorant_mat.S1CF2 + 
+    consonantal_mat.S1CF2 + 
+    voice_mat.S1CF2 + 
+    nasal_mat.S1CF2 + 
+    degree_mat.S1CF2 + 
+    labial_mat.S1CF2 + 
+    palatal_mat.S1CF2 + 
+    pharyngeal_mat.S1CF2 + 
+    round_mat.S1CF2 + 
+    tongue_mat.S1CF2 + 
+    radical_mat.S1CF2
+  
+  rownames(mat.S1CF2) <- element$Gloss
+  colnames(mat.S1CF2) <- element$Gloss
+  
+  sonorant_vec.S1CF3 <- element$S1CF3.Sonorant
+  sonorant_mat.S1CF3 <- (sonorant_vec.S1CF3 %*% t(ones) - ones %*% t(sonorant_vec.S1CF3))^2
+  
+  consonantal_vec.S1CF3 <- element$S1CF3.Consonantal
+  consonantal_mat.S1CF3 <- (consonantal_vec.S1CF3 %*% t(ones) - ones %*% t(consonantal_vec.S1CF3))^2
+  
+  voice_vec.S1CF3 <- element$S1CF3.Voice
+  voice_mat.S1CF3 <- (voice_vec.S1CF3 %*% t(ones) - ones %*% t(voice_vec.S1CF3))^2
+  
+  nasal_vec.S1CF3 <- element$S1CF3.Nasal
+  nasal_mat.S1CF3 <- (nasal_vec.S1CF3 %*% t(ones) - ones %*% t(nasal_vec.S1CF3))^2
+  
+  degree_vec.S1CF3 <- element$S1CF3.Degree
+  degree_mat.S1CF3 <- (degree_vec.S1CF3 %*% t(ones) - ones %*% t(degree_vec.S1CF3))^2
+  
+  labial_vec.S1CF3 <- element$S1CF3.Labial
+  labial_mat.S1CF3 <- (labial_vec.S1CF3 %*% t(ones) - ones %*% t(labial_vec.S1CF3))^2
+  
+  palatal_vec.S1CF3 <- element$S1CF3.Palatal
+  palatal_mat.S1CF3 <- (palatal_vec.S1CF3 %*% t(ones) - ones %*% t(palatal_vec.S1CF3))^2
+  
+  pharyngeal_vec.S1CF3 <- element$S1CF3.Pharyngeal
+  pharyngeal_mat.S1CF3 <- (pharyngeal_vec.S1CF3 %*% t(ones) - ones %*% t(pharyngeal_vec.S1CF3))^2
+  
+  round_vec.S1CF3 <- element$S1CF3.Round
+  round_mat.S1CF3 <- (round_vec.S1CF3 %*% t(ones) - ones %*% t(round_vec.S1CF3))^2
+  
+  tongue_vec.S1CF3 <- element$S1CF3.Tongue
+  tongue_mat.S1CF3 <- (tongue_vec.S1CF3 %*% t(ones) - ones %*% t(tongue_vec.S1CF3))^2
+  
+  radical_vec.S1CF3 <- element$S1CF3.Radical
+  radical_mat.S1CF3 <- (radical_vec.S1CF3 %*% t(ones) - ones %*% t(radical_vec.S1CF3))^2
+  
+  mat.S1CF3 <- sonorant_mat.S1CF3 + 
+    consonantal_mat.S1CF3 + 
+    voice_mat.S1CF3 + 
+    nasal_mat.S1CF3 + 
+    degree_mat.S1CF3 + 
+    labial_mat.S1CF3 + 
+    palatal_mat.S1CF3 + 
+    pharyngeal_mat.S1CF3 + 
+    round_mat.S1CF3 + 
+    tongue_mat.S1CF3 + 
+    radical_mat.S1CF3
+  
+  rownames(mat.S1CF3) <- element$Gloss
+  colnames(mat.S1CF3) <- element$Gloss
   
   sonorant_vec.S2C1 <- element$S2C1.Sonorant
   sonorant_mat.S2C1 <- (sonorant_vec.S2C1 %*% t(ones) - ones %*% t(sonorant_vec.S2C1))^2
@@ -1679,6 +2264,150 @@ global_matrix_target <- lapply(first_instance_list_T, FUN = function(element) {
   rownames(mat.S2C4) <- element$Gloss
   colnames(mat.S2C4) <- element$Gloss
   
+  sonorant_vec.S2CF1 <- element$S2CF1.Sonorant
+  sonorant_mat.S2CF1 <- (sonorant_vec.S2CF1 %*% t(ones) - ones %*% t(sonorant_vec.S2CF1))^2
+  
+  consonantal_vec.S2CF1 <- element$S2CF1.Consonantal
+  consonantal_mat.S2CF1 <- (consonantal_vec.S2CF1 %*% t(ones) - ones %*% t(consonantal_vec.S2CF1))^2
+  
+  voice_vec.S2CF1 <- element$S2CF1.Voice
+  voice_mat.S2CF1 <- (voice_vec.S2CF1 %*% t(ones) - ones %*% t(voice_vec.S2CF1))^2
+  
+  nasal_vec.S2CF1 <- element$S2CF1.Nasal
+  nasal_mat.S2CF1 <- (nasal_vec.S2CF1 %*% t(ones) - ones %*% t(nasal_vec.S2CF1))^2
+  
+  degree_vec.S2CF1 <- element$S2CF1.Degree
+  degree_mat.S2CF1 <- (degree_vec.S2CF1 %*% t(ones) - ones %*% t(degree_vec.S2CF1))^2
+  
+  labial_vec.S2CF1 <- element$S2CF1.Labial
+  labial_mat.S2CF1 <- (labial_vec.S2CF1 %*% t(ones) - ones %*% t(labial_vec.S2CF1))^2
+  
+  palatal_vec.S2CF1 <- element$S2CF1.Palatal
+  palatal_mat.S2CF1 <- (palatal_vec.S2CF1 %*% t(ones) - ones %*% t(palatal_vec.S2CF1))^2
+  
+  pharyngeal_vec.S2CF1 <- element$S2CF1.Pharyngeal
+  pharyngeal_mat.S2CF1 <- (pharyngeal_vec.S2CF1 %*% t(ones) - ones %*% t(pharyngeal_vec.S2CF1))^2
+  
+  round_vec.S2CF1 <- element$S2CF1.Round
+  round_mat.S2CF1 <- (round_vec.S2CF1 %*% t(ones) - ones %*% t(round_vec.S2CF1))^2
+  
+  tongue_vec.S2CF1 <- element$S2CF1.Tongue
+  tongue_mat.S2CF1 <- (tongue_vec.S2CF1 %*% t(ones) - ones %*% t(tongue_vec.S2CF1))^2
+  
+  radical_vec.S2CF1 <- element$S2CF1.Radical
+  radical_mat.S2CF1 <- (radical_vec.S2CF1 %*% t(ones) - ones %*% t(radical_vec.S2CF1))^2
+  
+  mat.S2CF1 <- sonorant_mat.S2CF1 + 
+    consonantal_mat.S2CF1 + 
+    voice_mat.S2CF1 + 
+    nasal_mat.S2CF1 + 
+    degree_mat.S2CF1 + 
+    labial_mat.S2CF1 + 
+    palatal_mat.S2CF1 + 
+    pharyngeal_mat.S2CF1 + 
+    round_mat.S2CF1 + 
+    tongue_mat.S2CF1 + 
+    radical_mat.S2CF1
+  
+  rownames(mat.S2CF1) <- element$Gloss
+  colnames(mat.S2CF1) <- element$Gloss
+  
+  sonorant_vec.S2CF2 <- element$S2CF2.Sonorant
+  sonorant_mat.S2CF2 <- (sonorant_vec.S2CF2 %*% t(ones) - ones %*% t(sonorant_vec.S2CF2))^2
+  
+  consonantal_vec.S2CF2 <- element$S2CF2.Consonantal
+  consonantal_mat.S2CF2 <- (consonantal_vec.S2CF2 %*% t(ones) - ones %*% t(consonantal_vec.S2CF2))^2
+  
+  voice_vec.S2CF2 <- element$S2CF2.Voice
+  voice_mat.S2CF2 <- (voice_vec.S2CF2 %*% t(ones) - ones %*% t(voice_vec.S2CF2))^2
+  
+  nasal_vec.S2CF2 <- element$S2CF2.Nasal
+  nasal_mat.S2CF2 <- (nasal_vec.S2CF2 %*% t(ones) - ones %*% t(nasal_vec.S2CF2))^2
+  
+  degree_vec.S2CF2 <- element$S2CF2.Degree
+  degree_mat.S2CF2 <- (degree_vec.S2CF2 %*% t(ones) - ones %*% t(degree_vec.S2CF2))^2
+  
+  labial_vec.S2CF2 <- element$S2CF2.Labial
+  labial_mat.S2CF2 <- (labial_vec.S2CF2 %*% t(ones) - ones %*% t(labial_vec.S2CF2))^2
+  
+  palatal_vec.S2CF2 <- element$S2CF2.Palatal
+  palatal_mat.S2CF2 <- (palatal_vec.S2CF2 %*% t(ones) - ones %*% t(palatal_vec.S2CF2))^2
+  
+  pharyngeal_vec.S2CF2 <- element$S2CF2.Pharyngeal
+  pharyngeal_mat.S2CF2 <- (pharyngeal_vec.S2CF2 %*% t(ones) - ones %*% t(pharyngeal_vec.S2CF2))^2
+  
+  round_vec.S2CF2 <- element$S2CF2.Round
+  round_mat.S2CF2 <- (round_vec.S2CF2 %*% t(ones) - ones %*% t(round_vec.S2CF2))^2
+  
+  tongue_vec.S2CF2 <- element$S2CF2.Tongue
+  tongue_mat.S2CF2 <- (tongue_vec.S2CF2 %*% t(ones) - ones %*% t(tongue_vec.S2CF2))^2
+  
+  radical_vec.S2CF2 <- element$S2CF2.Radical
+  radical_mat.S2CF2 <- (radical_vec.S2CF2 %*% t(ones) - ones %*% t(radical_vec.S2CF2))^2
+  
+  mat.S2CF2 <- sonorant_mat.S2CF2 + 
+    consonantal_mat.S2CF2 + 
+    voice_mat.S2CF2 + 
+    nasal_mat.S2CF2 + 
+    degree_mat.S2CF2 + 
+    labial_mat.S2CF2 + 
+    palatal_mat.S2CF2 + 
+    pharyngeal_mat.S2CF2 + 
+    round_mat.S2CF2 + 
+    tongue_mat.S2CF2 + 
+    radical_mat.S2CF2
+  
+  rownames(mat.S2CF2) <- element$Gloss
+  colnames(mat.S2CF2) <- element$Gloss
+  
+  sonorant_vec.S2CF3 <- element$S2CF3.Sonorant
+  sonorant_mat.S2CF3 <- (sonorant_vec.S2CF3 %*% t(ones) - ones %*% t(sonorant_vec.S2CF3))^2
+  
+  consonantal_vec.S2CF3 <- element$S2CF3.Consonantal
+  consonantal_mat.S2CF3 <- (consonantal_vec.S2CF3 %*% t(ones) - ones %*% t(consonantal_vec.S2CF3))^2
+  
+  voice_vec.S2CF3 <- element$S2CF3.Voice
+  voice_mat.S2CF3 <- (voice_vec.S2CF3 %*% t(ones) - ones %*% t(voice_vec.S2CF3))^2
+  
+  nasal_vec.S2CF3 <- element$S2CF3.Nasal
+  nasal_mat.S2CF3 <- (nasal_vec.S2CF3 %*% t(ones) - ones %*% t(nasal_vec.S2CF3))^2
+  
+  degree_vec.S2CF3 <- element$S2CF3.Degree
+  degree_mat.S2CF3 <- (degree_vec.S2CF3 %*% t(ones) - ones %*% t(degree_vec.S2CF3))^2
+  
+  labial_vec.S2CF3 <- element$S2CF3.Labial
+  labial_mat.S2CF3 <- (labial_vec.S2CF3 %*% t(ones) - ones %*% t(labial_vec.S2CF3))^2
+  
+  palatal_vec.S2CF3 <- element$S2CF3.Palatal
+  palatal_mat.S2CF3 <- (palatal_vec.S2CF3 %*% t(ones) - ones %*% t(palatal_vec.S2CF3))^2
+  
+  pharyngeal_vec.S2CF3 <- element$S2CF3.Pharyngeal
+  pharyngeal_mat.S2CF3 <- (pharyngeal_vec.S2CF3 %*% t(ones) - ones %*% t(pharyngeal_vec.S2CF3))^2
+  
+  round_vec.S2CF3 <- element$S2CF3.Round
+  round_mat.S2CF3 <- (round_vec.S2CF3 %*% t(ones) - ones %*% t(round_vec.S2CF3))^2
+  
+  tongue_vec.S2CF3 <- element$S2CF3.Tongue
+  tongue_mat.S2CF3 <- (tongue_vec.S2CF3 %*% t(ones) - ones %*% t(tongue_vec.S2CF3))^2
+  
+  radical_vec.S2CF3 <- element$S2CF3.Radical
+  radical_mat.S2CF3 <- (radical_vec.S2CF3 %*% t(ones) - ones %*% t(radical_vec.S2CF3))^2
+  
+  mat.S2CF3 <- sonorant_mat.S2CF3 + 
+    consonantal_mat.S2CF3 + 
+    voice_mat.S2CF3 + 
+    nasal_mat.S2CF3 + 
+    degree_mat.S2CF3 + 
+    labial_mat.S2CF3 + 
+    palatal_mat.S2CF3 + 
+    pharyngeal_mat.S2CF3 + 
+    round_mat.S2CF3 + 
+    tongue_mat.S2CF3 + 
+    radical_mat.S2CF3
+  
+  rownames(mat.S2CF3) <- element$Gloss
+  colnames(mat.S2CF3) <- element$Gloss
+  
   sonorant_vec.S3C1 <- element$S3C1.Sonorant
   sonorant_mat.S3C1 <- (sonorant_vec.S3C1 %*% t(ones) - ones %*% t(sonorant_vec.S3C1))^2
   
@@ -1870,6 +2599,150 @@ global_matrix_target <- lapply(first_instance_list_T, FUN = function(element) {
   
   rownames(mat.S3C4) <- element$Gloss
   colnames(mat.S3C4) <- element$Gloss
+  
+  sonorant_vec.S3CF1 <- element$S3CF1.Sonorant
+  sonorant_mat.S3CF1 <- (sonorant_vec.S3CF1 %*% t(ones) - ones %*% t(sonorant_vec.S3CF1))^2
+  
+  consonantal_vec.S3CF1 <- element$S3CF1.Consonantal
+  consonantal_mat.S3CF1 <- (consonantal_vec.S3CF1 %*% t(ones) - ones %*% t(consonantal_vec.S3CF1))^2
+  
+  voice_vec.S3CF1 <- element$S3CF1.Voice
+  voice_mat.S3CF1 <- (voice_vec.S3CF1 %*% t(ones) - ones %*% t(voice_vec.S3CF1))^2
+  
+  nasal_vec.S3CF1 <- element$S3CF1.Nasal
+  nasal_mat.S3CF1 <- (nasal_vec.S3CF1 %*% t(ones) - ones %*% t(nasal_vec.S3CF1))^2
+  
+  degree_vec.S3CF1 <- element$S3CF1.Degree
+  degree_mat.S3CF1 <- (degree_vec.S3CF1 %*% t(ones) - ones %*% t(degree_vec.S3CF1))^2
+  
+  labial_vec.S3CF1 <- element$S3CF1.Labial
+  labial_mat.S3CF1 <- (labial_vec.S3CF1 %*% t(ones) - ones %*% t(labial_vec.S3CF1))^2
+  
+  palatal_vec.S3CF1 <- element$S3CF1.Palatal
+  palatal_mat.S3CF1 <- (palatal_vec.S3CF1 %*% t(ones) - ones %*% t(palatal_vec.S3CF1))^2
+  
+  pharyngeal_vec.S3CF1 <- element$S3CF1.Pharyngeal
+  pharyngeal_mat.S3CF1 <- (pharyngeal_vec.S3CF1 %*% t(ones) - ones %*% t(pharyngeal_vec.S3CF1))^2
+  
+  round_vec.S3CF1 <- element$S3CF1.Round
+  round_mat.S3CF1 <- (round_vec.S3CF1 %*% t(ones) - ones %*% t(round_vec.S3CF1))^2
+  
+  tongue_vec.S3CF1 <- element$S3CF1.Tongue
+  tongue_mat.S3CF1 <- (tongue_vec.S3CF1 %*% t(ones) - ones %*% t(tongue_vec.S3CF1))^2
+  
+  radical_vec.S3CF1 <- element$S3CF1.Radical
+  radical_mat.S3CF1 <- (radical_vec.S3CF1 %*% t(ones) - ones %*% t(radical_vec.S3CF1))^2
+  
+  mat.S3CF1 <- sonorant_mat.S3CF1 + 
+    consonantal_mat.S3CF1 + 
+    voice_mat.S3CF1 + 
+    nasal_mat.S3CF1 + 
+    degree_mat.S3CF1 + 
+    labial_mat.S3CF1 + 
+    palatal_mat.S3CF1 + 
+    pharyngeal_mat.S3CF1 + 
+    round_mat.S3CF1 + 
+    tongue_mat.S3CF1 + 
+    radical_mat.S3CF1
+  
+  rownames(mat.S3CF1) <- element$Gloss
+  colnames(mat.S3CF1) <- element$Gloss
+  
+  sonorant_vec.S3CF2 <- element$S3CF2.Sonorant
+  sonorant_mat.S3CF2 <- (sonorant_vec.S3CF2 %*% t(ones) - ones %*% t(sonorant_vec.S3CF2))^2
+  
+  consonantal_vec.S3CF2 <- element$S3CF2.Consonantal
+  consonantal_mat.S3CF2 <- (consonantal_vec.S3CF2 %*% t(ones) - ones %*% t(consonantal_vec.S3CF2))^2
+  
+  voice_vec.S3CF2 <- element$S3CF2.Voice
+  voice_mat.S3CF2 <- (voice_vec.S3CF2 %*% t(ones) - ones %*% t(voice_vec.S3CF2))^2
+  
+  nasal_vec.S3CF2 <- element$S3CF2.Nasal
+  nasal_mat.S3CF2 <- (nasal_vec.S3CF2 %*% t(ones) - ones %*% t(nasal_vec.S3CF2))^2
+  
+  degree_vec.S3CF2 <- element$S3CF2.Degree
+  degree_mat.S3CF2 <- (degree_vec.S3CF2 %*% t(ones) - ones %*% t(degree_vec.S3CF2))^2
+  
+  labial_vec.S3CF2 <- element$S3CF2.Labial
+  labial_mat.S3CF2 <- (labial_vec.S3CF2 %*% t(ones) - ones %*% t(labial_vec.S3CF2))^2
+  
+  palatal_vec.S3CF2 <- element$S3CF2.Palatal
+  palatal_mat.S3CF2 <- (palatal_vec.S3CF2 %*% t(ones) - ones %*% t(palatal_vec.S3CF2))^2
+  
+  pharyngeal_vec.S3CF2 <- element$S3CF2.Pharyngeal
+  pharyngeal_mat.S3CF2 <- (pharyngeal_vec.S3CF2 %*% t(ones) - ones %*% t(pharyngeal_vec.S3CF2))^2
+  
+  round_vec.S3CF2 <- element$S3CF2.Round
+  round_mat.S3CF2 <- (round_vec.S3CF2 %*% t(ones) - ones %*% t(round_vec.S3CF2))^2
+  
+  tongue_vec.S3CF2 <- element$S3CF2.Tongue
+  tongue_mat.S3CF2 <- (tongue_vec.S3CF2 %*% t(ones) - ones %*% t(tongue_vec.S3CF2))^2
+  
+  radical_vec.S3CF2 <- element$S3CF2.Radical
+  radical_mat.S3CF2 <- (radical_vec.S3CF2 %*% t(ones) - ones %*% t(radical_vec.S3CF2))^2
+  
+  mat.S3CF2 <- sonorant_mat.S3CF2 + 
+    consonantal_mat.S3CF2 + 
+    voice_mat.S3CF2 + 
+    nasal_mat.S3CF2 + 
+    degree_mat.S3CF2 + 
+    labial_mat.S3CF2 + 
+    palatal_mat.S3CF2 + 
+    pharyngeal_mat.S3CF2 + 
+    round_mat.S3CF2 + 
+    tongue_mat.S3CF2 + 
+    radical_mat.S3CF2
+  
+  rownames(mat.S3CF2) <- element$Gloss
+  colnames(mat.S3CF2) <- element$Gloss
+  
+  sonorant_vec.S3CF3 <- element$S3CF3.Sonorant
+  sonorant_mat.S3CF3 <- (sonorant_vec.S3CF3 %*% t(ones) - ones %*% t(sonorant_vec.S3CF3))^2
+  
+  consonantal_vec.S3CF3 <- element$S3CF3.Consonantal
+  consonantal_mat.S3CF3 <- (consonantal_vec.S3CF3 %*% t(ones) - ones %*% t(consonantal_vec.S3CF3))^2
+  
+  voice_vec.S3CF3 <- element$S3CF3.Voice
+  voice_mat.S3CF3 <- (voice_vec.S3CF3 %*% t(ones) - ones %*% t(voice_vec.S3CF3))^2
+  
+  nasal_vec.S3CF3 <- element$S3CF3.Nasal
+  nasal_mat.S3CF3 <- (nasal_vec.S3CF3 %*% t(ones) - ones %*% t(nasal_vec.S3CF3))^2
+  
+  degree_vec.S3CF3 <- element$S3CF3.Degree
+  degree_mat.S3CF3 <- (degree_vec.S3CF3 %*% t(ones) - ones %*% t(degree_vec.S3CF3))^2
+  
+  labial_vec.S3CF3 <- element$S3CF3.Labial
+  labial_mat.S3CF3 <- (labial_vec.S3CF3 %*% t(ones) - ones %*% t(labial_vec.S3CF3))^2
+  
+  palatal_vec.S3CF3 <- element$S3CF3.Palatal
+  palatal_mat.S3CF3 <- (palatal_vec.S3CF3 %*% t(ones) - ones %*% t(palatal_vec.S3CF3))^2
+  
+  pharyngeal_vec.S3CF3 <- element$S3CF3.Pharyngeal
+  pharyngeal_mat.S3CF3 <- (pharyngeal_vec.S3CF3 %*% t(ones) - ones %*% t(pharyngeal_vec.S3CF3))^2
+  
+  round_vec.S3CF3 <- element$S3CF3.Round
+  round_mat.S3CF3 <- (round_vec.S3CF3 %*% t(ones) - ones %*% t(round_vec.S3CF3))^2
+  
+  tongue_vec.S3CF3 <- element$S3CF3.Tongue
+  tongue_mat.S3CF3 <- (tongue_vec.S3CF3 %*% t(ones) - ones %*% t(tongue_vec.S3CF3))^2
+  
+  radical_vec.S3CF3 <- element$S3CF3.Radical
+  radical_mat.S3CF3 <- (radical_vec.S3CF3 %*% t(ones) - ones %*% t(radical_vec.S3CF3))^2
+  
+  mat.S3CF3 <- sonorant_mat.S3CF3 + 
+    consonantal_mat.S3CF3 + 
+    voice_mat.S3CF3 + 
+    nasal_mat.S3CF3 + 
+    degree_mat.S3CF3 + 
+    labial_mat.S3CF3 + 
+    palatal_mat.S3CF3 + 
+    pharyngeal_mat.S3CF3 + 
+    round_mat.S3CF3 + 
+    tongue_mat.S3CF3 + 
+    radical_mat.S3CF3
+  
+  rownames(mat.S3CF3) <- element$Gloss
+  colnames(mat.S3CF3) <- element$Gloss
   
   sonorant_vec.S4C1 <- element$S4C1.Sonorant
   sonorant_mat.S4C1 <- (sonorant_vec.S4C1 %*% t(ones) - ones %*% t(sonorant_vec.S4C1))^2
@@ -2451,14 +3324,23 @@ global_matrix_target <- lapply(first_instance_list_T, FUN = function(element) {
     sqrt(mat.S1C2[,]) + 
     sqrt(mat.S1C3[,]) + 
     sqrt(mat.S1C4[,]) + 
+    sqrt(mat.S1CF1[,]) + 
+    sqrt(mat.S1CF2[,]) + 
+    sqrt(mat.S1CF3[,]) +
     sqrt(mat.S2C1[,]) + 
     sqrt(mat.S2C2[,]) + 
     sqrt(mat.S2C3[,]) + 
-    sqrt(mat.S2C4[,]) + 
+    sqrt(mat.S2C4[,]) +    
+    sqrt(mat.S2CF1[,]) + 
+    sqrt(mat.S2CF2[,]) + 
+    sqrt(mat.S2CF3[,]) + 
     sqrt(mat.S3C1[,]) +
     sqrt(mat.S3C2[,]) + 
     sqrt(mat.S3C3[,]) + 
     sqrt(mat.S3C4[,]) + 
+    sqrt(mat.S3CF1[,]) + 
+    sqrt(mat.S3CF2[,]) + 
+    sqrt(mat.S3CF3[,]) +
     sqrt(mat.S4C1[,]) + 
     sqrt(mat.S4C2[,]) + 
     sqrt(mat.S4C3[,]) + 

@@ -199,12 +199,12 @@ sample_IPAtarget_loop_base <- lapply(nsyl_target_list, FUN = function(element) {
            S4C1_target = ifelse(nsyl_target == 3 & !is.na(SFC1_target), 0, S4C1_target),
            SFC1_target = ifelse(nsyl_target == 4 & !is.na(S5C1_target), S5C1_target, SFC1_target),
            S5C1_target = ifelse(nsyl_target == 4 & !is.na(SFC1_target), 0, S5C1_target))
-  split_clust <- split_syl2 %>% separate(S1C1_target, c("TS1C1", "TS1C2", "TS1C3"), sep = "(?<=.)") %>%
-    separate(S2C1_target, c("TS2C1", "TS2C2", "TS2C3"), sep = "(?<=.)") %>%
-    separate(S3C1_target, c("TS3C1", "TS3C2", "TS3C3"), sep = "(?<=.)") %>%
-    separate(S4C1_target, c("TS4C1", "TS4C2", "TS4C3"), sep = "(?<=.)") %>%
-    separate(S5C1_target, c("TS5C1", "TS5C2", "TS5C3"), sep = "(?<=.)") %>%
-    separate(SFC1_target, c("TSFC1", "TSFC2", "TSFC3"), sep = "(?<=.)")
+  split_clust <- split_syl2 %>% separate(S1C1_target, c("TS1C1", "TS1C2", "TS1C3", "TS1C4"), sep = "(?<=.)") %>%
+    separate(S2C1_target, c("TS2C1", "TS2C2", "TS2C3", "TS2C4"), sep = "(?<=.)") %>%
+    separate(S3C1_target, c("TS3C1", "TS3C2", "TS3C3", "TS3C4"), sep = "(?<=.)") %>%
+    separate(S4C1_target, c("TS4C1", "TS4C2", "TS4C3", "TS4C4"), sep = "(?<=.)") %>%
+    separate(S5C1_target, c("TS5C1", "TS5C2", "TS5C3", "TS5C4"), sep = "(?<=.)") %>%
+    separate(SFC1_target, c("TSFC1", "TSFC2", "TSFC3", "TSFC4"), sep = "(?<=.)")
   })
 
 
@@ -233,15 +233,15 @@ sample_IPAtarget_loop_complex <- lapply(nsyl_target_list_complex, FUN = function
            S5C1_target = ifelse(nsyl_target == 5, after2, 0),
            SFC1_target = ifelse(S5C1_target == 0 & !is.na(after2), after2, 0)) %>%
     dplyr::select(-after1, -after2) %>%
-    separate(S1C1_target, c("TS1C1", "TS1C2", "TS1C3"), sep = "(?<=.)") %>%
+    separate(S1C1_target, c("TS1C1", "TS1C2", "TS1C3", "TS1C4"), sep = "(?<=.)") %>%
     separate(S1CF_target, c("TS1CF1", "TS1CF2", "TS1CF3"), sep = "(?<=.)") %>%
-    separate(S2C1_target, c("TS2C1", "TS2C2", "TS2C3"), sep = "(?<=.)") %>%
+    separate(S2C1_target, c("TS2C1", "TS2C2", "TS2C3", "TS2C4"), sep = "(?<=.)") %>%
     separate(S2CF_target, c("TS2CF1", "TS2CF2", "TS2CF3"), sep = "(?<=.)") %>%
-    separate(S3C1_target, c("TS3C1", "TS3C2", "TS3C3"), sep = "(?<=.)") %>%
+    separate(S3C1_target, c("TS3C1", "TS3C2", "TS3C3", "TS3C4"), sep = "(?<=.)") %>%
     separate(S3CF_target, c("TS3CF1", "TS3CF2", "TS3CF3"), sep = "(?<=.)") %>%
-    separate(S4C1_target, c("TS4C1", "TS4C2", "TS4C3"), sep = "(?<=.)") %>%
-    separate(S5C1_target, c("TS5C1", "TS5C2", "TS5C3"), sep = "(?<=.)") %>%
-    separate(SFC1_target, c("TSFC1", "TSFC2", "TSFC3"), sep = "(?<=.)")
+    separate(S4C1_target, c("TS4C1", "TS4C2", "TS4C3", "TS4C4"), sep = "(?<=.)") %>%
+    separate(S5C1_target, c("TS5C1", "TS5C2", "TS5C3", "TS5C4"), sep = "(?<=.)") %>%
+    separate(SFC1_target, c("TSFC1", "TSFC2", "TSFC3", "TSFC4"), sep = "(?<=.)")
             })
 
 #check <- do.call(rbind.data.frame, sample_IPAtarget_loop_complex)# %>% filter(nsyl_target >3)
@@ -296,7 +296,13 @@ sample_IPAactual_loop <- lapply(nsyl_actual_list, FUN = function(element) {
 
 actual_sample <- do.call(rbind.data.frame, sample_IPAactual_loop) %>% mutate(AS1CF1 = "",
                                                                              AS1CF2 = "",
-                                                                             AS1CF3 = "")
+                                                                             AS1CF3 = "",
+                                                                             AS2CF1 = "",
+                                                                             AS2CF2 = "",
+                                                                             AS2CF3 = "",
+                                                                             AS3CF1 = "",
+                                                                             AS3CF2 = "",
+                                                                             AS3CF3 = "")
 
 actual_target_IPA_FULL_Lyon <- target_sample %>% left_join(actual_sample)
 
@@ -410,8 +416,6 @@ output_actual <- lapply(actual_list, FUN = function(element) {
 ## need to add C4 to target data. too tired to do that now!!
 
 output_full <- mapply(rbind,output_target,output_actual,SIMPLIFY=FALSE) # below I'll convert this into a DF for generating the global matrix
-
-
 
 output_full_dist <- lapply(output_full, FUN = function(element) {
   target <- element %>% filter(data_type == "Target") 

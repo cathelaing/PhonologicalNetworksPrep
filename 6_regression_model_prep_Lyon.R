@@ -1,4 +1,4 @@
-# Updated 25th February 2023
+# Updated 213th March 2023
 
 # need to start with full list of all words by age, global_network$gloss1
 
@@ -42,8 +42,8 @@ global_distance_summ <- global_distance_lyon %>%
 
 ## ACTUAL DATA
 
-output <- vector("list", length(79)) #Prep a list to store your corr.test results
 names <- names(AOP_list)
+output_list <- list()
 
 for(i in seq_along(1:length(AOP_list))){    # NEED TO CHANGE THIS ABOVE AND IN LYON DATA
   
@@ -105,7 +105,7 @@ connected_words_melted_actual <- melt(connected_words_red_actual) %>%
 
 feather::write_feather(connected_words_melted_actual, "Data/connected_words_melted_actual_lyon.feather")
 
-connected_words_melted_actual <- feather::read_feather("Data/connected_words_melted_actual_lyon.feather") %>% mutate(age = as.numeric(age))
+#connected_words_melted_actual <- feather::read_feather("Data/connected_words_melted_actual_lyon.feather") %>% mutate(age = as.numeric(age))
 
 # Mean degree of each word in terms of all the words that it connects to
 
@@ -211,8 +211,8 @@ feather::write_feather(mean_degree_full_actual, "Data/mean_degree_full_actual_ly
 
 ## TARGET DATA
 
-output <- vector("list", length(79)) #Prep a list to store your corr.test results
 names <- names(AOP_list)
+output_list <- list()
 
 for(i in seq_along(1:length(AOP_list))){    # NEED TO CHANGE THIS ABOVE AND IN LYON DATA
   
@@ -274,7 +274,7 @@ connected_words_melted_target <- melt(connected_words_red_target) %>%
 
 feather::write_feather(connected_words_melted_target, "Data/connected_words_melted_target_lyon.feather")
 
-connected_words_melted_target <- feather::read_feather("Data/connected_words_melted_target_lyon.feather") %>% mutate(age = as.numeric(age))
+#connected_words_melted_target <- feather::read_feather("Data/connected_words_melted_target_lyon.feather") %>% mutate(age = as.numeric(age))
 
 # Mean degree of each word in terms of all the words that it connects to
 
@@ -427,23 +427,28 @@ session_data <- read_csv("Data/comparison_data_lyon.csv") %>%    # need to add o
   mutate(session_ordinal = row_number()) %>%
   dplyr::select(-n)
 
-<<<<<<< HEAD
-freq_lyon <- read_csv("Data/freq_lyon.csv")
-=======
+
 freq_lyon <- read_csv("Data/freq_lyon.csv") %>% 
   mutate(Speaker = ifelse(Speaker == "Theotime", "Tim", Speaker))
->>>>>>> 560d7a75bcc84d14ff62bf7dab09d816e5355192
 # chi_freq_bychi <- read_csv("Data/chi_freq_bychi.csv")
 # chi_freq_byword <- read_csv("Data/chi_freq_byword.csv")
+
+word_cat <- feather::read_feather("Data/FULLsample_Lyon.feather") %>% 
+  distinct(Gloss, category, .keep_all = T) %>%
+  dplyr::select(Gloss, category) %>%
+  group_by(Gloss, category) %>%
+  tally()
 
 FULLsample_var <- feather::read_feather("Data/FULLsample_Lyon.feather") %>% 
   group_by(Speaker, Gloss) %>% 
   tally() %>%
   rename("gloss1" = "Gloss",
-         "n_tokens" = "n",)   # how many tokens of each word included in the data
+         "n_tokens" = "n") %>%   # how many tokens of each word included in the data
+  left_join(word_cat, by = "Gloss")
 
 regression_data <- regression_data %>%
   left_join(freq_lyon) %>%
+  left_join(word_cat) %>%
   left_join(FULLsample_var) %>%
   left_join(session_data) %>%
   mutate(total_freq = ifelse(is.na(total_freq), 0, total_freq)) %>%

@@ -434,17 +434,17 @@ freq_lyon <- read_csv("Data/freq_lyon.csv") %>%
 # chi_freq_byword <- read_csv("Data/chi_freq_byword.csv")
 
 word_cat <- feather::read_feather("Data/FULLsample_Lyon.feather") %>% 
-  distinct(Gloss, category, .keep_all = T) %>%
+  distinct(Gloss, .keep_all = T) %>%
   dplyr::select(Gloss, category) %>%
-  group_by(Gloss, category) %>%
-  tally()
+  rename("gloss1" = "Gloss")
 
 FULLsample_var <- feather::read_feather("Data/FULLsample_Lyon.feather") %>% 
   group_by(Speaker, Gloss) %>% 
   tally() %>%
-  rename("gloss1" = "Gloss",
-         "n_tokens" = "n") %>%   # how many tokens of each word included in the data
-  left_join(word_cat, by = "Gloss")
+ # left_join(word_cat) %>%
+    rename("gloss1" = "Gloss",
+         "n_tokens" = "n")   # how many tokens of each word included in the data
+  
 
 regression_data <- regression_data %>%
   left_join(freq_lyon) %>%

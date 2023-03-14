@@ -444,6 +444,11 @@ session_data <- read_csv("Data/comparison_data_providence.csv") %>%    # need to
   mutate(session_ordinal = row_number()) %>%
   dplyr::select(-n)
 
+word_cat <- feather::read_feather("Data/FULLsample_Providence.feather") %>% 
+  distinct(Gloss, .keep_all = T) %>%
+  dplyr::select(Gloss, category) %>%
+  rename("gloss1" = "Gloss")
+
 FULLsample_var <- feather::read_feather("Data/FULLsample_Providence.feather") %>% 
   group_by(Speaker, Gloss) %>% 
   tally() %>%
@@ -452,6 +457,7 @@ FULLsample_var <- feather::read_feather("Data/FULLsample_Providence.feather") %>
 
 regression_data <- regression_data %>%
   left_join(chi_freq) %>%
+  left_join(word_cat) %>%
   left_join(FULLsample_var) %>%
   left_join(session_data) %>%
   mutate(total_freq = ifelse(is.na(total_freq), 0, total_freq)) %>%

@@ -447,7 +447,12 @@ session_data <- read_csv("Data/comparison_data_providence.csv") %>%    # need to
 word_cat <- feather::read_feather("Data/FULLsample_Providence.feather") %>% 
   distinct(Gloss, .keep_all = T) %>%
   dplyr::select(Gloss, category) %>%
-  rename("gloss1" = "Gloss")
+  rename("gloss1" = "Gloss") %>%
+  mutate(category = as.factor(category),
+         category = fct_collapse(category,
+                                 object_word = c("animals", "body_parts", "clothing", "food_drink", "furniture_rooms",
+                                                   "household", "people", "outside", "places", "toys", "vehicles"),
+                                 verbs = c("action_words", "helping_verbs")))
 
 FULLsample_var <- feather::read_feather("Data/FULLsample_Providence.feather") %>% 
   group_by(Speaker, Gloss) %>% 

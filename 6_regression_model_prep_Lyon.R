@@ -436,7 +436,12 @@ freq_lyon <- read_csv("Data/freq_lyon.csv") %>%
 word_cat <- feather::read_feather("Data/FULLsample_Lyon.feather") %>% 
   distinct(Gloss, .keep_all = T) %>%
   dplyr::select(Gloss, category) %>%
-  rename("gloss1" = "Gloss")
+  rename("gloss1" = "Gloss") %>%
+  mutate(category = as.factor(category),
+         category = fct_collapse(category,
+                                 object_word = c("animals", "body_parts", "clothing", "food_drink", "furniture_rooms",
+                                                 "household", "people", "outside", "places", "toys", "vehicles"),
+                                 verbs = c("action_words", "helping_verbs")))
 
 FULLsample_var <- feather::read_feather("Data/FULLsample_Lyon.feather") %>% 
   group_by(Speaker, Gloss) %>% 

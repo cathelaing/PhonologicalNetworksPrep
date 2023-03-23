@@ -418,14 +418,15 @@ regression_data <- mean_degree_full %>% left_join(global_network_split) %>%
   mutate(learned_next = ifelse(age == AOP-1, 1, 0)) %>%
   filter(age != AOP) %>%
   left_join(comparison_data) %>%
-  left_join(vocabsize_sub) %>%
+  left_join(vocabsize_providence) %>%
   ungroup() %>%
   mutate(AOP_scaled = c(scale(AOP, center = TRUE, scale = TRUE)),    
-         length_scaled = c(scale(Targetphon, center = TRUE, scale = TRUE))) %>%
-  #PAT_weighted = PAT_val/vocab_month) %>%
+         length_scaled = c(scale(Targetphon, center = TRUE, scale = TRUE)),
+         PAT_weighted = PAT_val/vocab_agg) %>%
   group_by(Speaker) %>%
   mutate(PAT_scaled = c(scale(PAT_val, center = TRUE, scale = TRUE)),
          PAT_scaled_m = c(scale(PAT_val_m, center = TRUE, scale = TRUE)),
+         PAT_vocab_scaled = c(scale(PAT_weighted, center = TRUE, scale = TRUE)),
          PAQ_scaled_target = c(scale(PAQ_target, center = TRUE, scale = TRUE)),
          PAQ_scaled_actual = c(scale(PAQ_actual, center = TRUE, scale = TRUE)))
   

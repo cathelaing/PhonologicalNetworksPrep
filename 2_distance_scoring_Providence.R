@@ -1,8 +1,18 @@
-# Updated Updated 24th February 2023
+# Updated 8th March 2023   ## need to check all of this - error in separating clusters; 4syls have been included
 
 # This data takes the sample generated in data_cleaning.R and creates a series of phonetic distance values for each word in the dataframe
 
-FULLsample <- feather::read_feather("Data/FULLsample_Providence.feather")
+FULLsample <- feather::read_feather("Data/FULLsample_Providence.feather") %>%
+  mutate(IPAtarget = ifelse(Gloss == "tissue", "tiJu", IPAtarget),
+         IPAtarget = ifelse(Gloss == "awake", "IweI*k", IPAtarget),
+         IPAtarget = ifelse(Gloss == "bathtub", "bC&N8tIb", IPAtarget),
+         IPAtarget = ifelse(Gloss == "pumpkin", "pJmpkIn", IPAtarget),
+         Gloss = ifelse(IPAtarget == "hoJ
+ld", "hold", Gloss),
+         IPAtarget = ifelse(Gloss == "uhoh", "JJeu", IPAtarget),
+         IPAtarget = ifelse(Gloss == "about", "IbaJ
+t", IPAtarget),
+         IPAtarget = ifelse(Gloss == "away", "IweI*", IPAtarget))
 
 
 FULLsample$Session <- gsub("^[^.]*.", "", FULLsample$Session) # create variable to show session number in only numeric form
@@ -10,32 +20,37 @@ FULLsample$Session <- gsub('[\a\b]', '', FULLsample$Session)
 
 # write_csv(FULLsample, "ProvidenceDataCHI.csv")
 
-sample_IPAtarget <- FULLsample %>% select(ID, Speaker, Session, Gloss, 
+sample_IPAtarget <- FULLsample %>% dplyr::select(ID, Speaker, Session, Gloss, 
                                           IPAtarget, IPAactual, 
                                           Targetphon, Actualphon, 
                                           TargetCV, ActualCV) # Create new dataframe to generate IPA segmental values
+  
 
 # substitute all target vowels for generic V because I don't care about vowels
 sample_IPAtarget$Vremoved_target <- gsub("([
 i
 u
-ɪ
-ʊ
+I*
+J
+
 e
 o
-ə
-ɛ
-ʌ
-ɔ
-ɜ
-æ                              
+I
+I
+J
+I
+I
+C&                              
 a
-ɑ])", "V", sample_IPAtarget$IPAtarget)    # vowels taken from runnng Phone Inventory script in Phon
+I])", "V", sample_IPAtarget$IPAtarget)    # vowels taken from runnng Phone Inventory script in Phon
 
 sample_IPAtarget$Vremoved_target <- gsub("VVV", "V", sample_IPAtarget$Vremoved_target)  # remove triphthongs to count as single vowel (following Monaghan et al 2010 but also because we're not looking at vowels here)
 sample_IPAtarget$Vremoved_target <- gsub("VV", "V", sample_IPAtarget$Vremoved_target)  # remove diphthongs to count as single vowel (following Monaghan et al 2010 but also because we're not looking at vowels here)
 sample_IPAtarget <- sample_IPAtarget %>% mutate(nsyl_target = stringr::str_count(Vremoved_target, "V"),
-                                                nsyl_target = ifelse(nsyl_target == 0, 1, nsyl_target))
+                                                nsyl_target = ifelse(nsyl_target == 0, 1, nsyl_target),
+                                                remove = ifelse(Gloss == "yes" & nsyl_target ==3, T, F)) %>%   # remove mis-transcribed words
+  filter(remove == F) %>%
+  dplyr::select(-remove)
 
 
 # substitute all actual vowels for generic V because I don't care about vowels here either
@@ -43,18 +58,19 @@ sample_IPAtarget <- sample_IPAtarget %>% mutate(nsyl_target = stringr::str_count
 sample_IPAtarget$Vremoved_actual <- gsub("([ 
 i
 u
-ɪ
-ʊ
+I*
+J
+
 e
 o
-ə
-ɛ
-ʌ
-ɔ
-ɜ
-æ
+I
+I
+J
+I
+I
+C&
 a
-ɑ])", "V", sample_IPAtarget$IPAactual)    # vowels taken from runnng Phone Inventory script in Phon
+I])", "V", sample_IPAtarget$IPAactual)    # vowels taken from runnng Phone Inventory script in Phon
 
 sample_IPAtarget$Vremoved_actual <- gsub("VVV", "V", sample_IPAtarget$Vremoved_actual)  
 sample_IPAtarget$Vremoved_actual <- gsub("VV", "V", sample_IPAtarget$Vremoved_actual)  
@@ -84,7 +100,8 @@ target_structures_sample$TargetCV_edited <- gsub("^", "", target_structures_samp
 
 
 target_structures_sample <- target_structures_sample %>%
-  mutate(TargetCV_edited = as.factor(TargetCV_edited))
+  mutate(TargetCV_edited = as.factor(TargetCV_edited),
+         TargetCV = as.character(TargetCV))
 
 # Do the same for actual syllabic structure. This will allow for comparison of targetlikeness later on
 
@@ -112,7 +129,8 @@ target_structures_sample <- target_structures_sample %>%
          onset = ifelse(TargetCV_edited %in% c("V", "V^CV", "VC", "VCV", "VCVC", "VCVCV", "VCVCVC", "VCVCVCV", "VCVCVCVC", 
                                                 "VCVCVCVCV", "VCVCVCVCVC", "VCVCVCVCVCV"), "V", "C"))
 
-sample_IPAtarget <- sample_IPAtarget %>% left_join(target_structures_sample) # join with main dataframe
+sample_IPAtarget <- sample_IPAtarget %>% left_join(target_structures_sample) %>% # join with main dataframe
+  mutate(ActualCV = as.character(ActualCV)) 
 
 ggplot(sample_IPAtarget, aes(x = nsyl_target)) + geom_histogram(binwidth = 0.5)  +
   scale_y_sqrt()
@@ -121,12 +139,11 @@ ggplot(sample_IPAtarget, aes(x = nsyl_actual)) + geom_histogram(binwidth = 0.5) 
 
 sample_IPAtarget %>% group_by(nsyl_actual) %>% tally()
 
-397/76148 #<1% 3 syls
-15/76148 # <.0001% 4+ syls
+1547/147988 #1% 3 syls
 
-# remove any words with more than 4 syls in Actual
+# remove actual forms with >3 syllables since these are mainly word play or 2-word utterances
 
-sample_IPAtarget <- sample_IPAtarget %>% filter(nsyl_actual <= 4)
+sample_IPAtarget <- sample_IPAtarget %>% filter(nsyl_actual < 4)
 
 # Now each segment of each word needs to be separated in order to compare target forms with actual productions
 # This process is done by syllable number, starting with target forms and then considering actual forms in relation to these
@@ -134,56 +151,125 @@ sample_IPAtarget <- sample_IPAtarget %>% filter(nsyl_actual <= 4)
 # For example: monosyllabic target /kat/ is separated into /k/~/a/~/t/ and then child's actual production is considered in relation to this
 # Actual production might be a monosyllable ([kat]), or a disyllable [kaka] or multisyllabic [kakaka]. In each of these cases, /k/~/a/~/t/ as generated below
 # is compared against the segments from the actual form 
-# First all target monosyllables are compared with all target forms (from 1-4 syllables, V- and C-intial separately)
-# Then disyllables (compared with 1-4 syllable forms, V- and C-initial), trisyllables, etc. up to 4-syllable words
-# Words beyond 4 syllables tended to be produced with vocal play, and so were excluded from the analysis
+# First all target monosyllables are compared with all target forms (from 1-6 syllables, V- and C-intial separately)
+# Then disyllables (compared with 1-6 syllable forms, V- and C-initial), trisyllables, etc. up to 6-syllable words
+# Words beyond 6 syllables tended to be produced with vocal play, and so were excluded from the analysis
 
+# words with clusters in S2 need to have them split into S1F and S2C1, except for a few complex words:
 
+Gloss <- c("pumpkin", "empty", "penguin", "bathtub", "dancing", "windy", 
+                 "standing", "holding", "sandbox", "sandwich", "candies", "finding", "penguins", "bumping", "dumping", "boxes", "vacuum", "planting", "fixing", "vacuums", "tasted", "planted", 
+                 "camping", "popsicles", "popsicle", "sandwiches", "outside", "into", "outsides")
+
+Vremoved_target_new <- c("pVmp-kVn", "Vmp-tV", "pVEg-wVn", "bVN8-tVb", "dVns-VE", "wI*Vnd-V", 
+                       "stVnd-VE", "hVld-VE", "sVnd-bVks", "sVnd-wVJ'", "kVnd-iVz", "fVnd-VE", "pVEg-wVnz", "bVmp-VE", "dVmp-VE", "bVks-IVz", "vV-kjVm", "plVnt-VE", "fVks-VE", "vV-kjVmz", "tVst-Vd", "plVnt-Vd", 
+                       "kVmp-VE", "pVp-sVkVlz", "pVp-sVkVl", "sVnd-wVJ'Vz", "Vt-sVd", "Vn-tV", "Vt-sVdz")
+
+split_clust <- data.frame(Gloss, Vremoved_target_new)
+
+# V1 <- sample_IPAtarget %>% filter(stringr::str_detect(TargetCV, "^V")) %>% # DF for looking at V-intial structures onlyV1 
+#  distinct(Gloss, .keep_all = T)
+
+sample_IPAtarget_complex <- split_clust %>% 
+  left_join(sample_IPAtarget, multiple = "all") %>%
+  filter(Gloss %in% split_clust$Gloss)
+  
 nsyl_target_list <- sample_IPAtarget %>%
+  filter(!(Gloss %in% split_clust$Gloss)) %>%
   split(., f = .$nsyl_target)
 
-sample_IPAtarget_loop <- lapply(nsyl_target_list, FUN = function(element) {
-  split_syl <- element %>% separate(Vremoved_target, c("S1C1_target", "S2C1_target", "S3C1_target", "S4C1_target", "SFC1_target"), "V") 
-  split_clust <- split_syl %>% separate(S1C1_target, c("TS1C1", "TS1C2", "TS1C3", "TS1C4", "TS1C5"), sep = "(?<=.)") %>%
-    separate(S2C1_target, c("TS2C1", "TS2C2", "TS2C3", "TS2C4", "TS2C5"), sep = "(?<=.)") %>%
-    separate(S3C1_target, c("TS3C1", "TS3C2", "TS3C3", "TS3C4", "TS3C5"), sep = "(?<=.)") %>%
-    separate(S4C1_target, c("TS4C1", "TS4C2", "TS4C3", "TS4C4", "TS4C5"), sep = "(?<=.)") %>%
-    separate(SFC1_target, c("TSFC1", "TSFC2", "TSFC3", "TSFC4", "TSFC5"), sep = "(?<=.)")
-})
+sample_IPAtarget_loop_base <- lapply(nsyl_target_list, FUN = function(element) {
+  split_syl <- element %>% separate(Vremoved_target, c("S1C1_target", "S2C1_target", "S3C1_target", "S4C1_target"), "V")
+   split_syl2 <- split_syl %>%
+     mutate(SFC1_target = ifelse(nsyl_target == 1 & !is.na(S2C1_target), S2C1_target, 0),     # create a category that is just codas 
+            S2C1_target = ifelse(nsyl_target == 1 & !is.na(SFC1_target), 0, S2C1_target),     # codas will always be aligned with codas
+            SFC1_target = ifelse(nsyl_target == 2 & !is.na(S3C1_target), S3C1_target, SFC1_target),
+            S3C1_target = ifelse(nsyl_target == 2 & !is.na(SFC1_target), 0, S3C1_target),
+            SFC1_target = ifelse(nsyl_target == 3 & !is.na(S4C1_target), S4C1_target, SFC1_target),
+            S4C1_target = ifelse(nsyl_target == 3 & !is.na(SFC1_target), 0, S4C1_target))
+       split_clust <- split_syl2 %>% separate(S1C1_target, c("TS1C1", "TS1C2", "TS1C3"), sep = "(?<=.)") %>%
+         separate(S2C1_target, c("TS2C1", "TS2C2", "TS2C3"), sep = "(?<=.)") %>%
+         separate(S3C1_target, c("TS3C1", "TS3C2", "TS3C3"), sep = "(?<=.)") %>%
+         separate(SFC1_target, c("TSFC1", "TSFC2", "TSFC3"), sep = "(?<=.)") %>%
+         filter(!(Gloss %in% split_clust$Gloss))
+  })
 
+nsyl_target_list_complex <- sample_IPAtarget_complex %>%
+  split(., f = .$nsyl_target)
+
+sample_IPAtarget_loop_complex <- lapply(nsyl_target_list_complex, FUN = function(element) {
+  split_syl <- element %>% separate(Vremoved_target_new, c("S1C1_target", "SI"), "-") %>%
+   separate(SI, c("S2C1_target", "S3C1_target",  "S4C1_target"), "V") %>%
+    mutate(SFC1_target = ifelse(nsyl_target == 2 & !is.na(S3C1_target), S3C1_target, 0),
+           S3C1_target = ifelse(nsyl_target == 2 & !is.na(SFC1_target), 0, S3C1_target),
+           SFC1_target = ifelse(nsyl_target == 3 & !is.na(S4C1_target), S4C1_target, SFC1_target),
+           S4C1_target = ifelse(nsyl_target == 3 & !is.na(SFC1_target), 0, S4C1_target)) %>%
+    separate(S1C1_target, c("S1C1_target", "S1CF_target"), "V")
+  split_clust <- split_syl %>% separate(S1C1_target, c("TS1C1", "TS1C2", "TS1C3"), sep = "(?<=.)") %>%
+    separate(S1CF_target, c("TS1CF1", "TS1CF2", "TS1CF3"), sep = "(?<=.)") %>%
+    separate(S2C1_target, c("TS2C1", "TS2C2", "TS2C3"), sep = "(?<=.)") %>%
+    separate(S3C1_target, c("TS3C1", "TS3C2", "TS3C3"), sep = "(?<=.)") %>%
+    separate(SFC1_target, c("TSFC1", "TSFC2", "TSFC3"), sep = "(?<=.)")
+  })
+
+target_list_base <- do.call(rbind.data.frame, sample_IPAtarget_loop_base) %>% mutate(TS1CF1 = "",
+                                                                                     TS1CF2 = "",
+                                                                                     TS1CF3 = "")
+target_list_complex <- do.call(rbind.data.frame, sample_IPAtarget_loop_complex) %>% dplyr::select(-Vremoved_target)
+
+# base <- data.frame(names(target_list_base))
+# complex <- data.frame(names(target_list_complex))
+# 
+# colceck <- rbind(base, complex)
+
+target_sample <- rbind(target_list_base, target_list_complex)
 
 # Now add segmental info re infants' actual productions to each DF
 
-Vinitial <- sample_IPAtarget %>% filter(stringr::str_detect(ActualCV, "^V")) # DF for looking at V-intial structures only
-Cinitial <- sample_IPAtarget %>% filter(stringr::str_detect(ActualCV, "^C")|stringr::str_detect(ActualCV, "^G"))    # DF for looking at C-intial structures only
+Vinitial <- sample_IPAtarget %>% mutate(ActualCV = as.character(ActualCV)) %>% filter(stringr::str_detect(ActualCV, "^V")) # DF for looking at V-intial structures only
+Cinitial <- sample_IPAtarget %>% mutate(ActualCV = as.character(ActualCV)) %>% filter(stringr::str_detect(ActualCV, "^C")|stringr::str_detect(ActualCV, "^G"))    # DF for looking at C-intial structures only
+
+nsyl_actual_list <- sample_IPAtarget %>%
+  split(., f = .$nsyl_actual)
 
 # Remember to merge these subsets together once DF is organized
 
-sample_IPAactual_loop <- lapply(sample_IPAtarget_loop, FUN = function(element) {
-  split_syl_Cinit <- element %>% filter(ActualCV %in% Cinitial$ActualCV) %>%
-    separate(Vremoved_actual, c("S1C1_actual", "S2C1_actual", "S3C1_actual", "S4C1_actual", "SFC1_actual"), "V")
-  split_clust_Cinit <- split_syl_Cinit %>% separate(S1C1_actual, c("AS1C1", "AS1C2", "AS1C3", "AS1C4", "AS1C5"), sep = "(?<=.)") %>%
-    separate(S2C1_actual, c("AS2C1", "AS2C2", "AS2C3", "AS2C4", "AS2C5"), sep = "(?<=.)") %>%
-    separate(S3C1_actual, c("AS3C1", "AS3C2", "AS3C3", "AS3C4", "AS3C5"), sep = "(?<=.)") %>%
-    separate(S4C1_actual, c("AS4C1", "AS4C2", "AS4C3", "AS4C4", "AS4C5"), sep = "(?<=.)") %>%
-    separate(SFC1_actual, c("ASFC1", "ASFC2", "ASFC3", "ASFC4", "ASFC5"), sep = "(?<=.)")
+sample_IPAactual_loop <- lapply(nsyl_actual_list, FUN = function(element) {
+  split_syl_Cinit <- element %>% dplyr::filter(ActualCV %in% Cinitial$ActualCV) %>%
+    separate(Vremoved_actual, c("S1C1_actual", "S2C1_actual", "S3C1_actual", "S4C1_actual"), "V") %>%
+  mutate(SFC1_actual = ifelse(nsyl_actual == 1 & !is.na(S2C1_actual), S2C1_actual, 0),     # create a category that is just codas 
+         S2C1_actual = ifelse(nsyl_actual == 1 & !is.na(SFC1_actual), 0, S2C1_actual),     # codas will always be aligned with codas
+         SFC1_actual = ifelse(nsyl_actual == 2 & !is.na(S3C1_actual), S3C1_actual, SFC1_actual),
+         S3C1_actual = ifelse(nsyl_actual == 2 & !is.na(SFC1_actual), 0, S3C1_actual),
+         SFC1_actual = ifelse(nsyl_actual == 3 & !is.na(S4C1_actual), S4C1_actual, SFC1_actual),
+         S4C1_actual = ifelse(nsyl_actual == 3 & !is.na(SFC1_actual), 0, S4C1_actual))
+  split_clust_Cinit <- split_syl_Cinit %>% separate(S1C1_actual, c("AS1C1", "AS1C2", "AS1C3"), sep = "(?<=.)") %>%
+       separate(S2C1_actual, c("AS2C1", "AS2C2", "AS2C3"), sep = "(?<=.)") %>%
+       separate(S3C1_actual, c("AS3C1", "AS3C2", "AS3C3"), sep = "(?<=.)") %>%
+       separate(SFC1_actual, c("ASFC1", "ASFC2", "ASFC3"), sep = "(?<=.)") 
   split_syl_Vinit <- element %>% filter(ActualCV %in% Vinitial$ActualCV) %>%
-    separate(Vremoved_actual, c("S1C1_actual", "S2C1_actual", "S3C1_actual", "S4C1_actual", "SFC1_actual"), "V")
-  split_clust_Vinit <- split_syl_Vinit %>% separate(S1C1_actual, c("AS1C1", "AS1C2", "AS1C3", "AS1C4", "AS1C5"), sep = "(?<=.)") %>%
-    separate(S2C1_actual, c("AS2C1", "AS2C2", "AS2C3", "AS2C4", "AS2C5"), sep = "(?<=.)") %>%
-    separate(S3C1_actual, c("AS3C1", "AS3C2", "AS3C3", "AS3C4", "AS3C5"), sep = "(?<=.)") %>%
-    separate(S4C1_actual, c("AS4C1", "AS4C2", "AS4C3", "AS4C4", "AS4C5"), sep = "(?<=.)") %>%
-    separate(SFC1_actual, c("ASFC1", "ASFC2", "ASFC3", "ASFC4", "ASFC5"), sep = "(?<=.)")
+    separate(Vremoved_actual, c("S1C1_actual", "S2C1_actual", "S3C1_actual", "S4C1_actual"), "V")  %>%
+    mutate(SFC1_actual = ifelse(nsyl_actual == 1 & !is.na(S2C1_actual), S2C1_actual, 0),     # create a category that is just codas 
+           S2C1_actual = ifelse(nsyl_actual == 1 & !is.na(SFC1_actual), 0, S2C1_actual),     # codas will always be aligned with codas
+           SFC1_actual = ifelse(nsyl_actual == 2 & !is.na(S3C1_actual), S3C1_actual, SFC1_actual),
+           S3C1_actual = ifelse(nsyl_actual == 2 & !is.na(SFC1_actual), 0, S3C1_actual),
+           SFC1_actual = ifelse(nsyl_actual == 3 & !is.na(S4C1_actual), S4C1_actual, SFC1_actual),
+           S4C1_actual = ifelse(nsyl_actual == 3 & !is.na(SFC1_actual), 0, S4C1_actual))
+  split_clust_Vinit <- split_syl_Vinit %>% separate(S1C1_actual, c("AS1C1", "AS1C2", "AS1C3"), sep = "(?<=.)") %>%
+    separate(S2C1_actual, c("AS2C1", "AS2C2", "AS2C3"), sep = "(?<=.)") %>%
+    separate(S3C1_actual, c("AS3C1", "AS3C2", "AS3C3"), sep = "(?<=.)") %>%
+    separate(SFC1_actual, c("ASFC1", "ASFC2", "ASFC3"), sep = "(?<=.)") 
   sample_IPA_CVinit <- rbind(split_clust_Vinit, split_clust_Cinit)
 })
 
-actual_target_IPA_FULL <- do.call(rbind.data.frame, sample_IPAactual_loop)
+actual_sample <- do.call(rbind.data.frame, sample_IPAactual_loop) %>% mutate(AS1CF1 = "",
+                                                                             AS1CF2 = "",
+                                                                             AS1CF3 = "")
+
+actual_target_IPA_FULL <- target_sample %>% left_join(actual_sample)
 
 #########
 
-# investigate missing items
-
-#comparison_sample <- FULLsample %>% dplyr::select(ID, Speaker, Session, Gloss, IPAtarget, IPAactual, IPAtarget, IPAactual, TargetCV, ActualCV)
 comparison_final <- actual_target_IPA_FULL %>% dplyr::select(ID, 
                                                              Speaker, 
                                                              Session, 
@@ -199,12 +285,6 @@ comparison_final <- actual_target_IPA_FULL %>% dplyr::select(ID,
                                                              TargetCV_edited, 
                                                              ActualCV_edited
                                                              )
- 
-#missing <- setdiff(comparison_sample$IPAactual, comparison_final$IPAactual)  # 298 items
-
-
-# Three missing items are instances of vocal play with multisyllable reducplication in the actual form - should be omitted from analysis anyway
-
 ##########
 
 
@@ -217,32 +297,33 @@ distinctive.feature.matrix <- tribble(~Symbol, ~Sonorant, ~Consonantal, ~Voice, 
                                       "t", -1, 1, -1, -1, 1, -1, 1, -1, -1, 1, 0,
                                       "d", -1, 1, 0, -1, 1, -1, 1, -1, -1, 1, 0,
                                       "k", -1, 1, -1, -1, 1, -1, -1, -1, -1, -1, 0,
-                                      "ɡ", -1, 1, 0, -1, 1, -1, -1, -1, -1, -1, 0,
+                                      "I!", -1, 1, 0, -1, 1, -1, -1, -1, -1, -1, 0,
                                       "f", -0.5, 1, -1, -1, 0, -1, 1, -1, 1, 0, 0,
                                       "v", -0.5, 1, 0, -1, 0, -1, 1, -1, 1, 0, 0,
-                                      "θ", -0.5, 1, -1, -1, 0, -1, 1, -1, -1, 0, 0,
-                                      "ð", -0.5, 1, 0, -1, 0, -1, 1, -1, -1, 0, 0,
+                                      "N8", -0.5, 1, -1, -1, 0, -1, 1, -1, -1, 0, 0,
+                                      "C0", -0.5, 1, 0, -1, 0, -1, 1, -1, -1, 0, 0,
                                       "s", -0.5, 1, -1, -1, 0, -1, 1, -1, -1, 1, 0,
                                       "c", -0.5, 1, 0, -1, 0, -1, 1, -1, -1, -1, 0,   # infants produce /c/ in some instances, though this doesn't occur in target forms
                                       "z", -0.5, 1, 0, -1, 0, -1, 1, -1, -1, 1, 0,
                                       "h", -0.5, 1, 0, -1, 0, -1, -1, 1, -1, -1, -1,
-                                      "ʃ", -0.5, 1, -1, -1, 0, -1, 0, -1, -1, 0, 0,
-                                      "ʒ", -0.5, 1, 0, -1, 0, -1, 0, -1, -1, 0, 0,
-                                      "ʧ", -0.8, 1, -1, -1, 1, -1, 0, -1, -1, 0, 0,
-                                      "ʤ", -0.8, 1, 0, -1, 1, -1, 0, -1, -1, 0, 0,
+                                      "J", -0.5, 1, -1, -1, 0, -1, 0, -1, -1, 0, 0,
+                                      "J", -0.5, 1, 0, -1, 0, -1, 0, -1, -1, 0, 0,
+                                      "J'", -0.8, 1, -1, -1, 1, -1, 0, -1, -1, 0, 0,
+                                      "J$", -0.8, 1, 0, -1, 1, -1, 0, -1, -1, 0, 0,
                                       "m", 0, 0, 1, 1, 1, 1, 0, -1, 1, 0, 0,
                                       "n", 0, 0, 1, 1, 1, -1, 1, -1, -1, 1, 0,
-                                      "ŋ", 0, 0, 1, 1, 1, -1, -1, -1, -1, -1, 0,
-                                      "ɹ", 0.5, 0, 1, 0, -1, -1, -1, 1, 1, -1, -1,
+                                      "E", 0, 0, 1, 1, 1, -1, -1, -1, -1, -1, 0,
+                                      "I9", 0.5, 0, 1, 0, -1, -1, -1, 1, 1, -1, -1,
                                       "r", 0.5, 0, 1, 0, -1, -1, -1, 1, 1, -1, -1,   # some rhotics in the data are coded as /r/
                                       "l", 0.5, 0, 1, 0, -1, -1, 1, -1, -1, 1, 0,
                                       "w", 0.8, 0, 1, 0, 0, 1, -1, -1, 1, -1, 0,
                                       "j", 0.8, 0, 1, 0, 0, -1, 0, -1, -1, 0, 1,
-                                      "ɾ", 0.5, 1, 1, 0, -1, -1, -1, 1, -1, 1, 0,
-                                      "ʙ", -0.5, 1, 0, -1, 1, 1, 0, -1, 1, 0, 0,
-                                      "ʔ", -1, 0, 0, -1, 0, -1, -1, 1, -1, 1, 0)    # added manually as not defined in original. Drew from Cambridge Handboo of Phonology and
+                                      "I>", 0.5, 1, 1, 0, -1, -1, -1, 1, -1, 1, 0,
+                                      "J", -0.5, 1, 0, -1, 1, 1, 0, -1, 1, 0, 0,
+                                      "J", -1, 0, 0, -1, 0, -1, -1, 1, -1, 1, 0)    # added manually as not defined in original. Drew from Cambridge Handboo of Phonology and
                                                                                     # similarities with /h/
 
+# stuck here because the two lists don't match in size
 
 colnames_target <- actual_target_IPA_FULL %>% dplyr::select(ID, starts_with("TS"))
 colnames(colnames_target) <- sub("T","",colnames(colnames_target))
@@ -258,7 +339,8 @@ output_target <- lapply(target_list, FUN = function(element) {
 
 colnames_actual <- actual_target_IPA_FULL %>% dplyr::select(ID, starts_with("AS"))
 colnames(colnames_actual) <- sub("A","",colnames(colnames_actual))
-actual_list <- setNames(lapply(names(colnames_actual)[-1], function(x) cbind(colnames_actual[1], colnames_actual[x])), names(colnames_actual)[-1])
+actual_list <- setNames(lapply(names(colnames_actual)[-1], function(x) cbind(colnames_actual[1], colnames_actual[x])), 
+                        names(colnames_actual)[-1])
 
 output_actual <- lapply(actual_list, FUN = function(element) {
   target_segment <- data.frame(element,
@@ -305,12 +387,11 @@ dist_final_df <- as.data.frame(output_full_dist)
 colnames(dist_final_df)[1] <- "unique"
 
 dist_final <- dist_final_df %>% dplyr::select(unique, -ends_with("data_type") & -ends_with(".ID") & -!contains("final_dist")) %>%
-  mutate(distance = rowSums(.[2:25])) %>%
+  mutate(distance = rowSums(.[2:16])) %>%
   dplyr::select(unique, distance) %>%
   rename("ID" = "unique")
 
 comparison_data <- comparison_final %>% left_join(dist_final)
-
 
 # Session_data ------------------------------------------------------------
 
@@ -339,7 +420,9 @@ session_data <- comparison_data %>% group_by(Speaker, age) %>%
 comparison_data <- comparison_data %>%
   left_join(session_data) %>%
   filter(!is.na(session_ordinal)) %>%
-  mutate(session_ordinal = as.numeric(session_ordinal)) 
+  mutate(session_ordinal = as.numeric(session_ordinal))  %>% 
+  mutate(corpus = "English") %>% 
+  dplyr::select(-TargetCV_edited, -ActualCV_edited)
 
 write_csv(comparison_data, "Data/comparison_data_Providence.csv")
 

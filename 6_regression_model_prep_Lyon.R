@@ -461,8 +461,11 @@ regression_data <- regression_data %>%
   mutate(freq_scaled = c(scale(total_freq, center = TRUE, scale = TRUE)),
          vocab_scaled = c(scale(vocab_month, center = TRUE, scale = TRUE)),
          tokens_scaled = c(scale(n_tokens, center = TRUE, scale = TRUE))) %>%
-  mutate(corpus = "Lyon", 
-         age_scaled = c(scale(age, center = T, scale = T)))
+  mutate(corpus = "French", 
+         age_scaled = c(scale(age, center = T, scale = T),
+                        category = as.factor(category),
+                        data_type = as.factor(data_type),
+                        Speaker = as.factor(Speaker)))
 
 feather::write_feather(regression_data, "Data/regression_data_lyon.feather")
 #regression_data <- feather::read_feather("Data/regression_data.feather")

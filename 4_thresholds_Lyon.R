@@ -200,7 +200,9 @@ globalthresholds_corr_lyon <- rbind(target_globalthresholds_corr_df, actual_glob
 
 globalthresholds_lyon <- rbind(target_globalthresholds_lyon, actual_globalthresholds_lyon)
 
-globalthresholds_AOP_lyon <- rbind(target_globalthresholds_AOP_lyon, actual_globalthresholds_AOP_lyon)
+globalthresholds_AOP_lyon <- rbind(target_globalthresholds_AOP_lyon, actual_globalthresholds_AOP_lyon) %>% 
+  filter(threshold == 0.25) %>% 
+  mutate(corpus = "French")
 
 feather::write_feather(globalthresholds_corr_lyon, "Data/globalthresholds_corr_lyon.feather") # correlation output data
 feather::write_feather(globalthresholds_lyon, "Data/globalthresholds_lyon.feather") # all types at all ages, plus AOP data

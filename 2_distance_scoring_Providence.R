@@ -30,19 +30,18 @@ sample_IPAtarget <- FULLsample %>% dplyr::select(ID, Speaker, Session, Gloss,
 sample_IPAtarget$Vremoved_target <- gsub("([
 i
 u
-I*
-J
-
+ɪ
+ʊ
 e
 o
-I
-I
-J
-I
-I
-C&                              
+ə
+ɛ
+ʌ
+ɔ
+ɜ
+æ                              
 a
-I])", "V", sample_IPAtarget$IPAtarget)    # vowels taken from runnng Phone Inventory script in Phon
+ɑ])", "V", sample_IPAtarget$IPAtarget)    # vowels taken from runnng Phone Inventory script in Phon
 
 sample_IPAtarget$Vremoved_target <- gsub("VVV", "V", sample_IPAtarget$Vremoved_target)  # remove triphthongs to count as single vowel (following Monaghan et al 2010 but also because we're not looking at vowels here)
 sample_IPAtarget$Vremoved_target <- gsub("VV", "V", sample_IPAtarget$Vremoved_target)  # remove diphthongs to count as single vowel (following Monaghan et al 2010 but also because we're not looking at vowels here)
@@ -58,19 +57,18 @@ sample_IPAtarget <- sample_IPAtarget %>% mutate(nsyl_target = stringr::str_count
 sample_IPAtarget$Vremoved_actual <- gsub("([ 
 i
 u
-I*
-J
-
+ɪ
+ʊ
 e
 o
-I
-I
-J
-I
-I
-C&
+ə
+ɛ
+ʌ
+ɔ
+ɜ
+æ
 a
-I])", "V", sample_IPAtarget$IPAactual)    # vowels taken from runnng Phone Inventory script in Phon
+ɑ])", "V", sample_IPAtarget$IPAactual)    # vowels taken from runnng Phone Inventory script in Phon
 
 sample_IPAtarget$Vremoved_actual <- gsub("VVV", "V", sample_IPAtarget$Vremoved_actual)  
 sample_IPAtarget$Vremoved_actual <- gsub("VV", "V", sample_IPAtarget$Vremoved_actual)  
@@ -161,9 +159,9 @@ Gloss <- c("pumpkin", "empty", "penguin", "bathtub", "dancing", "windy",
                  "standing", "holding", "sandbox", "sandwich", "candies", "finding", "penguins", "bumping", "dumping", "boxes", "vacuum", "planting", "fixing", "vacuums", "tasted", "planted", 
                  "camping", "popsicles", "popsicle", "sandwiches", "outside", "into", "outsides")
 
-Vremoved_target_new <- c("pVmp-kVn", "Vmp-tV", "pVEg-wVn", "bVN8-tVb", "dVns-VE", "wI*Vnd-V", 
-                       "stVnd-VE", "hVld-VE", "sVnd-bVks", "sVnd-wVJ'", "kVnd-iVz", "fVnd-VE", "pVEg-wVnz", "bVmp-VE", "dVmp-VE", "bVks-IVz", "vV-kjVm", "plVnt-VE", "fVks-VE", "vV-kjVmz", "tVst-Vd", "plVnt-Vd", 
-                       "kVmp-VE", "pVp-sVkVlz", "pVp-sVkVl", "sVnd-wVJ'Vz", "Vt-sVd", "Vn-tV", "Vt-sVdz")
+Vremoved_target_new <- c("pVmp-kVn", "Vmp-tV", "pVŋg-wVn", "bVθ-tVb", "dVns-Vŋ", "wɪVnd-V", 
+                         "stVnd-Vŋ", "hVld-Vŋ", "sVnd-bVks", "sVnd-wVʧ", "kVnd-iVz", "fVnd-Vŋ", "pVŋg-wVnz", "bVmp-Vŋ", "dVmp-Vŋ", "bVks-əVz", "vV-kjVm", "plVnt-Vŋ", "fVks-Vŋ", "vV-kjVmz", "tVst-Vd", "plVnt-Vd", 
+                         "kVmp-Vŋ", "pVp-sVkVlz", "pVp-sVkVl", "sVnd-wVʧVz", "Vt-sVd", "Vn-tV", "Vt-sVdz")
 
 split_clust <- data.frame(Gloss, Vremoved_target_new)
 
@@ -297,30 +295,30 @@ distinctive.feature.matrix <- tribble(~Symbol, ~Sonorant, ~Consonantal, ~Voice, 
                                       "t", -1, 1, -1, -1, 1, -1, 1, -1, -1, 1, 0,
                                       "d", -1, 1, 0, -1, 1, -1, 1, -1, -1, 1, 0,
                                       "k", -1, 1, -1, -1, 1, -1, -1, -1, -1, -1, 0,
-                                      "I!", -1, 1, 0, -1, 1, -1, -1, -1, -1, -1, 0,
+                                      "ɡ", -1, 1, 0, -1, 1, -1, -1, -1, -1, -1, 0,
                                       "f", -0.5, 1, -1, -1, 0, -1, 1, -1, 1, 0, 0,
                                       "v", -0.5, 1, 0, -1, 0, -1, 1, -1, 1, 0, 0,
-                                      "N8", -0.5, 1, -1, -1, 0, -1, 1, -1, -1, 0, 0,
-                                      "C0", -0.5, 1, 0, -1, 0, -1, 1, -1, -1, 0, 0,
+                                      "θ", -0.5, 1, -1, -1, 0, -1, 1, -1, -1, 0, 0,
+                                      "ð", -0.5, 1, 0, -1, 0, -1, 1, -1, -1, 0, 0,
                                       "s", -0.5, 1, -1, -1, 0, -1, 1, -1, -1, 1, 0,
                                       "c", -0.5, 1, 0, -1, 0, -1, 1, -1, -1, -1, 0,   # infants produce /c/ in some instances, though this doesn't occur in target forms
                                       "z", -0.5, 1, 0, -1, 0, -1, 1, -1, -1, 1, 0,
                                       "h", -0.5, 1, 0, -1, 0, -1, -1, 1, -1, -1, -1,
-                                      "J", -0.5, 1, -1, -1, 0, -1, 0, -1, -1, 0, 0,
-                                      "J", -0.5, 1, 0, -1, 0, -1, 0, -1, -1, 0, 0,
-                                      "J'", -0.8, 1, -1, -1, 1, -1, 0, -1, -1, 0, 0,
-                                      "J$", -0.8, 1, 0, -1, 1, -1, 0, -1, -1, 0, 0,
+                                      "ʃ", -0.5, 1, -1, -1, 0, -1, 0, -1, -1, 0, 0,
+                                      "ʒ", -0.5, 1, 0, -1, 0, -1, 0, -1, -1, 0, 0,
+                                      "ʧ", -0.8, 1, -1, -1, 1, -1, 0, -1, -1, 0, 0,
+                                      "ʤ", -0.8, 1, 0, -1, 1, -1, 0, -1, -1, 0, 0,
                                       "m", 0, 0, 1, 1, 1, 1, 0, -1, 1, 0, 0,
                                       "n", 0, 0, 1, 1, 1, -1, 1, -1, -1, 1, 0,
-                                      "E", 0, 0, 1, 1, 1, -1, -1, -1, -1, -1, 0,
-                                      "I9", 0.5, 0, 1, 0, -1, -1, -1, 1, 1, -1, -1,
+                                      "ŋ", 0, 0, 1, 1, 1, -1, -1, -1, -1, -1, 0,
+                                      "ɹ", 0.5, 0, 1, 0, -1, -1, -1, 1, 1, -1, -1,
                                       "r", 0.5, 0, 1, 0, -1, -1, -1, 1, 1, -1, -1,   # some rhotics in the data are coded as /r/
                                       "l", 0.5, 0, 1, 0, -1, -1, 1, -1, -1, 1, 0,
                                       "w", 0.8, 0, 1, 0, 0, 1, -1, -1, 1, -1, 0,
                                       "j", 0.8, 0, 1, 0, 0, -1, 0, -1, -1, 0, 1,
-                                      "I>", 0.5, 1, 1, 0, -1, -1, -1, 1, -1, 1, 0,
-                                      "J", -0.5, 1, 0, -1, 1, 1, 0, -1, 1, 0, 0,
-                                      "J", -1, 0, 0, -1, 0, -1, -1, 1, -1, 1, 0)    # added manually as not defined in original. Drew from Cambridge Handboo of Phonology and
+                                      "ɾ", 0.5, 1, 1, 0, -1, -1, -1, 1, -1, 1, 0,
+                                      "ʙ", -0.5, 1, 0, -1, 1, 1, 0, -1, 1, 0, 0,
+                                      "ʔ", -1, 0, 0, -1, 0, -1, -1, 1, -1, 1, 0)    # added manually as not defined in original. Drew from Cambridge Handboo of Phonology and
                                                                                     # similarities with /h/
 
 # stuck here because the two lists don't match in size

@@ -1,4 +1,4 @@
-# Updated 9th MArch 2023
+# Updated 9th March 2023
 
 global_distance_providence <- feather::read_feather("Data/globaldistance_Providence.feather")
 
@@ -208,14 +208,14 @@ for (i in unique(mean_degree_full_actual_init$Speaker)) {
     filter(Speaker == i) %>%                                                         # for each speaker
     group_by(gloss1) %>%                                                             # identify the words
     complete(gloss1, age = (min_ages$min_age[which(min_ages$Speaker == i)]):         # that don't have an initial timepoint at 
-               (AOP_summ$AOP[which(AOP_summ$Speaker == i & AOP_summ$gloss1 == gloss1)])) %>%         # the child's minimum age, and complete the gaps
+                (AOP_summ$AOP[which(AOP_summ$Speaker == i & AOP_summ$gloss1 == gloss1)])) %>%         # the child's minimum age, and complete the gaps
     mutate(remove = ifelse(!(age %in% AOP_summ$AOP[which(AOP_summ$Speaker == i)]), T, F)) %>%  # remove ages that don't have recordings
-    filter(remove != T) %>% 
+    filter(remove != T) %>%
     ungroup() %>%
     mutate(PAT_val = ifelse(is.na(PAT_val), 0, PAT_val),                            # create PAT vals for these missing data points
            PAT_val_m = ifelse(is.na(PAT_val_m), 0, PAT_val_m)) %>%                  # these are 0 by default as they don't connect to anything
-    fill(Speaker, .direction = "down") %>%                                          # fill in the Speaker info 
-    fill(Speaker, .direction = "up") 
+    fill(Speaker, .direction = "down") %>%                                          # fill in the Speaker info
+    fill(Speaker, .direction = "up")
   all_mean_degree_data_actual[[i]] <- mean_degree_full_actual_missing
 }
 
@@ -428,7 +428,7 @@ regression_data <- mean_degree_full %>% left_join(global_network_split) %>%
   mutate(PAT_scaled = c(scale(PAT_val, center = TRUE, scale = TRUE)),
          PAT_scaled_m = c(scale(PAT_val_m, center = TRUE, scale = TRUE)),
          PAT_vocab_scaled = c(scale(PAT_weighted, center = TRUE, scale = TRUE)),
-         PAQ_vocab_scaled = c(scale(PAQ_vocab, center = T, scale = T)),
+         PAQ_vocab_scaled = c(scale(PAQ_weighted, center = T, scale = T)),
          PAQ_scaled_target = c(scale(PAQ_target, center = TRUE, scale = TRUE)),
          PAQ_scaled_actual = c(scale(PAQ_actual, center = TRUE, scale = TRUE)))
   
@@ -473,10 +473,10 @@ regression_data <- regression_data %>%
          vocab_scaled = c(scale(vocab_month, center = TRUE, scale = TRUE)),
          tokens_scaled = c(scale(n_tokens, center = TRUE, scale = TRUE))) %>%
   mutate(corpus = "English", 
-         age_scaled = c(scale(age, center = T, scale = T),
+         age_scaled = c(scale(age, center = T, scale = T)),
                         category = as.factor(category),
                         data_type = as.factor(data_type),
-                        Speaker = as.factor(Speaker)))
+                        Speaker = as.factor(Speaker))
 
 feather::write_feather(regression_data, "Data/regression_data_providence.feather")
 #regression_data <- feather::read_feather("Data/regression_data_providence.feather")

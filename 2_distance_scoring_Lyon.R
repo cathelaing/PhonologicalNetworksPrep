@@ -160,17 +160,19 @@ Gloss <- c("appareil photo", "tracteur", "tortue", "maintenant", "parti", "merci
            "serviette", "fourmi", "dormir", "dormi", "docteur", "hélicoptère", "verser", "argent", "dernière", "renverser", 
            "s'endormi", "couverture", "endormi", "parler")
 
-split_clust_base <- data.frame(Gloss)#, Vremoved_target_new)
+Vremoved_target_new <- c("VpVʁVj-fVtV", "tʁVk-tVʁ", "tVʁ-tV", "mVt-nV", "pVʁ-tV",  "mVʁ-sV","pVʁ-kwV","tVʁ-tVn", "Vst-wVʁ",  "fVʁ-mV", "ɡVʁ-sV",
+                         "bVv-wVʁ",  "mVʁ-tV", "dVʁ-jVʁ", "fVʁ-ʃVt", "pVʁ-tV", "mVʃ-wVʁ", "ʒVʁ-dVn", "mVʁ-ʃV", "sVʁ-vjVt", "fVʁ-mV", "dVʁ-mVʁ", "dVʁ-mV", "dVk-tVʁ",
+                         "VlVkVp-tVʁ", "vVʁ-sV", "lVʁ-ʒV", "dVʁ-njV", "ʁVvVʁ-sV", "sVdVʁ-mV", "kVvVʁ-tVʁ", "VdVʁ-mV", "pVʁ-lV")
 
-vremoved <- sample_IPAtarget_Lyon %>% dplyr::select(Gloss, Vremoved_target) %>%filter(Gloss %in% split_clust$Gloss) %>% distinct(Gloss, .keep_all = T)
+split_clust_base <- data.frame(Gloss, Vremoved_target_new)
+
+vremoved <- sample_IPAtarget_Lyon %>% dplyr::select(Gloss, Vremoved_target) %>%filter(Gloss %in% split_clust_base$Gloss) %>% distinct(Gloss, .keep_all = T)
 
 split_clust_base <- split_clust_base %>% left_join(vremoved)
 
 split_clust_base$Vremoved_target
 
-Vremoved_target_new <- c("VpVʁVj-fVtV", "tʁVk-tVʁ", "tVʁ-tV", "mVt-nV", "pVʁ-tV",  "mVʁ-sV","pVʁ-kwV","tVʁ-tVn", "Vst-wVʁ",  "fVʁ-mV", "ɡVʁ-sV",
-                         "bVv-wVʁ",  "mVʁ-tV", "dVʁ-jVʁ", "fVʁ-ʃVt", "pVʁ-tV", "mVʃ-wVʁ", "ʒVʁ-dVn", "mVʁ-ʃV", "sVʁ-vjVt", "fVʁ-mV", "dVʁ-mVʁ", "dVʁ-mV", "dVk-tVʁ",
-                         "VlVkVp-tVʁ", "vVʁ-sV", "lVʁ-ʒV", "dVʁ-njV", "ʁVvVʁ-sV", "sVdVʁ-mV", "kVvVʁ-tVʁ", "VdVʁ-mV", "pVʁ-lV")
+
 
 split_clust <- data.frame(Gloss, Vremoved_target_new)
 

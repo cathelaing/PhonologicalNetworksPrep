@@ -46,6 +46,9 @@ library(ggridges)
 library(wesanderson)
 library(igraph)
 library(reshape2)
+library(tidyr)
+
+options("encoding" = "UTF-8")
 
 
 

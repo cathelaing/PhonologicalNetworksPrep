@@ -182,7 +182,6 @@ globalthresholds_corr_providence <- rbind(target_globalthresholds_corr_df, actua
 globalthresholds_providence <- rbind(target_globalthresholds_providence, actual_globalthresholds_providence)
 
 globalthresholds_AOP_providence <- rbind(target_globalthresholds_AOP_providence, actual_globalthresholds_AOP_providence) %>% 
-  filter(threshold == 0.25) %>% 
   mutate(corpus = "English")
 
 feather::write_feather(globalthresholds_corr_providence, "Data/globalthresholds_corr_providence.feather") # correlation output data

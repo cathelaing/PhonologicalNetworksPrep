@@ -14,7 +14,7 @@ FULLsample_Lyon <- feather::read_feather("Data/FULLsample_Lyon.feather") %>%
          IPAtarget= ifelse(Gloss == "bébé", "bebe", IPAtarget),
          IPAtarget = ifelse(Gloss == "hélicoptère", "elikɔptɛʁ", IPAtarget),
          Gloss = ifelse(IPAtarget == "ʒaʁiv", "arriver", Gloss),
-        # IPAtarget = ifelse(Gloss == "regarder", "ʁəgaʁd", IPAtarget),
+         # IPAtarget = ifelse(Gloss == "regarder", "ʁəgaʁd", IPAtarget),
          IPAtarget = ifelse(Gloss == "argent", "laʁʒɑ", IPAtarget),
          IPAtarget = ifelse(Gloss == "au revoir", "avwaʁ", IPAtarget))
 
@@ -25,9 +25,9 @@ FULLsample_Lyon$Session <- gsub('[\a\b]', '', FULLsample_Lyon$Session)
 # write_csv(FULLsample_Lyon, "ProvidenceDataCHI.csv")
 
 sample_IPAtarget_Lyon <- FULLsample_Lyon %>% select(ID, Speaker, Session, Gloss, 
-                                          IPAtarget, IPAactual, 
-                                          Targetphon, Actualphon, 
-                                          TargetCV, ActualCV) # Create new dataframe to generate IPA segmental values
+                                                    IPAtarget, IPAactual, 
+                                                    Targetphon, Actualphon, 
+                                                    TargetCV, ActualCV) # Create new dataframe to generate IPA segmental values
 
 #paste0(unique(unlist(strsplit(sample_IPAtarget_Lyon$IPAtarget, ''))), collapse = "") # find all IPA vowels
 
@@ -52,7 +52,7 @@ y
 sample_IPAtarget_Lyon$Vremoved_target <- gsub("VVV", "V", sample_IPAtarget_Lyon$Vremoved_target)  # remove triphthongs to count as single vowel (following Monaghan et al 2010 but also because we're not looking at vowels here)
 sample_IPAtarget_Lyon$Vremoved_target <- gsub("VV", "V", sample_IPAtarget_Lyon$Vremoved_target)  # remove diphthongs to count as single vowel (following Monaghan et al 2010 but also because we're not looking at vowels here)
 sample_IPAtarget_Lyon <- sample_IPAtarget_Lyon %>% mutate(nsyl_target = stringr::str_count(Vremoved_target, "V"),
-                                                nsyl_target = ifelse(nsyl_target == 0, 1, nsyl_target))
+                                                          nsyl_target = ifelse(nsyl_target == 0, 1, nsyl_target))
 
 #paste0(unique(unlist(strsplit(sample_IPAtarget_Lyon$IPAactual, ''))), collapse = "") # find all IPA vowels
 
@@ -65,7 +65,7 @@ sample_IPAtarget_Lyon$Vremoved_actual <- gsub("([ø e a y ʌ ɛ o ɥ u i ɔ ɑ �
 sample_IPAtarget_Lyon$Vremoved_actual <- gsub("VVV", "V", sample_IPAtarget_Lyon$Vremoved_actual)  
 sample_IPAtarget_Lyon$Vremoved_actual <- gsub("VV", "V", sample_IPAtarget_Lyon$Vremoved_actual)  
 sample_IPAtarget_Lyon <- sample_IPAtarget_Lyon %>% mutate(nsyl_actual = stringr::str_count(Vremoved_actual, "V"),
-                                                nsyl_actual = ifelse(nsyl_actual == 0, 1, nsyl_actual))
+                                                          nsyl_actual = ifelse(nsyl_actual == 0, 1, nsyl_actual))
 
 
 # Now split data by syllable structures since difference structures need treating differently when running a segment-by-segment comparison
@@ -169,8 +169,8 @@ split_clust_base <- split_clust_base %>% left_join(vremoved)
 split_clust_base$Vremoved_target
 
 Vremoved_target_new <- c("VpVʁVj-fVtV", "tʁVk-tVʁ", "tVʁ-tV", "mVt-nV", "pVʁ-tV",  "mVʁ-sV","pVʁ-kwV","tVʁ-tVn", "Vst-wVʁ",  "fVʁ-mV", "ɡVʁ-sV",
-  "bVv-wVʁ",  "mVʁ-tV", "dVʁ-jVʁ", "fVʁ-ʃVt", "pVʁ-tV", "mVʃ-wVʁ", "ʒVʁ-dVn", "mVʁ-ʃV", "sVʁ-vjVt", "fVʁ-mV", "dVʁ-mVʁ", "dVʁ-mV", "dVk-tVʁ",
-  "VlVkVp-tVʁ", "vVʁ-sV", "lVʁ-ʒV", "dVʁ-njV", "ʁVvVʁ-sV", "sVdVʁ-mV", "kVvVʁ-tVʁ", "VdVʁ-mV", "pVʁ-lV")
+                         "bVv-wVʁ",  "mVʁ-tV", "dVʁ-jVʁ", "fVʁ-ʃVt", "pVʁ-tV", "mVʃ-wVʁ", "ʒVʁ-dVn", "mVʁ-ʃV", "sVʁ-vjVt", "fVʁ-mV", "dVʁ-mVʁ", "dVʁ-mV", "dVk-tVʁ",
+                         "VlVkVp-tVʁ", "vVʁ-sV", "lVʁ-ʒV", "dVʁ-njV", "ʁVvVʁ-sV", "sVdVʁ-mV", "kVvVʁ-tVʁ", "VdVʁ-mV", "pVʁ-lV")
 
 split_clust <- data.frame(Gloss, Vremoved_target_new)
 
@@ -179,7 +179,7 @@ split_clust <- data.frame(Gloss, Vremoved_target_new)
 sample_IPAtarget_complex <- split_clust %>%
   left_join(sample_IPAtarget_Lyon, multiple = "all") %>%
   filter(nsyl_target > 1) %>%
-    filter(Gloss %in% split_clust$Gloss)
+  filter(Gloss %in% split_clust$Gloss)
 
 nsyl_target_list <- sample_IPAtarget_Lyon %>%
   filter(!(IPAtarget %in% sample_IPAtarget_complex$IPAtarget)) %>%
@@ -205,7 +205,7 @@ sample_IPAtarget_loop_base <- lapply(nsyl_target_list, FUN = function(element) {
     separate(S4C1_target, c("TS4C1", "TS4C2", "TS4C3", "TS4C4"), sep = "(?<=.)") %>%
     separate(S5C1_target, c("TS5C1", "TS5C2", "TS5C3", "TS5C4"), sep = "(?<=.)") %>%
     separate(SFC1_target, c("TSFC1", "TSFC2", "TSFC3", "TSFC4"), sep = "(?<=.)")
-  })
+})
 
 
 nsyl_target_list_complex <- sample_IPAtarget_complex %>%
@@ -213,19 +213,19 @@ nsyl_target_list_complex <- sample_IPAtarget_complex %>%
 
 sample_IPAtarget_loop_complex <- lapply(nsyl_target_list_complex, FUN = function(element) {
   split_syl <- element %>% separate(Vremoved_target_new, c("before", "after"), "-") %>%
-     separate(before, c("S1C1_target", "S2C1_target",  "S3C1_target", "S4C1_target"), "V") %>%
+    separate(before, c("S1C1_target", "S2C1_target",  "S3C1_target", "S4C1_target"), "V") %>%
     # start by looking at 'before' segment of word, i.e. before syllable boundary
     mutate(S1CF_target = ifelse(nsyl_target == 2 & !is.na(S2C1_target), S2C1_target, 0),
-          S2C1_target = ifelse(nsyl_target == 2 & !is.na(S1CF_target), 0, S2C1_target),
-          S2CF_target = ifelse(nsyl_target == 3 & !is.na(S3C1_target), S3C1_target, 0),
-          S3C1_target = ifelse(nsyl_target == 3 & !is.na(S2CF_target), 0, S3C1_target),
-          S3CF_target = ifelse(nsyl_target == 4 & !is.na(S3C1_target), S4C1_target, 0),
-          S4C1_target = ifelse(nsyl_target == 4 & !is.na(S3CF_target), 0, S4C1_target),
-          S3CF_target = ifelse(nsyl_target == 5 & !is.na(S4C1_target), S4C1_target, S3CF_target),    # special case for appareil photo, due to being v-initial
-          S4C1_target = ifelse(nsyl_target == 5 & !is.na(S3CF_target), 0, S4C1_target))
-    # now look at 'after' segment
+           S2C1_target = ifelse(nsyl_target == 2 & !is.na(S1CF_target), 0, S2C1_target),
+           S2CF_target = ifelse(nsyl_target == 3 & !is.na(S3C1_target), S3C1_target, 0),
+           S3C1_target = ifelse(nsyl_target == 3 & !is.na(S2CF_target), 0, S3C1_target),
+           S3CF_target = ifelse(nsyl_target == 4 & !is.na(S3C1_target), S4C1_target, 0),
+           S4C1_target = ifelse(nsyl_target == 4 & !is.na(S3CF_target), 0, S4C1_target),
+           S3CF_target = ifelse(nsyl_target == 5 & !is.na(S4C1_target), S4C1_target, S3CF_target),    # special case for appareil photo, due to being v-initial
+           S4C1_target = ifelse(nsyl_target == 5 & !is.na(S3CF_target), 0, S4C1_target))
+  # now look at 'after' segment
   after_syls <- split_syl %>% 
-     separate(after, c("after1", "after2"), "V") %>%
+    separate(after, c("after1", "after2"), "V") %>%
     mutate(S2C1_target = ifelse(nsyl_target == 2 & S2C1_target == 0, after1, S2C1_target),
            S3C1_target = ifelse(nsyl_target == 3 & S3C1_target == 0, after1, S3C1_target),
            S4C1_target = ifelse(nsyl_target == 4 & S4C1_target == 0, after1, S4C1_target),
@@ -242,7 +242,7 @@ sample_IPAtarget_loop_complex <- lapply(nsyl_target_list_complex, FUN = function
     separate(S4C1_target, c("TS4C1", "TS4C2", "TS4C3", "TS4C4"), sep = "(?<=.)") %>%
     separate(S5C1_target, c("TS5C1", "TS5C2", "TS5C3", "TS5C4"), sep = "(?<=.)") %>%
     separate(SFC1_target, c("TSFC1", "TSFC2", "TSFC3", "TSFC4"), sep = "(?<=.)")
-            })
+})
 
 #check <- do.call(rbind.data.frame, sample_IPAtarget_loop_complex)# %>% filter(nsyl_target >3)
 
@@ -311,18 +311,18 @@ actual_target_IPA_FULL_Lyon <- target_sample %>% left_join(actual_sample)
 
 #comparison_sample <- FULLsample_Lyon %>% dplyr::select(ID, Speaker, Session, Gloss, IPAtarget, IPAactual, IPAtarget, IPAactual, TargetCV, ActualCV)
 comparison_final <- actual_target_IPA_FULL_Lyon %>% dplyr::select(ID, 
-                                                             Speaker, 
-                                                             Session, 
-                                                             Gloss,
-                                                             IPAtarget, 
-                                                             IPAactual,
-                                                             nsyl_target,
-                                                             nsyl_actual,
-                                                             Targetphon,
-                                                             Actualphon,
-                                                             TargetCV, 
-                                                             ActualCV
-                                                             )
+                                                                  Speaker, 
+                                                                  Session, 
+                                                                  Gloss,
+                                                                  IPAtarget, 
+                                                                  IPAactual,
+                                                                  nsyl_target,
+                                                                  nsyl_actual,
+                                                                  Targetphon,
+                                                                  Actualphon,
+                                                                  TargetCV, 
+                                                                  ActualCV
+)
 
 #setdiff(comparison_sample$IPAactual, comparison_final$IPAactual) # 2 items difference, both due to syllable count
 feather::write_feather(actual_target_IPA_FULL_Lyon, "Data/actual_target_IPA_FULL_Lyon.feather")
@@ -383,7 +383,7 @@ distinctive.feature.matrix <- tribble(~Symbol, ~Sonorant, ~Consonantal, ~Voice, 
                                       "ç", -0.5, 1, -1, 0,  0, -1, 1, -1, 0, 0,  -1,
                                       "ɲ", 1, 1, 1, 1, 1, -1, 1, -1, -1, +1, 0,
                                       "ʔ", -1, 0, 0, -1, 0, -1, -1, 1, -1, 1, 0)    # added manually as not defined in original. Drew from Cambridge Handbook of Phonology and
-                                                                                    # similarities with /h/
+# similarities with /h/
 
 # check that /g/ of regarder has been coded properly
 
@@ -443,7 +443,7 @@ output_full_dist <- lapply(output_full, FUN = function(element) {
                                              round_df$round_diff + 
                                              tongue_df$tongue_diff + 
                                              radical_df$radical_diff))
- # element_dist_final <- element_dist %>% dplyr::select(-Sonorant, -Consonantal, - Voice, -Nasal, -Degree, -Labial, -Palatal, -Pharyngeal, -Round, -Tongue, -Radical)
+  # element_dist_final <- element_dist %>% dplyr::select(-Sonorant, -Consonantal, - Voice, -Nasal, -Degree, -Labial, -Palatal, -Pharyngeal, -Round, -Tongue, -Radical)
 })
 
 dist_final_df <- as.data.frame(output_full_dist)
@@ -487,7 +487,7 @@ session_data <- comparison_data %>% group_by(Speaker, age) %>%
 comparison_data <- comparison_data %>%
   left_join(session_data) %>%
   filter(!is.na(session_ordinal)) %>%
-  mutate(session_ordinal = as.numeric(session_ordinal)) 
+  mutate(session_ordinal = as.numeric(session_ordinal)) %>% mutate(corpus = "French")
 
 write_csv(comparison_data, "Data/comparison_data_Lyon.csv")
 
@@ -501,5 +501,4 @@ distance_full <- distance_full_df %>% dplyr::select(unique, -ends_with("data_typ
   rename("ID" = "unique",
          "data_type" = "data") %>%
   left_join(comparison_data) %>%
-feather::write_feather("Data/distance_full_Lyon.feather")
-
+  feather::write_feather("Data/distance_full_Lyon.feather")

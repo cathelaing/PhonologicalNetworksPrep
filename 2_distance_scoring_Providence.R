@@ -3,16 +3,14 @@
 # This data takes the sample generated in data_cleaning.R and creates a series of phonetic distance values for each word in the dataframe
 
 FULLsample <- feather::read_feather("Data/FULLsample_Providence.feather") %>%
-  mutate(IPAtarget = ifelse(Gloss == "tissue", "tiJu", IPAtarget),
-         IPAtarget = ifelse(Gloss == "awake", "IweI*k", IPAtarget),
-         IPAtarget = ifelse(Gloss == "bathtub", "bC&N8tIb", IPAtarget),
-         IPAtarget = ifelse(Gloss == "pumpkin", "pJmpkIn", IPAtarget),
-         Gloss = ifelse(IPAtarget == "hoJ
-ld", "hold", Gloss),
-         IPAtarget = ifelse(Gloss == "uhoh", "JJeu", IPAtarget),
-         IPAtarget = ifelse(Gloss == "about", "IbaJ
-t", IPAtarget),
-         IPAtarget = ifelse(Gloss == "away", "IweI*", IPAtarget))
+  mutate(IPAtarget = ifelse(Gloss == "tissue", "tiʃu", IPAtarget),
+         IPAtarget = ifelse(Gloss == "awake", "əweɪk", IPAtarget),
+         IPAtarget = ifelse(Gloss == "bathtub", "bæθtəb", IPAtarget),
+         IPAtarget = ifelse(Gloss == "pumpkin", "pʌmpkən", IPAtarget),
+         Gloss = ifelse(IPAtarget == "hoʊld", "hold", Gloss),
+         IPAtarget = ifelse(Gloss == "uhoh", "ʌʔeu", IPAtarget),
+         IPAtarget = ifelse(Gloss == "about", "əbaʊt", IPAtarget),
+         IPAtarget = ifelse(Gloss == "away", "əweɪ", IPAtarget))
 
 
 FULLsample$Session <- gsub("^[^.]*.", "", FULLsample$Session) # create variable to show session number in only numeric form

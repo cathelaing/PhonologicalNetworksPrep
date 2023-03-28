@@ -470,7 +470,7 @@ regression_data <- regression_data %>%
   left_join(session_data) %>%
   mutate(total_freq = ifelse(is.na(total_freq), 0, total_freq)) %>%
   mutate(freq_scaled = c(scale(total_freq, center = TRUE, scale = TRUE)),
-         vocab_scaled = c(scale(vocab_month, center = TRUE, scale = TRUE)),
+         vocab_scaled = c(scale(vocab_agg, center = TRUE, scale = TRUE)),
          tokens_scaled = c(scale(n_tokens, center = TRUE, scale = TRUE))) %>%
   mutate(corpus = "English", 
          age_scaled = c(scale(age, center = T, scale = T)),

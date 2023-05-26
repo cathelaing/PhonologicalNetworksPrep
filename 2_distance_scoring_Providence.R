@@ -1,4 +1,4 @@
-# Updated 8th March 2023   ## need to check all of this - error in separating clusters; 4syls have been included
+# Updated 8th March 2023
 
 # This data takes the sample generated in data_cleaning.R and creates a series of phonetic distance values for each word in the dataframe
 

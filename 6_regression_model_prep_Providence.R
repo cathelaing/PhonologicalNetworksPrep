@@ -474,22 +474,25 @@ regression_data <- regression_data %>%
          tokens_scaled = c(scale(n_tokens, center = TRUE, scale = TRUE))) %>%
   mutate(corpus = "English", 
          age_scaled = c(scale(age, center = T, scale = T)),
-                        category = as.factor(category),
-                        data_type = as.factor(data_type),
-                        Speaker = as.factor(Speaker))
+         category = as.factor(category),
+         data_type = as.factor(data_type),
+         Speaker = as.factor(Speaker),
+         corpus = as.factor(corpus))
+
+regression_data$category = relevel(regression_data$category, ref="object_word")
 
 feather::write_feather(regression_data, "Data/regression_data_providence.feather")
-#regression_data <- feather::read_feather("Data/regression_data_providence.feather")
+regression_data <- feather::read_feather("Data/regression_data_providence.feather")
 
-#regression_data_1 <- regression_data %>% filter(learned_next == 1)
-
-# predictors for AOP - don't need this in current paper
-
+# regression_data_1 <- regression_data %>% filter(learned_next == 1)
+# 
+# # predictors for AOP - don't need this in current paper
+# 
 # pat_formula_AOP <- as.formula("AOP_scaled ~ PAT_scaled + (1|Speaker)")
 # paq_formula_AOP <- as.formula("AOP_scaled ~ PAQ_scaled_target + (1|Speaker)")
-# all_formula_AOP <- as.formula("AOP_scaled ~ PAT_scaled + PAQ_scaled_target + length_scaled + freq_scaled +
-#                              length_scaled:PAT_scaled + length_scaled:PAQ_scaled_target +
-#                              freq_scaled:PAT_scaled + freq_scaled:PAQ_scaled_target +
+# all_formula_AOP <- as.formula("AOP_scaled ~ PAT_scaled + PAQ_scaled_target + length_scaled + freq_scaled + vocab_scaled + tokens_scaled +
+#                              length_scaled:PAT_scaled + length_scaled:PAQ_scaled_target + vocab_scaled:PAT_scaled + vocab_scaled:PAQ_scaled_target +
+#                              freq_scaled:PAT_scaled + freq_scaled:PAQ_scaled_target + tokens_scaled:PAT_scaled + tokens_scaled:PAQ_scaled_target +
 #                               (1|Speaker)")
 # 
 # formulas <- list(pat_formula_AOP,  paq_formula_AOP, all_formula_AOP)
@@ -497,98 +500,132 @@ feather::write_feather(regression_data, "Data/regression_data_providence.feather
 # coefs_agg_all <- data.frame()
 # 
 # for (formula in formulas){
-#   
+# 
 #   reg_agg_target_AOP <- lmer(formula, data=subset(regression_data, data_type == "target"))
 #   reg_agg_actual_AOP <- lmer(formula,  data=subset(regression_data, data_type == "actual"))
-#   
+# 
 #   #Extract coeficnet and confidence intervals
 #   coef_agg_fun <- function (model, meas_name) {
-#     conf <- confint(model, method ="Wald") 
+#     conf <- confint(model, method ="Wald")
 #     conf <- data.frame(predictor = row.names(conf), conf) %>%
 #       dplyr::filter(!(predictor %in% c('.sig01', '.sigma', '(Intercept)')))
-#     
+# 
 #     coef <- coef(summary(model))
 #     data.frame(predictor = row.names(coef), coef) %>%
 #       dplyr::filter(predictor !='(Intercept)') %>%
 #       left_join(conf) %>%
 #       mutate(measure = meas_name)
 #   }
-#   
+# 
 #   coef_agg_target_AOP <- coef_agg_fun(reg_agg_target_AOP, 'target')
 #   coef_agg_actual_AOP <- coef_agg_fun(reg_agg_actual_AOP, 'actual')
-#   
-#   
+# 
+# 
 #   coef_agg_form_AOP <- coef_agg_target_AOP %>%
 #     bind_rows(coef_agg_actual_AOP) %>%
-#     mutate(Test = ifelse(toString(formula[3])=='PAT_scaled + PAQ_scaled_target + length_scaled + freq_scaled +
-#                              length_scaled:PAT_scaled + length_scaled:PAQ_scaled_target +
-#                              freq_scaled:PAT_scaled + freq_scaled:PAQ_scaled_target +
+#     mutate(Test = ifelse(toString(formula[3])=='PAT_scaled + PAQ_scaled_target + length_scaled + freq_scaled + vocab_scaled + tokens_scaled +
+#                              length_scaled:PAT_scaled + length_scaled:PAQ_scaled_target + vocab_scaled:PAT_scaled + vocab_scaled:PAQ_scaled_target +
+#                              freq_scaled:PAT_scaled + freq_scaled:PAQ_scaled_target + tokens_scaled:PAT_scaled + tokens_scaled:PAQ_scaled_target +
 #                               (1|Speaker)', 'Combined', 'Individual'))
-#   
+# 
 #   coefs_agg_all_AOP <- bind_rows(coef_agg_target_AOP, coef_agg_actual_AOP)
-#   
+# 
 # }
 # 
 #   #feather::write_feather(coefs_agg_all_AOP, "Data/static_preds_all_AOP_RED.feather")    # reduced version of data, with lemmas only
 # feather::write_feather(coefs_agg_all_AOP, "Data/static_preds_all_AOP_providence.feather")
 # #coefs_agg_all_AOP <- feather::read_feather("Data/static_preds_all_AOP_providence.feather")
 # 
+# plot_agg <- ggplot(coefs_agg_all_AOP, aes(x = predictor, y = Estimate)) +
+#   geom_pointrange(aes(ymin = X2.5.., ymax = X97.5.., y = Estimate, col = predictor),
+#                   position = position_dodge(width = .9),
+#                   linewidth = 2,
+#                   fatten = 2) +
+#   geom_hline(yintercept = 0, color = "grey", linetype = "dashed", size = 1)+
+#   facet_wrap(~measure)  +
+# #  scale_x_discrete(labels = c('Vocab','n Tokens','PAT*Age', 'PAT', "PAQ", "Freq", "Age*Vocab", "Age*Tokens", "Age*PAQ", "Age*Freq", "Age")) +
+#   coord_flip() +
+#   #guides(colour=FALSE) +
+#   #scale_colour_solarized() +
+#   theme_bw(base_size = 18) +
+#   theme(aspect.ratio = 0.7,
+#         text = element_text(size=30),
+#         legend.position = "")
 # 
 # # predictors for learned_next
 # 
 # pat_formula_LN <- as.formula("learned_next ~ PAT_scaled + (1|Speaker)")
 # paq_formula_LN <- as.formula("learned_next ~ PAQ_scaled_target + (1|Speaker)")
-# all_formula_LN <- as.formula("learned_next ~ 
-#                              PAT_scaled*AOP_scaled + 
+# all_formula_LN <- as.formula("learned_next ~
+#                              PAT_scaled*AOP_scaled +
 #                              PAQ_scaled_target*AOP_scaled +
-#                              length_scaled*AOP_scaled + 
-#                              freq_scaled*AOP_scaled + 
+#                              #length_scaled*AOP_scaled +
+#                              freq_scaled*AOP_scaled +
+#                              vocab_scaled*AOP_scaled +
+#                              tokens_scaled*AOP_scaled +
 #                               (1|Speaker)")
 # 
 # formulas <- list(pat_formula_LN,  paq_formula_LN, all_formula_LN)
 # 
-# coefs_agg_all <- data.frame()
+# coefs_agg_all_LN <- data.frame()
 # 
 # for (formula in formulas){
-#   
-#   reg_agg_target_LN <- glmer(formula, data=subset(regression_data, data_type == "target" 
-#                                                   & corpus == "Providence"
+# 
+#   reg_agg_target_LN <- glmer(formula, data=subset(regression_data, data_type == "target"
+#                                                   #& corpus == "English"
 #                                                   ), family = binomial())
-#   reg_agg_actual_LN <- glmer(formula,  data=subset(regression_data, data_type == "actual" 
-#                                                    & corpus == "Providence"
+#   reg_agg_actual_LN <- glmer(formula,  data=subset(regression_data, data_type == "actual"
+#                                                   # & corpus == "English"
 #                                                    ), family = binomial())
-#   
+# 
 #   #Extract coeficnet and confidence intervals
 #   coef_agg_fun <- function (model, meas_name) {
 #     conf <- confint(model, method ="Wald")
 #     conf <- data.frame(predictor = row.names(conf), conf) %>%
 #       dplyr::filter(!(predictor %in% c('.sig01', '.sigma', '(Intercept)')))
-#     
+# 
 #     coef <- coef(summary(model))
 #     data.frame(predictor = row.names(coef), coef) %>%
 #       dplyr::filter(predictor !='(Intercept)') %>%
 #       left_join(conf) %>%
 #       mutate(measure = meas_name)
 #   }
-#   
+# 
 #   coef_agg_target_LN <- coef_agg_fun(reg_agg_target_LN, 'target')
 #   coef_agg_actual_LN <- coef_agg_fun(reg_agg_actual_LN, 'actual')
-#   
-#   
+# 
+# 
 #   coef_agg_form_LN <- coef_agg_target_LN %>%
 #     bind_rows(coef_agg_actual_LN) %>%
-#     mutate(Test = ifelse(toString(formula[3])=='#PAT_scaled +
-#                             #PAQ_scaled_target + 
-#                             PAT_scaled*AOP_scaled + 
+#     mutate(Test = ifelse(toString(formula[3])=='
+#                              PAT_scaled*AOP_scaled +
 #                              PAQ_scaled_target*AOP_scaled +
-#                              length_scaled*AOP_scaled + 
-#                              freq_scaled*AOP_scaled + 
+#                              #length_scaled*AOP_scaled +
+#                              freq_scaled*AOP_scaled +
+#                              vocab_scaled*AOP_scaled +
+#                              tokens_scaled*AOP_scaled +
 #                               (1|Speaker)',
 #                          'Combined', 'Individual'))
-#   
+# 
 #   coefs_agg_all_LN <- bind_rows(coef_agg_target_LN, coef_agg_actual_LN)
-#   
+# 
 # }
 # 
 # #feather::write_feather(coefs_agg_all_LN, "Data/static_preds_all_LN_RED.feather")
 # feather::write_feather(coefs_agg_all_LN, "Data/static_preds_all_LN_providence.feather")
+# 
+# plot_agg <- ggplot(coefs_agg_all_LN, aes(x = predictor, y = Estimate)) +
+#   geom_pointrange(aes(ymin = X2.5.., ymax = X97.5.., y = Estimate, col = predictor),
+#                   position = position_dodge(width = .9),
+#                   linewidth = 2,
+#                   fatten = 2) +
+#   geom_hline(yintercept = 0, color = "grey", linetype = "dashed", size = 1)+
+#   facet_wrap(~measure)  +
+#   scale_x_discrete(labels = c('Vocab','n Tokens','PAT*Age', 'PAT', "PAQ", "Freq", "Age*Vocab", "Age*Tokens", "Age*PAQ", "Age*Freq", "Age")) +
+#   coord_flip() +
+#   #guides(colour=FALSE) +
+#   #scale_colour_solarized() +
+#   theme_bw(base_size = 18) +
+#   theme(aspect.ratio = 0.7,
+#         text = element_text(size=30),
+#         legend.position = "")

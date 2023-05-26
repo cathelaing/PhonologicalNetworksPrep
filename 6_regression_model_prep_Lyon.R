@@ -464,9 +464,12 @@ regression_data <- regression_data %>%
          tokens_scaled = c(scale(n_tokens, center = TRUE, scale = TRUE))) %>%
   mutate(corpus = "French", 
          age_scaled = c(scale(age, center = T, scale = T)),
-                        category = as.factor(category),
-                        data_type = as.factor(data_type),
-                        Speaker = as.factor(Speaker))
+         category = as.factor(category),
+         data_type = as.factor(data_type),
+         Speaker = as.factor(Speaker),
+         corpus = as.factor(corpus))
+
+regression_data$category = relevel(regression_data$category, ref="object_word")
 
 feather::write_feather(regression_data, "Data/regression_data_lyon.feather")
 #regression_data <- feather::read_feather("Data/regression_data.feather")

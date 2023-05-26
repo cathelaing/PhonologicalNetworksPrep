@@ -1,7 +1,5 @@
 # Updated 3rd May 2021
 
-#source("prelims.R")
-
 ################################## SET UP #######################################
 
 # Load data
@@ -350,10 +348,8 @@ globalWattsStrogatz <- rbind(global_WattsStrogatz_data_target, global_WattsStrog
          lowerQuantile = NA,
          upperQuantile = NA)
 
-globalsmallworlddata_comparison <- rbind(globalsmallworlddata, globalWattsStrogatz, globalErdosRenyi) #%>%
-#  left_join(WPs)
+globalsmallworlddata_comparison <- rbind(globalsmallworlddata, globalWattsStrogatz, globalErdosRenyi)
 
-#feather::write_feather(globalsmallworlddata_comparison, "Data/globalsmallworlddata_comparison_RED_lyon.feather")
 feather::write_feather(globalsmallworlddata_comparison, "Data/globalsmallworlddata_comparison_lyon.feather")
 
 

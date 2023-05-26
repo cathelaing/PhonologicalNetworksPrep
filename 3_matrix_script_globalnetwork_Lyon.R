@@ -1,8 +1,5 @@
 # Updated 23rd February 2023
 
-#source("prelims.R")
-
-#data_summ <- feather::read_feather("Data/large_files/data_summ_Lyon.feather")
 distance_full <- feather::read_feather("Data/distance_full_Lyon.feather")
 
 first_instance_base <- distance_full %>%

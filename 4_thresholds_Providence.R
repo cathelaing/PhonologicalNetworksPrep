@@ -4,8 +4,6 @@
 # It calculates the degree for each word pair across a set of thresholds from E=0.1-1 in relation to age, vocab size, and age of production (global network)
 # It then runs correlations between degree and AOP
 
-#source("prelims.R")
-
 globaldistance_Providence_actual <- feather::read_feather("Data/globaldistance_Providence.feather") %>% filter(data_type == "actual")
 
 ################################## INITIAL THRESHOLD DATASET: ACTUAL FORMS ###########################
@@ -186,6 +184,5 @@ globalthresholds_AOP_providence <- rbind(target_globalthresholds_AOP_providence,
 
 feather::write_feather(globalthresholds_corr_providence, "Data/globalthresholds_corr_providence.feather") # correlation output data
 feather::write_feather(globalthresholds_providence, "Data/globalthresholds_providence.feather") # all types at all ages, plus AOP data
-#feather::write_feather(globaldistance, "Data/globaldistance.feather") # distance between each word pair at each age
 feather::write_feather(globalthresholds_AOP_providence, "Data/globalthresholds_AOP_providence.feather") # AOP for full network, taken at last month of data (30 months)
 

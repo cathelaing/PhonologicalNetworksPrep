@@ -4,8 +4,6 @@
 # It calculates the degree for each word pair across a set of thresholds from E=0.1-1 in relation to age, vocab size, and age of production (global network)
 # It then runs correlations between degree and AOP
 
-#source("prelims.R")
-
 globaldistance_lyon_actual <- feather::read_feather("Data/globaldistance_Lyon.feather") %>% 
   filter(data_type == "actual")
 
@@ -205,6 +203,5 @@ globalthresholds_AOP_lyon <- rbind(target_globalthresholds_AOP_lyon, actual_glob
 
 feather::write_feather(globalthresholds_corr_lyon, "Data/globalthresholds_corr_lyon.feather") # correlation output data
 feather::write_feather(globalthresholds_lyon, "Data/globalthresholds_lyon.feather") # all types at all ages, plus AOP data
-#feather::write_feather(globaldistance, "Data/large_files/globaldistance.feather") # distance between each word pair at each age
 feather::write_feather(globalthresholds_AOP_lyon, "Data/globalthresholds_AOP_lyon.feather") # AOP for full network, taken at last month of data (30 months)
 

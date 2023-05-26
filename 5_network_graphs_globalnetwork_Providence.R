@@ -1,7 +1,5 @@
 # Updated 24th February 2023
 
-#source("prelims.R")
-
 ################################## SET UP #######################################
 
 # Load data
@@ -347,7 +345,6 @@ globalWattsStrogatz <- rbind(global_WattsStrogatz_data_target, global_WattsStrog
 
 globalsmallworlddata_comparison <- rbind(globalsmallworlddata, globalWattsStrogatz, globalErdosRenyi)
 
-#feather::write_feather(globalsmallworlddata_comparison, "Data/globalsmallworlddata_comparison_RED_providence.feather")
 feather::write_feather(globalsmallworlddata_comparison, "Data/globalsmallworlddata_comparison_providence.feather")
 
 

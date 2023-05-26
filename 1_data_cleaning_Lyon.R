@@ -1,4 +1,4 @@
-# Updated 25th February 2023
+# Updated 26th May 2023
 
 source("0_prelims.R")
 
@@ -19,7 +19,7 @@ log <- function(msg="") {
 
 # In Phon: Specialized > WordMatch
 #  Untick: Stress pattern, Include length diacritics, Include stress markers
-#  T^ick: Exact match, Syllable count, Ignore diacritics, Include syllable boundaries
+#  Tick: Exact match, Syllable count, Ignore diacritics, Include syllable boundaries
 
 # Data is imported as Excel file; before importing into R, go through each file and save as a .csv
 # then open each file individually in Excel and go through the following processes to make the data readable in this script:
@@ -36,9 +36,9 @@ log <- function(msg="") {
 # - Also replaced IPA /g/ with keyboard <g> as it wasn't reading for some reason
 # - and r with <r> as also wasn't reading
 
-# # TO CHECK [all seems to work fine in current version]:
+
 # # I started by manually removing diacritics from the .csv file - all syllabic markers, length markers and aspiration. I also removed any glottal stops that were in 
-# # consonant clusters (n=?? CHECK AS I HAVEN'T DONE THIS FOR THE BIG DATASET). The code will then run properly as it can read all other IPA symbols.
+# # consonant clusters. The code will then run properly as it can read all other IPA symbols.
 
 
 # Finally, aggregate into one large file:
@@ -110,39 +110,14 @@ FULLsample_Lyon$Gloss <- gsub('[<>]', '', FULLsample_Lyon$Gloss)
 FULLsample_Lyon$Gloss <- gsub('@o', '', FULLsample_Lyon$Gloss)
 FULLsample_Lyon$IPAtarget <- gsub('*', '', FULLsample_Lyon$IPAtarget)
 
+## read in CDI data. Note that this was imported in raw form from http://wordbank.stanford.edu/.
 
-#lexique <- FULLsample_Lyon %>% distinct(Gloss) %>% write_csv("Data/lexique_updated.csv")  # create set of French types
+# For the French data, all word types in Fullsample_Lyon$Gloss were translated, first using a script in Google translate, and then checked by the researcher, with any errors or missing datapoints manually translated
+# The list of word types was then coded for its 'basic level' form (e.g. "wouf wouf wouf" was coded as "wouf" to match the CDI form)
+# Anything not related to a CDI word was coded as blank
+# this was then saved as its own document so that the CDI and the type as produced in the corpus are kept in one separate document
 
-#write.csv(lexique, "Data/lexique.csv", fileEncoding="Windows-1252") # export and translate using Google docs, hand-translate anything that Docs struggles with
-
-# lexicon_en <- read_csv("Data/lexicon_CDI.csv") %>%
-#   rename("Gloss" = "word") %>%
-#   distinct(Gloss, .keep_all = TRUE)
-# lexique_fr <- read_csv("Data/French-EnglishLexicon.csv") %>% mutate(Gloss = tolower(Gloss))
-# lexique_fr$Gloss <- gsub('[+]', ' ', lexique_fr$Gloss)
-# lexique_fr$Gloss <- gsub('the ', ' ', lexique_fr$Gloss) # remove 'the', which has been auto-translated from l' 
-# lexique_fr$Gloss <- gsub('to ', '', lexique_fr$Gloss) # remove 'to', which has been auto-translated from verbs
-# 
-# lexique_checks <- lexique_fr %>% left_join(lexicon_en) 
-#write.csv(lexique_checks, "Data/lexique_checks.csv", fileEncoding="Windows-1252") # export for manual checking
-
-# lexique <- read.csv("Data/lexique_checks_done.csv", fileEncoding="Windows-1252") %>%
-#    dplyr::select(-lemma1) %>% rename("trans" = "Gloss", 
-#                                      "Gloss" = "Target")
-
-# lexique <- lexique %>% filter(Gloss %in% FULLsample_Lyon$Gloss) %>%
-#   distinct(Gloss, .keep_all = TRUE)
-
-#lexique_sub <- lexique %>% dplyr::select(Gloss)
-
-# ws_fr1 <- read_csv("Data/wordbank_item_data.csv")# %>% dplyr::select(item_definition, category)
-# ws_fr2 <- read_csv("Data/ws_french.csv")# %>% dplyr::select(item_definition, category)
-# 
-# ws_fr <- rbind(ws_fr1, ws_fr2) %>%
-#   distinct(item_definition, .keep_all = T) %>%
-#   write_csv("Data/french_CDI.csv")
-
-ws_fr <- read_csv("Data/french_CDI.csv") %>% dplyr::select(item_definition, category, Gloss) %>%
+ws_fr <- read_csv("additional_files/french_CDI.csv") %>% dplyr::select(item_definition, category, Gloss) %>%
   rename("gloss1" = "Gloss",
          "Gloss" = "item_definition")
 
@@ -152,5 +127,4 @@ FULLsample_Lyon <- FULLsample_Lyon %>% left_join(ws_fr, by = "Gloss") %>%
   rename("Gloss" = "gloss1")
 
 feather::write_feather(FULLsample_Lyon, "Data/FULLsample_Lyon.feather")
-#FULLsample_Lyon <- feather::read_feather("Data/FULLsample_Lyon.feather")
 

@@ -115,16 +115,6 @@ sample_IPAtarget$ActualCV_edited <- gsub("^", "", sample_IPAtarget$ActualCV_edit
 #levels(target_structures$structure_edited)
 
 # create two new columns that alongside sample_IPAtarget$nsyl_target together will allow for filtering of specific word structures across the data
-
-# openclosed = does the target form have a coda? (yes = closed, no = open)
-# onset = is it a vowel (V) or consonant (C) at word onset?
-
-target_structures_sample <- target_structures_sample %>% 
-  mutate(openclosed = ifelse(TargetCV_edited %in% c("C", "CVC", "VC", "CVCVC", "VCVC", "CVCVC^CVC", "CVCVCVC", "VCVCVC", 
-                                                     "CVCVCVCVC", "VCVCVCVC", "CVCVCVCVCVC", "VCVCVCVCVC", "CVCVCVCVCVCVC"), "closed", "open"),
-         onset = ifelse(TargetCV_edited %in% c("V", "V^CV", "VC", "VCV", "VCVC", "VCVCV", "VCVCVC", "VCVCVCV", "VCVCVCVC", 
-                                                "VCVCVCVCV", "VCVCVCVCVC", "VCVCVCVCVCV"), "V", "C"))
-
 sample_IPAtarget <- sample_IPAtarget %>% left_join(target_structures_sample) %>% # join with main dataframe
   mutate(ActualCV = as.character(ActualCV)) 
 
@@ -434,33 +424,3 @@ distance_full <- distance_full_df %>% dplyr::select(unique, -ends_with("data_typ
   left_join(comparison_data) %>%
   feather::write_feather("Data/distance_full_Providence.feather")
 
-
-
-# Convert session info into age in months for comparison_data_phondist
-
-# comparison_data_phondist$years <- stri_sub(comparison_data_phondist$Session, 1, 2)
-# comparison_data_phondist$months <- stri_sub(comparison_data_phondist$Session, 3, 4)
-# comparison_data_phondist$days <- stri_sub(comparison_data_phondist$Session, 5, 6)
-# 
-# comparison_data_phondist <- comparison_data_phondist %>%
-#   mutate(years = as.numeric(years),
-#          months = as.numeric(months),
-#          days = as.numeric(days),
-#          age = (years*12) + months) %>%
-#   dplyr::select(-years, -months, -days) 
-# 
-# session_data_phondist <- comparison_data_phondist %>% group_by(Speaker, age) %>%
-#   tally() %>%
-#   filter(n > 1) %>%
-#   dplyr::select(Speaker, age) %>%
-#   group_by(Speaker, age) %>% 
-#   tally() %>%
-#   mutate(session_ordinal = row_number()) %>%
-#   dplyr::select(-n)
-# 
-# comparison_data_phondist <- comparison_data_phondist %>%
-#   left_join(session_data_phondist) %>%
-#   filter(!is.na(session_ordinal)) %>%
-#   mutate(session_ordinal = as.numeric(session_ordinal)) 
-# 
-# write_csv(comparison_data_phondist, "Data/large_files/comparison_data_phondist.csv")

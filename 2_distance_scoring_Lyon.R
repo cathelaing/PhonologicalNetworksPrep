@@ -1,13 +1,7 @@
 # Updated 10th March 2023
 # This data takes the sample generated in data_cleaning.R and creates a series of phonetic distance values for each word in the dataframe
 
-# This script generates the following files:
-
-# comparison_data <- read_csv("Data/large_files/comparison_data_Lyon.csv")
-# distance_full <- feather::read_feather("Data/large_files/distance_full_Lyon.feather")
-
 #############################
-
 
 FULLsample_Lyon <- feather::read_feather("Data/FULLsample_Lyon.feather") %>%
   mutate(IPAtarget = ifelse(Gloss == "appareil photo", "apaʁɛjfoto", IPAtarget),
@@ -118,20 +112,6 @@ actual_structures_sample$ActualCV_edited <- gsub("^", "", actual_structures_samp
 
 actual_structures_sample <- actual_structures_sample %>%
   mutate(ActualCV_edited = as.factor(ActualCV_edited))
-
-
-# create two new columns that alongside sample_IPAtarget$nsyl_target together will allow for filtering of specific word structures across the data
-
-#levels(sample_IPAtarget_Lyon$TargetCV_edited)
-
-# openclosed = does the target form have a coda? (yes = closed, no = open)
-# onset = is it a vowel (V) or consonant (C) at word onset?
-
-# target_structures_sample <- target_structures_sample %>% 
-#   mutate(openclosed = ifelse(TargetCV_edited %in% c("C", "CVC", "VC", "CVCVC", "VCVC", "CVCVC^CVC", "CVCVCVC", "VCVCVC", 
-#                                                      "CVCVCVCVC", "VCVCVCVC", "CVCVCVCVCVC", "VCVCVCVCVC", "CVCVCVCVCVCVC"), "closed", "open"),
-#          onset = ifelse(TargetCV_edited %in% c("V", "V^CV", "VC", "VCV", "VCVC", "VCVCV", "VCVCVC", "VCVCVCV", "VCVCVCVC", 
-#                                                 "VCVCVCVCV", "VCVCVCVCVC", "VCVCVCVCVCV"), "V", "C"))
 
 sample_IPAtarget_Lyon <- sample_IPAtarget_Lyon %>% left_join(target_structures_sample) %>%
   left_join(actual_structures_sample)  # join with main dataframe

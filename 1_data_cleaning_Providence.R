@@ -2,7 +2,13 @@
 
 source("prelims.R")
 
-lexicon <- read_csv("Data/lexicon_CDI.csv") %>%
+## read in CDI data. Note that this was imported in raw form from http://wordbank.stanford.edu/.
+
+# The list of word types was coded for its 'basic level' form (e.g. "woof woofy woof" was coded as "woof woof" to match the CDI form)
+# Anything not related to a CDI word was coded as blank
+# this was then saved as its own document so that the CDI and the type as produced in the corpus are kept in one separate document
+
+lexicon <- read_csv("additional_files/english_CDI.csv") %>%
   rename("Gloss" = "word") %>%
   distinct(Gloss, .keep_all = TRUE)
 
@@ -40,9 +46,8 @@ log <- function(msg="") {
 # - Also replaced IPA /g/ with keyboard <g> as it wasn't reading for some reason
 # - and r with <r> as also wasn't reading
 
-# # TO CHECK [all seems to work fine in current version]:
 # # I started by manually removing diacritics from the .csv file - all syllabic markers, length markers and aspiration. I also removed any glottal stops that were in 
-# # consonant clusters (n=?? CHECK AS I HAVEN'T DONE THIS FOR THE BIG DATASET). The code will then run properly as it can read all other IPA symbols.
+# # consonant clusters. The code will then run properly as it can read all other IPA symbols.
 
 
 # Finally, aggregate into one large file:
@@ -123,6 +128,3 @@ FULLsample <- FULLsample %>% left_join(lexicon, by = "Gloss") %>%
 
 
 feather::write_feather(FULLsample, "Data/FULLsample_Providence.feather")
-
-
-# need to also compare clean data against comparison data - some words appear to have been removed from the data and I'm not sure why

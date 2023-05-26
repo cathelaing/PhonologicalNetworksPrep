@@ -2,7 +2,6 @@
 
 #source("prelims.R")
 
-#data_summ <- feather::read_feather("Data/large_files/data_summ.feather")
 distance_full <- feather::read_feather("Data/distance_full_Providence.feather")
 
 first_instance_base <- distance_full %>%

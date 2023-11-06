@@ -121,16 +121,13 @@ ws_fr <- read_csv("additional_files/french_CDI.csv") %>% dplyr::select(item_defi
   rename("gloss1" = "Gloss",
          "Gloss" = "item_definition")
 
-# get df size with all words included
-FULLsample_Lyon_all <- FULLsample_Lyon %>% group_by(Speaker, Gloss) %>% tally() 
-
 FULLsample_Lyon <- FULLsample_Lyon %>% left_join(ws_fr, by = "Gloss") %>%
+  write_csv("Data/FULLsample_Lyon_all.csv") %>% # save df with all words included
   filter(!is.na(gloss1)) %>%
   dplyr::select(-Gloss) %>%
   rename("Gloss" = "gloss1")
 
-#FULLsample_Lyon_CDI <- FULLsample_Lyon %>% group_by(Speaker, Gloss) %>% tally()
+FULLsample_Lyon_CDI <- FULLsample_Lyon %>% group_by(Speaker, Gloss) %>% tally()
 
 feather::write_feather(FULLsample_Lyon, "Data/FULLsample_Lyon.feather")
-write_csv(FULLsample_Lyon_all, "Data/FULLsample_Lyon_all.csv")
 

@@ -121,10 +121,15 @@ FULLsample <- rbind(sample_Alex,
 FULLsample$Gloss <- gsub("(@).*", "\\1", FULLsample$Gloss)
 FULLsample$Gloss <- str_replace_all(FULLsample$Gloss, "[^[:alnum:]]", "")
 
+# get df size with all words included
+FULLsample_Providence_all <- FULLsample %>% group_by(Speaker, Gloss) %>% tally()
+
 FULLsample <- FULLsample %>% left_join(lexicon, by = "Gloss") %>%
   filter(inCDI == TRUE) %>%
   dplyr::select(-Gloss) %>%
   rename("Gloss" = "gloss1")
 
+#FULLsample_Providence_CDI <- FULLsample %>% group_by(Speaker, Gloss) %>% tally()
 
 feather::write_feather(FULLsample, "Data/FULLsample_Providence.feather")
+write_csv(FULLsample_Providence_all, "Data/FULLsample_Providence_all.csv")

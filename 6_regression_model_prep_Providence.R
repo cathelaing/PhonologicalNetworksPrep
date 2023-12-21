@@ -46,7 +46,7 @@ global_distance_summ <- global_distance_providence %>%
 names <- names(AOP_list)
 output_list <- list()
 
-for(i in seq_along(1:length(AOP_list))){    # NEED TO CHANGE THIS ABOVE AND IN LYON DATA
+for(i in seq_along(1:length(AOP_list))){  
   
   element <- AOP_list[[i]]
   # you got a vector as output as element$Speaker: we assume it is always made of equal elements
@@ -166,7 +166,7 @@ known_words_degree_actual <-lapply(gloss_list, FUN = function(element) {
     group_by(Speaker, age) %>%
     summarise(PAT_val = median(degree),
               PAT_val_m = mean(degree))
-  known_degree_list <- list(degrees)    # should be degrees
+  known_degree_list <- list(degrees)    
     })
 
 AOP_summ_red <- AOP_summ %>% dplyr::select(Speaker, gloss1, AOP)
@@ -188,26 +188,28 @@ min_ages <- ages %>% group_by(Speaker) %>% summarise(min_age = min(age)) %>%    
 
 all_mean_degree_data_actual <- vector("list", length(2151))    # create an empty list for the missing datapoints
 
-for (i in unique(mean_degree_full_actual_init$Speaker)) {
+for (i in unique(mean_degree_full_actual_init$Speaker)) { 
   mean_degree_full_actual_missing <- mean_degree_full_actual_init %>%  
     filter(Speaker == i) %>%                                                         # for each speaker
-    group_by(gloss1) %>%                                                             # identify the words
-    complete(gloss1, age = (min_ages$min_age[which(min_ages$Speaker == i)]):         # that don't have an initial timepoint at 
-                (AOP_summ$AOP[which(AOP_summ$Speaker == i & AOP_summ$gloss1 == gloss1)])) %>%         # the child's minimum age, and complete the gaps
-    mutate(remove = ifelse(!(age %in% AOP_summ$AOP[which(AOP_summ$Speaker == i)]), T, F)) %>%  # remove ages that don't have recordings
+    complete(gloss1,
+           age = (min_ages$min_age[which(min_ages$Speaker == i)]):         # that don't have an initial timepoint at
+                 (AOP_summ$AOP[which(AOP_summ$Speaker == i & AOP_summ$gloss1 == gloss1)])) %>%         # the child's minimum age, and complete the gaps
+     mutate(remove = ifelse(!(age %in% AOP_summ$AOP[which(AOP_summ$Speaker == i)]), T, F)) %>% # remove ages that don't have recordings
     filter(remove != T) %>%
     ungroup() %>%
     mutate(PAT_val = ifelse(is.na(PAT_val), 0, PAT_val),                            # create PAT vals for these missing data points
            PAT_val_m = ifelse(is.na(PAT_val_m), 0, PAT_val_m)) %>%                  # these are 0 by default as they don't connect to anything
     fill(Speaker, .direction = "down") %>%                                          # fill in the Speaker info
+    fill(age, .direction = "up") %>%                                          # fill in the Speaker info
     fill(Speaker, .direction = "up")
-  all_mean_degree_data_actual[[i]] <- mean_degree_full_actual_missing
+   all_mean_degree_data_actual[[i]] <- mean_degree_full_actual_missing
 }
 
 mean_degree_full_actual <- bind_rows(all_mean_degree_data_actual) %>%
   left_join(AOP_summ_red) %>%
   dplyr::select(-remove) %>%
-  mutate(data_type = "actual")
+  mutate(data_type = "actual") %>%
+  filter(age <= AOP)
 
 feather::write_feather(mean_degree_full_actual, "Data/mean_degree_full_actual_providence.feather")
 
@@ -317,14 +319,6 @@ connected_degree_target_melted <- melt(connected_degree_target) %>%
 
 feather::write_feather(connected_degree_target_melted, "Data/connected_degree_target_melted_providence.feather")
 
-#connected_degree_target_melted <- feather::read_feather("Data/connected_degree_target_melted_providence.feather")
-
-# target_global_degree <- feather::read_feather("Data/target_globaldistance_list_degree_providence.feather") %>%
-#   mutate(age = as.numeric(age))
-
-# target_global_degree <- feather::read_feather("Data/actual_globaldistance_list_degree_providence.feather") %>%
-#   mutate(age = as.numeric(age))
-
 target_global_degree <- globalthresholds_providence %>% 
   filter(data_type == "target") %>%
   dplyr::select(Speaker, age, gloss1, degree) %>%
@@ -350,29 +344,37 @@ mean_degree_full_target_init <- melt(known_words_degree_target) %>%      # estab
   pivot_wider(names_from = variable, values_from = value) %>%
   separate(L1, into = c("remove", "gloss1"), sep = "_") %>%
   dplyr::select(-remove, -L2, -rn)
- 
+
+# note that this only works for words that would connect to at least one other word at each timepoint, so there
+# are some missing datapoints. Deal with this now:
+
+min_ages <- ages %>% group_by(Speaker) %>% summarise(min_age = min(age)) %>%    # establish minimum age for each infant in the dataset
+  mutate(min_age = as.numeric(min_age))
+
 all_mean_degree_data_target <- vector("list", length(2151))    # create an empty list for the missing datapoints
 
-for (i in unique(mean_degree_full_target_init$Speaker)) {
+for (i in unique(mean_degree_full_target_init$Speaker)) { 
   mean_degree_full_target_missing <- mean_degree_full_target_init %>%  
     filter(Speaker == i) %>%                                                         # for each speaker
-    group_by(gloss1) %>%                                                             # identify the words
-    complete(gloss1, age = (min_ages$min_age[which(min_ages$Speaker == i)]):         # that don't have an initial timepoint at 
-               (AOP_summ$AOP[which(AOP_summ$Speaker == i & AOP_summ$gloss1 == gloss1)])) %>%           # the child's minimum age, and complete the gaps
-    mutate(remove = ifelse(!(age %in% AOP_summ$AOP[which(AOP_summ$Speaker == i)]), T, F)) %>%  # remove ages that don't have recordings
-    filter(remove != T) %>% 
+    complete(gloss1,
+             age = (min_ages$min_age[which(min_ages$Speaker == i)]):         # that don't have an initial timepoint at
+               (AOP_summ$AOP[which(AOP_summ$Speaker == i & AOP_summ$gloss1 == gloss1)])) %>%         # the child's minimum age, and complete the gaps
+    mutate(remove = ifelse(!(age %in% AOP_summ$AOP[which(AOP_summ$Speaker == i)]), T, F)) %>% # remove ages that don't have recordings
+    filter(remove != T) %>%
     ungroup() %>%
     mutate(PAT_val = ifelse(is.na(PAT_val), 0, PAT_val),                            # create PAT vals for these missing data points
            PAT_val_m = ifelse(is.na(PAT_val_m), 0, PAT_val_m)) %>%                  # these are 0 by default as they don't connect to anything
-    fill(Speaker, .direction = "down") %>%                                          # fill in the Speaker info 
-    fill(Speaker, .direction = "up") 
+    fill(Speaker, .direction = "down") %>%                                          # fill in the Speaker info
+    fill(age, .direction = "up") %>%                                          # fill in the Speaker info
+    fill(Speaker, .direction = "up")
   all_mean_degree_data_target[[i]] <- mean_degree_full_target_missing
 }
 
 mean_degree_full_target <- bind_rows(all_mean_degree_data_target) %>%
   left_join(AOP_summ_red) %>%
   dplyr::select(-remove) %>%
-  mutate(data_type = "target")
+  mutate(data_type = "target") %>%
+  filter(age <= AOP)
 
 feather::write_feather(mean_degree_full_target, "Data/mean_degree_full_target_providence.feather")
 

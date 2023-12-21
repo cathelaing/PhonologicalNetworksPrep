@@ -10,7 +10,13 @@ FULLsample <- feather::read_feather("Data/FULLsample_Providence.feather") %>%
          Gloss = ifelse(IPAtarget == "hoʊld", "hold", Gloss),
          IPAtarget = ifelse(Gloss == "uhoh", "ʌʔeu", IPAtarget),
          IPAtarget = ifelse(Gloss == "about", "əbaʊt", IPAtarget),
-         IPAtarget = ifelse(Gloss == "away", "əweɪ", IPAtarget))
+         IPAtarget = ifelse(Gloss == "away", "əweɪ", IPAtarget),
+         remove = ifelse(Gloss == "baby" & IPAtarget == "bi", T, F),
+         remove = ifelse(IPAactual %in% c("wvzæ", "wvz", "wvt", "knt", "wvɾ", "kvps",
+                                          "gnŋ", "pwŋ", "bnni", "gwn", "dvki", "mnki", 
+                                          "ðvd", "hnd", "dzdzgo"), T, remove)) %>%
+  filter(remove == FALSE) %>%
+  dplyr::select(-remove)
 
 
 FULLsample$Session <- gsub("^[^.]*.", "", FULLsample$Session) # create variable to show session number in only numeric form
@@ -309,7 +315,6 @@ distinctive.feature.matrix <- tribble(~Symbol, ~Sonorant, ~Consonantal, ~Voice, 
                                       "ʔ", -1, 0, 0, -1, 0, -1, -1, 1, -1, 1, 0)    # added manually as not defined in original. Drew from Cambridge Handboo of Phonology and
                                                                                     # similarities with /h/
 
-# stuck here because the two lists don't match in size
 
 colnames_target <- actual_target_IPA_FULL %>% dplyr::select(ID, starts_with("TS"))
 colnames(colnames_target) <- sub("T","",colnames(colnames_target))
@@ -423,4 +428,331 @@ distance_full <- distance_full_df %>% dplyr::select(unique, -ends_with("data_typ
          "data_type" = "data") %>%
   left_join(comparison_data) %>%
   feather::write_feather("Data/distance_full_Providence.feather")
+
+distance_table_A <- feather::read_feather("Data/distance_full_Providence.feather") %>%
+  filter(#Gloss %in% c("bat", "blue", "that", "hello", "baby", "doggy", "towel") & 
+           Speaker == "Alex" & 
+           data_type == "Actual" & 
+             age == 19) %>%
+  group_by(Gloss) %>%
+  slice(1) %>%
+  dplyr::select(Gloss, IPAactual, S1C1.S1C1, S1C2.S1C2, S2C1.S2C1, SFC1.SFC1) %>%
+  mutate(S2C1.S2C1 = ifelse(S2C1.S2C1 == "0", "", S2C1.S2C1),
+         S1C2.S1C2 = ifelse(S1C2.S1C2 == "0", "", S1C2.S1C2))
+
+distance_table_T <- feather::read_feather("Data/distance_full_Providence.feather") %>%
+  filter(#Gloss %in% c("bat", "blue", "that", "hello", "baby", "doggy", "towel") & 
+           Speaker == "Alex" & 
+           data_type == "Target" &
+             age == 19) %>%
+  group_by(Gloss) %>%
+  slice(1) %>%
+  dplyr::select(Gloss, IPAtarget, S1C1.S1C1, S1C2.S1C2, S2C1.S2C1, SFC1.SFC1) %>%
+  mutate(S1C2.S1C2 = ifelse(S1C2.S1C2 == "0", "", S1C2.S1C2),
+         S2C1.S2C1 = ifelse(S2C1.S2C1 == "0", "", S2C1.S2C1))
+
+distance_table_step1 <- feather::read_feather("Data/distance_full_Providence.feather") %>%
+  filter(Gloss %in% c("baby", "balloon", "sky") & 
+           Speaker == "Alex" & 
+           data_type == "Target") %>%
+  group_by(Gloss) %>%
+  slice(1) %>%
+  unite(S1C1.Features,
+        S1C1.Sonorant, 
+        S1C1.Consonantal, 
+        S1C1.Voice, 
+        S1C1.Nasal,
+        S1C1.Degree,
+        S1C1.Labial,
+        S1C1.Palatal,
+        S1C1.Pharyngeal,
+        S1C1.Round,
+        S1C1.Tongue,
+        S1C1.Radical,
+        sep = ",", remove = TRUE) %>%
+  unite(S1C2.Features,
+        S1C2.Sonorant, 
+        S1C2.Consonantal, 
+        S1C2.Voice, 
+        S1C2.Nasal,
+        S1C2.Degree,
+        S1C2.Labial,
+        S1C2.Palatal,
+        S1C2.Pharyngeal,
+        S1C2.Round,
+        S1C2.Tongue,
+        S1C2.Radical,
+        sep = ",", remove = TRUE) %>%
+  unite(S2C1.Features,
+        S2C1.Sonorant, 
+        S2C1.Consonantal, 
+        S2C1.Voice, 
+        S2C1.Nasal,
+        S2C1.Degree,
+        S2C1.Labial,
+        S2C1.Palatal,
+        S2C1.Pharyngeal,
+        S2C1.Round,
+        S2C1.Tongue,
+        S2C1.Radical,
+        sep = ",", remove = TRUE) %>%
+  unite(SFC1.Features,
+        SFC1.Sonorant, 
+        SFC1.Consonantal, 
+        SFC1.Voice, 
+        SFC1.Nasal,
+        SFC1.Degree,
+        SFC1.Labial,
+        SFC1.Palatal,
+        SFC1.Pharyngeal,
+        SFC1.Round,
+        SFC1.Tongue,
+        SFC1.Radical,
+        sep = ",", remove = TRUE) %>%
+  dplyr::select(Gloss, IPAtarget, S1C1.S1C1, S1C1.Features, 
+                S1C2.S1C2, S1C2.Features, 
+                S2C1.S2C1, S2C1.Features, 
+                SFC1.SFC1, SFC1.Features)
+
+distance_table_baby.S1 <- distance_table_step1 %>% 
+  filter(Gloss == "baby") %>% 
+  dplyr::select(Gloss, IPAtarget, S1C1.S1C1, S1C1.Features) %>%
+  mutate(word_pos = "S1C1") %>%
+  rename("consonant" = "S1C1.S1C1",
+         "features" = "S1C1.Features")
+distance_table_baby.S2 <- distance_table_step1 %>% 
+  filter(Gloss == "baby") %>% 
+  dplyr::select(Gloss, IPAtarget, S2C1.S2C1, S2C1.Features) %>%
+  mutate(word_pos = "S2C1") %>%
+  rename("consonant" = "S2C1.S2C1",
+         "features" = "S2C1.Features")
+
+baby_dummy1 <- data.frame("", "", "", "", "S1C2")
+baby_dummy2 <- data.frame("", "", "", "", "SFC1")
+names(baby_dummy1) <- c("Gloss", "IPAtarget", "consonant", "features", "word_pos")
+names(baby_dummy2) <- c("Gloss", "IPAtarget", "consonant", "features", "word_pos")
+
+distance_table_baby <- rbind(distance_table_baby.S1, 
+                             baby_dummy1,
+                             distance_table_baby.S2,
+                             baby_dummy2)
+
+distance_table_balloon.S1 <- distance_table_step1 %>% 
+  filter(Gloss == "balloon") %>% 
+  dplyr::select(Gloss, IPAtarget, S1C1.S1C1, S1C1.Features) %>%
+  mutate(word_pos = "S1C1") %>%
+  rename("consonant" = "S1C1.S1C1",
+         "features" = "S1C1.Features")
+distance_table_balloon.S2 <- distance_table_step1 %>% 
+  filter(Gloss == "balloon") %>% 
+  dplyr::select(Gloss, IPAtarget, S2C1.S2C1, S2C1.Features) %>%
+  mutate(word_pos = "S2C1") %>%
+  rename("consonant" = "S2C1.S2C1",
+         "features" = "S2C1.Features")
+distance_table_balloon.SF <- distance_table_step1 %>% 
+  filter(Gloss == "balloon") %>% 
+  dplyr::select(Gloss, IPAtarget, SFC1.SFC1, SFC1.Features) %>%
+  mutate(word_pos = "SFC1") %>%
+  rename("consonant" = "SFC1.SFC1",
+         "features" = "SFC1.Features")
+
+balloon_dummy <- data.frame("", "", "", "", "S1C2")
+names(balloon_dummy) <- c("Gloss", "IPAtarget", "consonant", "features", "word_pos")
+
+distance_table_balloon <- rbind(distance_table_balloon.S1, 
+                                balloon_dummy,
+                                distance_table_balloon.S2, 
+                                distance_table_balloon.SF)
+
+distance_table_sky.S1C1 <- distance_table_step1 %>% 
+  filter(Gloss == "sky") %>% 
+  dplyr::select(Gloss, IPAtarget, S1C1.S1C1, S1C1.Features) %>%
+  mutate(word_pos = "S1C1") %>%
+  rename("consonant" = "S1C1.S1C1",
+         "features" = "S1C1.Features")
+distance_table_sky.S1C2 <- distance_table_step1 %>% 
+  filter(Gloss == "sky") %>% 
+  dplyr::select(Gloss, IPAtarget, S1C2.S1C2, S1C2.Features) %>%
+  mutate(word_pos = "S1C2") %>%
+  rename("consonant" = "S1C2.S1C2",
+         "features" = "S1C2.Features")
+
+sky_dummy1 <- data.frame("", "", "", "", "S2C1")
+names(sky_dummy1) <- c("Gloss", "IPAtarget", "consonant", "features", "word_pos")
+sky_dummy2 <- data.frame("", "", "", "", "SFC1")
+names(sky_dummy2) <- c("Gloss", "IPAtarget", "consonant", "features", "word_pos")
+
+distance_table_sky <- rbind(distance_table_sky.S1C1, 
+                            distance_table_sky.S1C2,
+                            sky_dummy1,
+                            sky_dummy2)
+
+distance_table_init <- distance_table_baby %>%
+  left_join(distance_table_balloon, by = "word_pos") %>%
+  left_join(distance_table_sky, by = "word_pos") %>%
+  mutate(consonant.x = ifelse(consonant.x == "", "-", consonant.x),
+         consonant.y = ifelse(consonant.y == "", "-", consonant.y),
+         consonant = ifelse(consonant == "", "-", consonant)) %>%
+  separate(features.x, into = c("son.x", "cons.x", "voice.x", 
+                                   "nas.x", "deg.x", "lab.x", 
+                                   "pal.x", "phar.x", "round.x", 
+                                   "tongue.x", "rad.x"), sep = ",") %>%
+  separate(features.y, into = c("son.y", "cons.y", "voice.y", 
+                                "nas.y", "deg.y", "lab.y", 
+                                "pal.y", "phar.y", "round.y", 
+                                "tongue.y", "rad.y"), sep = ",") %>%
+  separate(features, into = c("son", "cons", "voice", 
+                                "nas", "deg", "lab", 
+                                "pal", "phar", "round", 
+                                "tongue", "rad"), sep = ",") %>%
+  mutate(across(c("son.x", "cons.x", "voice.x", 
+                  "nas.x", "deg.x", "lab.x", 
+                  "pal.x", "phar.x", "round.x", 
+                  "tongue.x", "rad.x",
+                  "son.y", "cons.y", "voice.y", 
+                  "nas.y", "deg.y", "lab.y", 
+                  "pal.y", "phar.y", "round.y", 
+                  "tongue.y", "rad.y",
+                  "son", "cons", "voice", 
+                  "nas", "deg", "lab", 
+                  "pal", "phar", "round", 
+                  "tongue", "rad"), as.numeric)) %>%
+  mutate_if(is.numeric, ~replace_na(., 0)) %>%
+  mutate(son.balloon = (son.x-son.y)^2, 
+         cons.balloon = (cons.x-cons.y)^2, 
+         voice.balloon = (voice.x-voice.y)^2, 
+         nas.balloon = (nas.x-nas.y)^2, 
+         deg.balloon = (deg.x-deg.y)^2, 
+         lab.balloon = (lab.x-lab.y)^2, 
+         pal.balloon = (pal.x-pal.y)^2, 
+         phar.balloon = (phar.x-phar.y)^2, 
+         round.balloon = (round.x-round.y)^2, 
+         tongue.balloon = (tongue.x-tongue.y)^2, 
+         rad.balloon = (rad.x-rad.y)^2,
+         son.sky = (son.x-son)^2, 
+         cons.sky = (cons.x-cons)^2, 
+         voice.sky = (voice.x-voice)^2, 
+         nas.sky = (nas.x-nas)^2, 
+         deg.sky = (deg.x-deg)^2, 
+         lab.sky = (lab.x-lab)^2, 
+         pal.sky = (pal.x-pal)^2, 
+         phar.sky = (phar.x-phar)^2, 
+         round.sky = (round.x-round)^2, 
+         tongue.sky = (tongue.x-tongue)^2, 
+         rad.sky = (rad.x-rad)^2)
+
+
+sum.sq.diff.balloon <- distance_table_init %>% 
+  mutate(sum.balloon = son.balloon +
+         cons.balloon +
+         voice.balloon + 
+         nas.balloon + 
+         deg.balloon +
+         lab.balloon + 
+         pal.balloon +
+         phar.balloon + 
+         round.balloon +
+         tongue.balloon +
+         rad.balloon,
+         sqrt.balloon = sqrt(sum.balloon),
+         final_dist = sum(sqrt.balloon,na.rm=T)) %>%
+  unite(sum_sq_diffs_balloon,
+        son.balloon,
+        cons.balloon,
+        voice.balloon,
+        nas.balloon,
+        deg.balloon,
+        lab.balloon,
+        pal.balloon,
+        phar.balloon,
+        round.balloon,
+        tongue.balloon,
+        rad.balloon,
+        sep = "+", remove = TRUE)
+
+ssd_all_balloon <- sum.sq.diff.balloon %>% dplyr::select(sum_sq_diffs_balloon)
+ssd_balloon <- sum.sq.diff.balloon %>% dplyr::select(Gloss.y, final_dist) %>% slice(1) %>%
+  rename("sum_sq_diffs_balloon" = "final_dist")
+
+sum.sq.diff.sky <- distance_table_init %>% 
+  mutate(sum.sky = son.sky +
+           cons.sky +
+           voice.sky + 
+           nas.sky + 
+           deg.sky +
+           lab.sky + 
+           pal.sky +
+           phar.sky + 
+           round.sky +
+           tongue.sky +
+           rad.sky,
+         sqrt.sky = sqrt(sum.sky),
+         final_dist = sum(sqrt.sky,na.rm=T)) %>%
+  unite(sum_sq_diffs_sky,
+        son.sky,
+        cons.sky,
+        voice.sky,
+        nas.sky,
+        deg.sky,
+        lab.sky,
+        pal.sky,
+        phar.sky,
+        round.sky,
+        tongue.sky,
+        rad.sky,
+        sep = "+", remove = TRUE)
+
+ssd_all_sky <- sum.sq.diff.sky %>% dplyr::select(sum_sq_diffs_sky)
+ssd_sky <- sum.sq.diff.sky %>% dplyr::select(Gloss, final_dist) %>% slice(1) %>%
+  rename("sum_sq_diffs_sky" = "final_dist")
+  
+
+distance_table_step2 <- distance_table_baby  %>%
+  dplyr::select(word_pos, Gloss, IPAtarget, consonant, features) %>%
+  left_join(distance_table_balloon, by = "word_pos") %>%
+  cbind(ssd_all_balloon) %>%
+  left_join(distance_table_sky, by = "word_pos") %>%
+  cbind(ssd_all_sky) %>%
+  mutate(consonant.x = ifelse(consonant.x =="", "-", consonant.x),
+         consonant.y = ifelse(consonant.y =="", "-", consonant.y),
+         consonant = ifelse(consonant == "", "-", consonant),
+         features.x = ifelse(consonant.x == "-", 0, features.x),
+         features.y = ifelse(consonant.y == "-", 0, features.y),
+         features = ifelse(consonant == "-", 0, features),
+         sum_sq_diffs_balloon = ifelse(consonant.x == "-" & consonant.y == "-", "-", sum_sq_diffs_balloon),
+         sum_sq_diffs_sky = ifelse(consonant.x == "-" & consonant == "-", "-", sum_sq_diffs_sky))
+
+ssd_line <- ssd_balloon %>% 
+  mutate(word_pos = "Phonological distance (Σ √(sum squared differences))",
+         Gloss.x = "",
+         IPAtarget.x = "",
+         consonant.x = "",
+         features.x = "",
+         IPAtarget.y = "",
+         consonant.y = "",
+         features.y = "",
+         IPAtarget = "",
+         consonant = "",
+         features = ""
+         ) %>% cbind(ssd_sky)
+
+distance_table_final <- distance_table_step2 %>% rbind(ssd_line) %>% write_csv("Data/repofiles/phon_dist_table.csv")
+
+providence_dist <- feather::read_feather("Data/distance_full_Providence.feather")
+
+# dist_checks_E <- providence_dist %>% dplyr::select(-contains(c("Sonorant", 
+#         "Consonantal", 
+#         "Voice", 
+#         "Nasal",
+#         "Degree",
+#         "Labial",
+#         "Palatal",
+#         "Pharyngeal",
+#         "Round",
+#         "Tongue",
+#         "Radical"))) %>%
+#   dplyr::select(Gloss, IPAtarget, IPAactual, Speaker, age, data_type, 2,4,5,15:17,6:14) %>%
+#   filter(data_type == "Actual")
+
+
 

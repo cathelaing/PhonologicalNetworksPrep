@@ -90,6 +90,7 @@ aid,aid,aid,aid,n,NA,FALSE,NA,NA,NA
 aidan,aidan,aidan,aidan,n,prop,FALSE,NA,NA,NA
 aiden,aiden,aiden,aiden,n,prop,FALSE,NA,NA,NA
 ain't,ain't,be,be,v,NA,TRUE,30,helping_verbs,function_words
+aint,ain't,be,be,v,NA,TRUE,30,helping_verbs,function_words
 air,air,air,air,n,NA,FALSE,NA,NA,NA
 airborne,airborne,airborne,airborne,adj,NA,FALSE,NA,NA,NA
 airplane,airplane,airplane,airplane,n,NA,TRUE,20,vehicles,nouns
@@ -309,10 +310,11 @@ attack,attack,attack,attack,n,NA,FALSE,NA,NA,NA
 attention,attention,attention,attention,n,NA,FALSE,NA,NA,NA
 audubon,audubon,audubon,audubon,n,prop,FALSE,NA,NA,NA
 aunt,aunt,aunt,aunt,n,NA,TRUE,25,people,other
-auntie,auntie,auntie,auntie,n,prop,FALSE,NA,NA,NA
-auntie's,auntie's,Auntie,NA,NA,NA,FALSE,NA,NA,NA
-auntie's,auntie's,auntie,auntie,n,prop,FALSE,NA,NA,NA
-aunty's,aunty's,Aunty,NA,NA,NA,FALSE,NA,NA,NA
+auntie,auntie,auntie,auntie,n,prop,TRUE,25,people,other
+auntie's,auntie's,Auntie,NA,NA,NA,TRUE,25,people,other
+auntie's,auntie's,auntie,auntie,n,prop,TRUE,25,people,other
+aunty's,aunty's,Aunty,NA,NA,NA,TRUE,25,people,other
+aunties,aunty's,Aunty,NA,NA,NA,TRUE,25,people,other
 austrailia,austrailia,australia,australia,n,prop,FALSE,NA,NA,NA
 australia,australia,australia,australia,n,prop,FALSE,NA,NA,NA
 avenue,avenue,avenue,avenue,n,prop,FALSE,NA,NA,NA
@@ -343,15 +345,18 @@ babi,babi,babi,babi,n,prop,FALSE,NA,NA,NA
 babies,baby,baby,baby,n,NA,TRUE,16,people,other
 babies,baby,baby,baby,v,NA,TRUE,16,people,other
 baby,baby,baby,baby,n,NA,TRUE,16,people,other
+babys,baby,baby,baby,n,NA,TRUE,16,people,other
 baby,baby,baby,baby,v,NA,TRUE,16,people,other
 baby_bear,baby_bear,bear,bear,n,prop,TRUE,19,animals,nouns
 baby_o,baby_o,baby,baby,n,prop,TRUE,16,people,other
 baby_roo,baby_roo,baby,baby,n,prop,TRUE,16,people,other
 baby+doll,baby+doll,doll,doll,n,NA,TRUE,22,toys,nouns
+babydoll,baby+doll,doll,doll,n,NA,TRUE,22,toys,nouns
 baby+sits,baby+sits,baby sit,baby+sit,v,NA,FALSE,NA,NA,NA
 babybug,babybug,bug,bug,v,NA,TRUE,21,animals,nouns
 baby's,baby,baby,baby,n,NA,TRUE,16,people,other
 baby's,baby,baby,baby,v,NA,TRUE,16,people,other
+babys,baby,baby,baby,v,NA,TRUE,16,people,other
 babysit,babysit,baby sit,NA,NA,NA,FALSE,NA,NA,NA
 babysitter,babysitter,baby sitter,NA,NA,NA,FALSE,NA,NA,NA
 babysitters,babysitters,baby sitter,NA,NA,NA,FALSE,NA,NA,NA
@@ -780,7 +785,8 @@ blankets,blanket,blanket,blanket,n,NA,TRUE,21,household,nouns
 blankets,blanket,blanket,blanket,v,NA,TRUE,21,household,nouns
 blanket's,blanket,blanket,blanket,n,NA,TRUE,21,household,nouns
 blanket's,blanket,blanket,blanket,v,NA,TRUE,21,household,nouns
-blankie,blankie,blankie,blankie,n,NA,FALSE,NA,NA,NA
+blankie,blanky,blanket,blanket,n,NA,TRUE,21,household,nouns
+blankies,blanky,blanket,blanket,n,NA,TRUE,21,household,nouns
 blanky,blanky,blanket,blanket,n,NA,TRUE,21,household,nouns
 blast,blast,blast,blast,n,NA,FALSE,NA,NA,NA
 blastoff,blastoff,blastoff,NA,NA,NA,FALSE,NA,NA,NA
@@ -896,6 +902,7 @@ boo,boo,boo,boo,n,NA,FALSE,NA,NA,NA
 boo,boo,boo,boo,v,NA,FALSE,NA,NA,NA
 boo+boo,boo+boo,owie,boo+boo,chi,NA,TRUE,19,body_parts,nouns
 boo+boos,boo+boo,owie,boo+boo,chi,NA,TRUE,19,body_parts,nouns
+booboo,boo+boo,owie,boo+boo,chi,NA,TRUE,19,body_parts,nouns
 boobs,boobs,boob,boob,n,NA,FALSE,NA,NA,NA
 booed,booed,boo,boo,co,NA,FALSE,NA,NA,NA
 booed,booed,boo,boo,n,NA,FALSE,NA,NA,NA
@@ -1179,6 +1186,7 @@ bundle,bundle,bundle,bundle,n,NA,FALSE,NA,NA,NA
 bunnies,bunny,bunny,bunny,n,NA,TRUE,20,animals,nouns
 bunny,bunny,bunny,bunny,n,NA,TRUE,20,animals,nouns
 bunny's,bunny,bunny,bunny,n,NA,TRUE,20,animals,nouns
+bunnys,bunny,bunny,bunny,n,NA,TRUE,20,animals,nouns
 bunting,bunting,bunting,bunting,n,prop,FALSE,NA,NA,NA
 burger,burger,burger,burger,n,NA,FALSE,NA,NA,NA
 burned,burned,burn,burn,v,NA,FALSE,NA,NA,NA
@@ -1323,6 +1331,8 @@ candy,candy,candy,candy,n,NA,TRUE,22,food_drink,nouns
 candy_land,candy_land,candy land,candy+land,n,prop,FALSE,NA,NA,NA
 candy+cane,candy+cane,candy,candy,n,NA,TRUE,22,food_drink,nouns
 candy+canes,candy+canes,candy,candy,n,NA,TRUE,22,food_drink,nouns
+candycane,candy+canes,candy,candy,n,NA,TRUE,22,food_drink,nouns
+candycanes,candy+canes,candy,candy,n,NA,TRUE,22,food_drink,nouns
 candyland,candyland,candyland,candyland,n,prop,FALSE,NA,NA,NA
 canes,canes,cane,cane,n,NA,FALSE,NA,NA,NA
 cannon,cannon,cannon,cannon,n,NA,FALSE,NA,NA,NA
@@ -1330,6 +1340,7 @@ canoe,canoe,canoe,canoe,n,NA,FALSE,NA,NA,NA
 cans,cans,can,can,mod,NA,FALSE,NA,NA,NA
 cans,cans,can,can,n,NA,FALSE,NA,NA,NA
 can't,can't,can,can,mod,NA,FALSE,NA,NA,NA
+cant,can't,can,can,mod,NA,FALSE,NA,NA,NA
 cantaloupe,cantaloupe,cantaloupe,cantaloupe,n,NA,FALSE,NA,NA,NA
 canyon,canyon,canyon,canyon,n,prop,FALSE,NA,NA,NA
 cap,cap,cap,cap,n,NA,FALSE,NA,NA,NA
@@ -1622,6 +1633,7 @@ choking,choking,choke,choke,part,NA,FALSE,NA,NA,NA
 choking,choking,choking,NA,NA,NA,FALSE,NA,NA,NA
 choo,choo,choo choo,choo,on,NA,TRUE,19,sounds,other
 choo+choo,choo+choo,choo choo,choo+choo,on,NA,TRUE,19,sounds,other
+choochoo,choo+choo,choo choo,choo+choo,on,NA,TRUE,19,sounds,other
 choose,choose,choose,choose,v,NA,FALSE,NA,NA,NA
 choose,choose,choose,choose,part,NA,FALSE,NA,NA,NA
 choosing,choosing,choose,choose,v,NA,FALSE,NA,NA,NA
@@ -1793,8 +1805,11 @@ cock,cock,cock,cock,on,NA,FALSE,NA,NA,NA
 cock,cock,cock,cock,n,NA,FALSE,NA,NA,NA
 cock,cock,cock,cock,co,NA,FALSE,NA,NA,NA
 cock_a_doo,cock_a_doo,cockadoodledoo,cock_a_doo,on,NA,TRUE,25,sounds,other
+cockadoodle,cock_a_doodle,cockadoodledoo,cock+a+doodle+doo,on,NA,TRUE,25,sounds,other
+cockadoodledoo,cock_a_doodle,cockadoodledoo,cock+a+doodle+doo,on,NA,TRUE,25,sounds,other
 cock_a_doodle,cock_a_doodle,cockadoodledoo,cock+a+doodle+doo,on,NA,TRUE,25,sounds,other
 cock_a_doodle_doo,cock_a_doodle_doo,cockadoodledoo,cock+a+doodle+doo,on,NA,TRUE,25,sounds,other
+cockadoo,cock_a_doodle_doo,cockadoodledoo,cock+a+doodle+doo,on,NA,TRUE,25,sounds,other
 cockatoo,cockatoo,cockatoo,cockatoo,n,NA,FALSE,NA,NA,NA
 coco,coco,coco,coco,n,prop,FALSE,NA,NA,NA
 coconuts,coconuts,coconut,coconut,n,NA,FALSE,NA,NA,NA
@@ -1975,7 +1990,8 @@ coughs,coughs,cough,cough,v,NA,FALSE,NA,NA,NA
 coughs,coughs,cough,cough,adj,NA,FALSE,NA,NA,NA
 coughy,coughy,cough,cough,adj,NA,FALSE,NA,NA,NA
 could,could,could,could,mod,NA,TRUE,NA,helping_verbs,function_words
-couldn't,couldn't,can,can,v,NA,FALSE,NA,NA,NA
+couldn't,could,could,could,mod,NA,TRUE,NA,helping_verbs,function_words
+couldnt,could,could,could,mod,NA,TRUE,NA,helping_verbs,function_words
 count,count,count,count,n,NA,FALSE,NA,NA,NA
 count,count,count,count,v,NA,FALSE,NA,NA,NA
 count,count,count,count,part,NA,FALSE,NA,NA,NA
@@ -2259,8 +2275,8 @@ da_da_da_da,da_da_da_da,da da da da,da_da_da_da,singing,NA,FALSE,NA,NA,NA
 da_da_dee_oh_doh,da_da_dee_oh_doh,da da dee oh doh,da_da_dee_oh_doh,singing,NA,FALSE,NA,NA,NA
 da_la_lee_oh_doh,da_la_lee_oh_doh,da la lee oh doh,da_la_lee_oh_doh,singing,NA,FALSE,NA,NA,NA
 dabbit,dabbit,dabbit,dabbit,chi,NA,FALSE,NA,NA,NA
-dad,dad,dad,dad,n,prop,FALSE,NA,NA,NA
-dad,dad,dad,dad,sing,NA,FALSE,NA,NA,NA
+dad,dad,daddy,daddy,n,prop,TRUE,16,people,other
+dad,dad,daddy,daddy,n,prop,TRUE,16,people,other
 dad_dad_dad_dad_dad_dad_dad_dad_dad_dad,dad_dad_dad_dad_dad_dad_dad_dad_dad_dad,dad dad dad dad dad dad dad dad dad dad,dad_dad_dad_dad_dad_dad_dad_dad_dad_dad,singing,NA,FALSE,NA,NA,NA
 dada,dada,dada,dada,n,prop,FALSE,NA,NA,NA
 dadadun,dadadun,dadadun,dadadun,wp,NA,FALSE,NA,NA,NA
@@ -2275,8 +2291,8 @@ daddle,daddle,daddle,daddle,wp,NA,FALSE,NA,NA,NA
 daddy,daddy,daddy,daddy,n,prop,TRUE,16,people,other
 daddy_long_legs,daddy_long_legs,daddy long legs,daddy+long+legs,n,NA,FALSE,NA,NA,NA
 daddyah,daddyah,daddyah,daddyah,wp,NA,FALSE,NA,NA,NA
-daddy's,daddy's,Daddy,NA,NA,NA,FALSE,NA,NA,NA
-daddy's,daddy,daddy,daddy,n,prop,TRUE,16,people,other
+daddy's,daddy's,daddy,daddy,n,prop,TRUE,16,people,other
+daddys,daddy,daddy,daddy,n,prop,TRUE,16,people,other
 dadeem,dadeem,dadeem,dadeem,wp,NA,FALSE,NA,NA,NA
 dadidi,dadidi,dadidi,dadidi,wp,NA,FALSE,NA,NA,NA
 dadigi,dadigi,dadigi,dadigi,wp,NA,FALSE,NA,NA,NA
@@ -2443,6 +2459,7 @@ diddle_iddle_lum_dum_yyy_yyy_yyy_yyy_stump_yyy_diddle_yyy_yyy,diddle_iddle_lum_d
 diddy,diddy,diddy,diddy,n,prop,FALSE,NA,NA,NA
 didi,didi,didi,didi,n,prop,FALSE,NA,NA,NA
 didn't,didn't,do,do,v,NA,TRUE,25,helping_verbs,function_words
+didnt,didn't,do,do,v,NA,TRUE,25,helping_verbs,function_words
 die,die,die,die,v,NA,FALSE,NA,NA,NA
 die,die,die,die,n,NA,FALSE,NA,NA,NA
 die,die,die,die,part,NA,FALSE,NA,NA,NA
@@ -2567,14 +2584,15 @@ does,does,does,do,n,gerund,TRUE,NA,helping_verbs,function_words
 does,does,does,do,sing,NA,TRUE,NA,helping_verbs,function_words
 does,does,does,NA,NA,NA,TRUE,NA,helping_verbs,function_words
 doesn't,doesn't,does,do,v,NA,TRUE,NA,helping_verbs,function_words
+doesnt,doesn't,does,do,v,NA,TRUE,NA,helping_verbs,function_words
 dog,dog,dog,dog,n,NA,TRUE,16,animals,nouns
 dog,dog,dog,dog,v,NA,TRUE,16,animals,nouns
 dogfish,dogfish,dogfish,NA,NA,NA,FALSE,NA,NA,NA
-doggie,doggie,doggie,doggie,n,prop,FALSE,NA,NA,NA
+doggie,doggie,dog,dog,n,NA,TRUE,16,animals,nouns
 doggie_woggie,doggie_woggie,dog,dog,n,NA,TRUE,16,animals,nouns
-doggies,doggies,doggy,doggy,n,prop,FALSE,NA,NA,NA
-doggy,doggy,doggy,doggy,n,prop,FALSE,NA,NA,NA
-doggy's,doggy's,doggy,doggy,n,prop,FALSE,NA,NA,NA
+doggies,doggies,dog,dog,n,NA,TRUE,17,animals,nouns
+doggy,doggy,dog,dog,n,NA,TRUE,18,animals,nouns
+doggy's,doggy's,dog,dog,n,NA,TRUE,19,animals,nouns
 dogs,dog,dog,dog,n,NA,TRUE,16,animals,nouns
 dogs,dog,dog,dog,v,NA,TRUE,16,animals,nouns
 dog's,dog,dog,dog,n,NA,TRUE,16,animals,nouns
@@ -2583,6 +2601,7 @@ doing,doing,do,do,mod,NA,TRUE,25,helping_verbs,function_words
 doing,doing,do,do,v,NA,TRUE,25,helping_verbs,function_words
 doing,doing,do,do,part,NA,TRUE,25,helping_verbs,function_words
 doing,doing,do,do,n,gerund,TRUE,25,helping_verbs,function_words
+doin,doing,do,do,n,gerund,TRUE,25,helping_verbs,function_words
 doing,doing,do,do,sing,NA,TRUE,25,helping_verbs,function_words
 doink,doink,doink,doink,on,NA,FALSE,NA,NA,NA
 doinkaboink,doinkaboink,doinkaboink,doinkaboink,on,NA,FALSE,NA,NA,NA
@@ -2598,6 +2617,7 @@ dolls,doll,doll,doll,n,NA,TRUE,22,toys,nouns
 doll's,doll,doll,doll,n,NA,TRUE,22,toys,nouns
 dolly,dolly,dolly,dolly,n,prop,FALSE,NA,NA,NA
 dolly's,dolly's,dolly,dolly,n,prop,FALSE,NA,NA,NA
+dollys,dolly's,dolly,dolly,n,prop,FALSE,NA,NA,NA
 dolphin,dolphin,dolphin,dolphin,n,NA,FALSE,NA,NA,NA
 dolphins,dolphins,dolphin,dolphin,n,NA,FALSE,NA,NA,NA
 domino,domino,domino,domino,n,NA,FALSE,NA,NA,NA
@@ -2617,6 +2637,7 @@ donkeys,donkey,donkey,donkey,n,NA,TRUE,28,animals,nouns
 donkey's,donkey,donkey,donkey,n,NA,TRUE,28,animals,nouns
 don't,don't,don t ,NA,NA,NA,FALSE,NA,NA,NA
 don't,don't,don t,NA,NA,NA,FALSE,NA,NA,NA
+dont,don't,don t,NA,NA,NA,FALSE,NA,NA,NA
 donut,donut,donut,donut,n,NA,TRUE,26,food_drink,nouns
 donuts,donut,donut,donut,n,NA,TRUE,26,food_drink,nouns
 doo,doo,doo,doo,n,NA,FALSE,NA,NA,NA
@@ -2815,18 +2836,18 @@ drying,drying,drying,NA,NA,NA,FALSE,NA,NA,NA
 duba_duba_do,duba_duba_do,duba duba do,duba_duba_do,singing,NA,FALSE,NA,NA,NA
 duba_duba_duba_duba_duba_duba_do,duba_duba_duba_duba_duba_duba_do,duba duba duba duba duba duba do,duba_duba_duba_duba_duba_duba_do,chi,NA,FALSE,NA,NA,NA
 duck,duck,duck,duck,n,NA,TRUE,17,animals,nouns
-duck,duck,duck,duck,adj,NA,TRUE,17,animals,nouns
-duckie,duckie,duckie,NA,NA,NA,FALSE,NA,NA,NA
-duckies,duckies,duckie,NA,NA,NA,FALSE,NA,NA,NA
-duckling,duckling,duckling,duckling,n,NA,FALSE,NA,NA,NA
-ducklings,ducklings,duckling,duckling,n,NA,FALSE,NA,NA,NA
-duckling's,duckling's,duckling,duckling,n,NA,FALSE,NA,NA,NA
+duckie,duckie,duck,duck,n,NA,TRUE,17,animals,nouns
+duckies,duckies,duck,duck,n,NA,TRUE,17,animals,nouns
+duckling,duckling,duck,duck,n,NA,TRUE,17,animals,nouns
+ducklings,ducklings,duck,duck,n,NA,TRUE,17,animals,nouns
+duckling's,duckling's,duck,duck,n,NA,TRUE,17,animals,nouns
 ducks,duck,duck,duck,n,NA,TRUE,17,animals,nouns
 ducks,duck,duck,duck,adj,NA,TRUE,17,animals,nouns
 duck's,duck,duck,duck,n,NA,TRUE,17,animals,nouns
 duck's,duck,duck,duck,adj,NA,TRUE,17,animals,nouns
 ducksie,duck,duck,duck,n,NA,TRUE,17,animals,nouns
-ducky,ducky,ducky,ducky,n,prop,FALSE,NA,NA,NA
+ducky,duck,duck,duck,n,NA,TRUE,17,animals,nouns
+duckys,duck,duck,duck,n,NA,TRUE,17,animals,nouns
 dudameemurn,dudameemurn,dudameemurn,dudameemurn,chi,NA,FALSE,NA,NA,NA
 dudameewuh,dudameewuh,dudameewuh,dudameewuh,chi,NA,FALSE,NA,NA,NA
 duduniniz,duduniniz,duduniniz,duduniniz,chi,NA,FALSE,NA,NA,NA
@@ -3328,6 +3349,7 @@ fishing,fishing,fish,fish,adj,NA,FALSE,NA,NA,NA
 fishing,fishing,fish,fish,v,NA,FALSE,NA,NA,NA
 fishing,fishing,fish,fish,part,NA,FALSE,NA,NA,NA
 fish's,fish's,fish,fish,n,NA,FALSE,NA,NA,NA
+fishs,fish's,fish,fish,n,NA,FALSE,NA,NA,NA
 fish's,fish's,fish,fish,adj,NA,FALSE,NA,NA,NA
 fish's,fish's,fish,fish,v,NA,FALSE,NA,NA,NA
 fish's,fish's,fish,fish,part,NA,FALSE,NA,NA,NA
@@ -3394,6 +3416,7 @@ flik,flik,flik,flik,wp,NA,FALSE,NA,NA,NA
 flip,flip,flip,flip,v,NA,FALSE,NA,NA,NA
 flip,flip,flip,flip,adj,NA,FALSE,NA,NA,NA
 flip,flip,flip,flip,part,NA,FALSE,NA,NA,NA
+flipflop,flip+flop,flip flop,flip+flop,n,NA,FALSE,NA,NA,NA
 flip+flop,flip+flop,flip flop,flip+flop,n,NA,FALSE,NA,NA,NA
 flip+flops,flip+flops,flip flop,flip+flop,n,NA,FALSE,NA,NA,NA
 flipped,flipped,flip,flip,v,NA,FALSE,NA,NA,NA
@@ -3825,10 +3848,7 @@ gog,gog,gog,gog,wp,NA,FALSE,NA,NA,NA
 goga,goga,goga,goga,wp,NA,FALSE,NA,NA,NA
 goggles,goggles,goggle,goggle,n,NA,FALSE,NA,NA,NA
 going,going,go,go,v,NA,TRUE,19,action_words,verbs
-going,going,go,go,part,NA,TRUE,19,action_words,verbs
-going,going,go,go,n,gerund,TRUE,19,action_words,verbs
-going,going,go,go,sing,NA,TRUE,19,action_words,verbs
-going,going,going,NA,NA,NA,FALSE,NA,NA,NA
+goin,going,go,go,v,NA,TRUE,19,action_words,verbs
 gold,gold,gold,gold,adj,NA,FALSE,NA,NA,NA
 gold,gold,gold,gold,n,NA,FALSE,NA,NA,NA
 gold,gold,gold ,NA,NA,NA,FALSE,NA,NA,NA
@@ -3863,6 +3883,7 @@ good,good,good,good,adv,NA,TRUE,24,descriptive_words,adjectives
 good,good,good,good,co,NA,TRUE,24,descriptive_words,adjectives
 good,good,good,good,n,adj,TRUE,24,descriptive_words,adjectives
 good_luck_bear,good_luck_bear,bear,bear,n,prop,TRUE,19,animals,nouns
+goodnight,good_night,good night,goodnight,co,NA,TRUE,18,games_routines,other
 good_night,good_night,good night,goodnight,co,NA,TRUE,18,games_routines,other
 gooda,gooda,gooda,gooda,chi,NA,FALSE,NA,NA,NA
 goodbye,goodbye,good bye,NA,NA,NA,FALSE,NA,NA,NA
@@ -3890,6 +3911,8 @@ got,got,get,get,v,NA,TRUE,24,action_words,verbs
 got,got,get,get,part,NA,TRUE,24,action_words,verbs
 got,got,get,get,n,gerund,TRUE,24,action_words,verbs
 got_to,got_to,have,have,part,NA,TRUE,26,action_words,verbs
+gotta,got_to,have,have,part,NA,TRUE,26,action_words,verbs
+gotto,got_to,have,have,part,NA,TRUE,26,action_words,verbs
 gotcha,gotcha,gotcha,gotcha,co,NA,FALSE,NA,NA,NA
 gotta,gotta,gotta,have,part,NA,TRUE,30,helping_verbs,function_words
 gouda,gouda,gouda,gouda,n,NA,FALSE,NA,NA,NA
@@ -4094,6 +4117,7 @@ had,had,have,have,n,gerund,TRUE,26,action_words,verbs
 had,had,had,NA,NA,NA,FALSE,NA,NA,NA
 haddock,haddock,haddock,haddock,n,NA,FALSE,NA,NA,NA
 hafta,have,hafta,hafta,mod,aux,TRUE,29,helping_verbs,function_words
+haveto,have,hafta,hafta,mod,aux,TRUE,29,helping_verbs,function_words
 hah,hah,hah,hah,co,NA,FALSE,NA,NA,NA
 hair,hair,hair,hair,n,NA,TRUE,20,body_parts,nouns
 hair,hair,hair,hair,adj,NA,TRUE,20,body_parts,nouns
@@ -4213,7 +4237,9 @@ have,have,have,have,aux,NA,TRUE,26,action_words,verbs
 have,have,have,have,part,NA,TRUE,26,action_words,verbs
 have,have,have,have,n,gerund,TRUE,26,action_words,verbs
 have_to,have_to,have,have,aux,NA,TRUE,26,action_words,verbs
+haveto,have_to,have,have,aux,NA,TRUE,26,action_words,verbs
 haven't,haven't,have,have,aux,NA,TRUE,26,action_words,verbs
+havent,haven't,have,have,aux,NA,TRUE,26,action_words,verbs
 having,having,have,have,v,NA,TRUE,26,action_words,verbs
 having,having,have,have,mod,aux,TRUE,26,action_words,verbs
 having,having,have,have,aux,NA,TRUE,26,action_words,verbs
@@ -4265,6 +4291,7 @@ he'd,he'd,did,did,aux,NA,TRUE,28,helping_verbs,function_words
 hedgehog,hedgehog,hedgehog,hedgehog,n,NA,FALSE,NA,NA,NA
 hedgehogs,hedgehogs,hedgehog,hedgehog,n,NA,FALSE,NA,NA,NA
 hee,hee,hee,hee,co,NA,FALSE,NA,NA,NA
+heehaw,hee+haw,hee haw,hee+haw,on,NA,FALSE,NA,NA,NA
 hee+haw,hee+haw,hee haw,hee+haw,on,NA,FALSE,NA,NA,NA
 heehee,heehee,heehee,heehee,on,NA,FALSE,NA,NA,NA
 heel,heel,heel,heel,n,NA,FALSE,NA,NA,NA
@@ -4326,6 +4353,7 @@ her's,her's,her,her,det,poss,TRUE,29,pronouns,function_words
 herself,herself,herself,herself,pro,refl,FALSE,NA,NA,NA
 he's,he's,he,he,pro,sub,TRUE,28,pronouns,function_words
 he's,he's,he,he,sing,NA,TRUE,28,pronouns,function_words
+hes,he's,he,he,pro,sub,TRUE,28,pronouns,function_words
 hexagon,hexagon,hexagon,hexagon,n,NA,FALSE,NA,NA,NA
 hey,hey,hey,hey,co,NA,FALSE,NA,NA,NA
 hi,hi,hi,hi,co,NA,TRUE,16,games_routines,other
@@ -4504,6 +4532,7 @@ houses,house,house,house,v,NA,TRUE,23,places,other
 housie,house,house,house,n,NA,TRUE,23,places,other
 how,how,how,how,adv,int,TRUE,29,question_words,function_words
 how'd,how'd,how,how,adv,NA,TRUE,29,question_words,function_words
+hows,how'd,how,how,adv,NA,TRUE,29,question_words,function_words
 howie,howie,howie,howie,n,prop,FALSE,NA,NA,NA
 howler,howler,howler,NA,NA,NA,FALSE,NA,NA,NA
 how's,how's,how,how,adv,int,TRUE,29,question_words,function_words
@@ -4701,6 +4730,7 @@ involved,involved,involve,involve,part,NA,FALSE,NA,NA,NA
 iowa,iowa,iowa,iowa,n,prop,FALSE,NA,NA,NA
 ipanema,ipanema,ipanema,ipanema,n,prop,FALSE,NA,NA,NA
 iron,iron,iron,iron,n,NA,FALSE,NA,NA,NA
+Is,is,be,be,aux,NA,TRUE,30,helping_verbs,function_words
 is,is,be,be,aux,NA,TRUE,30,helping_verbs,function_words
 is,is,be,be,cop,NA,TRUE,30,helping_verbs,function_words
 is,is,be,be,part,NA,TRUE,30,helping_verbs,function_words
@@ -4710,8 +4740,10 @@ isa,isa,isa,isa,n,prop,FALSE,NA,NA,NA
 isabella,isabella,isabella,isabella,n,prop,FALSE,NA,NA,NA
 isabelle,isabelle,isabelle,isabelle,n,prop,FALSE,NA,NA,NA
 isabelle's,isabelle's,Isabelle,NA,NA,NA,FALSE,NA,NA,NA
+Island,island,island,island,n,NA,FALSE,NA,NA,NA
 island,island,island,island,n,NA,FALSE,NA,NA,NA
 isn't,isn't,is,is,aux,NA,TRUE,28,helping_verbs,function_words
+isnt,isn't,is,is,aux,NA,TRUE,28,helping_verbs,function_words
 issa,issa,issa,issa,n,prop,FALSE,NA,NA,NA
 it,it,it,it,pro,per,TRUE,26,pronouns,function_words
 it,it,it,it,n,prop,TRUE,26,pronouns,function_words
@@ -4720,15 +4752,18 @@ itch,itch,itch,itch,v,NA,FALSE,NA,NA,NA
 itch,itch,itch,itch,adj,NA,FALSE,NA,NA,NA
 itchy,itchy,itchy,NA,NA,NA,FALSE,NA,NA,NA
 it'll,it'll,will,will,aux,NA,TRUE,30,helping_verbs,function_words
+itll,it'll,will,will,aux,NA,TRUE,30,helping_verbs,function_words
 its,its,its,its,det,poss,FALSE,NA,NA,NA
 it's,it's,it,it,pro,per,TRUE,26,pronouns,function_words
 it's,it's,it,it,n,prop,TRUE,26,pronouns,function_words
+Its,it's,it,it,n,prop,TRUE,26,pronouns,function_words
 it's,it's,It,NA,NA,NA,FALSE,NA,NA,NA
 itself,itself,itself,itself,pro,refl,FALSE,NA,NA,NA
 itsy,itsy,itsy,itsy,adj,NA,FALSE,NA,NA,NA
 itsy,itsy,itsy,itsy,sing,NA,FALSE,NA,NA,NA
 itsy_bitsy_spider_went_up_the_spout,itsy_bitsy_spider_went_up_the_spout,itsy bitsy spider went up the spout,itsy_bitsy_spider_went_up_the_spout,singing,NA,FALSE,NA,NA,NA
 itty,itty,itty,itty,adj,NA,FALSE,NA,NA,NA
+Ive,i've,have,have,aux,NA,TRUE,26,action_words,verbs
 i've,i've,have,have,aux,NA,TRUE,26,action_words,verbs
 ivory,ivory,ivory,ivory,n,NA,FALSE,NA,NA,NA
 j,j,xx j,NA,NA,NA,FALSE,NA,NA,NA
@@ -4779,6 +4814,7 @@ jello,jello,jello,jello,n,NA,TRUE,28,food_drink,nouns
 jelly,jelly,jelly,jelly,n,NA,TRUE,26,food_drink,nouns
 jelly+bean,jelly+bean,jelly bean,jelly+bean,n,NA,FALSE,NA,NA,NA
 jelly+beans,jelly+beans,jelly bean,jelly+bean,n,NA,FALSE,NA,NA,NA
+jellybeans,jelly+beans,jelly bean,jelly+bean,n,NA,FALSE,NA,NA,NA
 jellyfish,jellyfish,jellyfish,jelly+fish,n,NA,FALSE,NA,NA,NA
 jellyfishes,jellyfishes,jellyfish,jelly+fish,n,NA,FALSE,NA,NA,NA
 jemima_puddle_duck,jemima_puddle_duck,jemima puddle duck,jemima+puddle+duck,n,prop,FALSE,NA,NA,NA
@@ -5004,6 +5040,8 @@ kits,kits,kit,kit,n,NA,FALSE,NA,NA,NA
 kitten,kitten,kitten,kitten,n,NA,FALSE,NA,NA,NA
 kittens,kittens,kitten,kitten,n,NA,FALSE,NA,NA,NA
 kitty,kitty,kitty,kitty,n,NA,TRUE,17,animals,nouns
+kittys,kitty,kitty,kitty,n,NA,TRUE,17,animals,nouns
+kittycat,kitty+cat,cat,cat,n,NA,TRUE,18,animals,nouns
 kitty+cat,kitty+cat,cat,cat,n,NA,TRUE,18,animals,nouns
 kitty+catty,kitty+catty,cat,cat,n,NA,TRUE,18,animals,nouns
 kitty's,kitty,kitty,kitty,n,NA,TRUE,17,animals,nouns
@@ -5029,6 +5067,7 @@ knock,knock,knock,knock,co,NA,TRUE,25,action_words,verbs
 knock,knock,knock,knock,n,NA,TRUE,25,action_words,verbs
 knock,knock,knock,knock,part,NA,TRUE,25,action_words,verbs
 knock+knock,knock+knock,knock,knock,v,NA,TRUE,25,action_words,verbs
+knockknock,knock+knock,knock,knock,v,NA,TRUE,25,action_words,verbs
 knocked,knocked,knock,knock,v,NA,TRUE,25,action_words,verbs
 knocked,knocked,knock,knock,co,NA,TRUE,25,action_words,verbs
 knocked,knocked,knock,knock,n,NA,TRUE,25,action_words,verbs
@@ -5272,6 +5311,7 @@ lied,lied,lie,lie,v,NA,FALSE,NA,NA,NA
 lied,lied,lie,lie,n,NA,FALSE,NA,NA,NA
 life,life,life,life,n,NA,FALSE,NA,NA,NA
 life+jackets,life+jackets,jacket,jacket,n,NA,TRUE,24,clothing,nouns
+lifejackets,life+jackets,jacket,jacket,n,NA,TRUE,24,clothing,nouns
 lifeguard,lifeguard,lifeguard,lifeguard,n,NA,FALSE,NA,NA,NA
 lift,lift,lift,lift,v,NA,FALSE,NA,NA,NA
 lift,lift,lift,lift,n,NA,FALSE,NA,NA,NA
@@ -5318,6 +5358,7 @@ liking,liking,liking,NA,NA,NA,FALSE,NA,NA,NA
 lilacs,lilacs,lilac,lilac,n,NA,FALSE,NA,NA,NA
 lily,lily,lily,lily,n,prop,FALSE,NA,NA,NA
 lily+pads,lily+pads,lily,lily,n,NA,FALSE,NA,NA,NA
+lilypads,lily+pads,lily,lily,n,NA,FALSE,NA,NA,NA
 lilys,lilys,lily,lily,n,NA,FALSE,NA,NA,NA
 lily's,lily's,Lily,NA,NA,NA,FALSE,NA,NA,NA
 lily's,lily's,lily,lily,n,prop,FALSE,NA,NA,NA
@@ -5414,11 +5455,12 @@ log,log,log,log,n,NA,FALSE,NA,NA,NA
 loga,loga,loga,loga,chi,NA,FALSE,NA,NA,NA
 loley,loley,loley,loley,chi,NA,FALSE,NA,NA,NA
 loli,loli,loli,loli,chi,NA,FALSE,NA,NA,NA
-lollie,lollie,lolly,lolly,n,NA,FALSE,NA,NA,NA
+lollie,lollie,lollipop,lollipop,n,NA,TRUE,27,food_drink,nouns
+lollies,lollie,lollipop,lollipop,n,NA,TRUE,27,food_drink,nouns
 lollipop,lollipop,lollipop,lollipop,n,NA,TRUE,27,food_drink,nouns
 lollipops,lollipop,lollipop,lollipop,n,NA,TRUE,27,food_drink,nouns
-lolly,lolly,lolly,lolly,n,prop,FALSE,NA,NA,NA
-loly,loly,lolly,lolly,n,NA,FALSE,NA,NA,NA
+lolly,lolly,lollipop,lollipop,n,NA,TRUE,27,food_drink,nouns
+loly,loly,lollipop,lollipop,n,NA,TRUE,27,food_drink,nouns
 lonely,lonely,lonely,NA,NA,NA,FALSE,NA,NA,NA
 long,long,long,long,adj,NA,TRUE,29,descriptive_words,adjectives
 long,long,long,long,adv,NA,TRUE,29,descriptive_words,adjectives
@@ -5470,11 +5512,13 @@ losing,losing,losing ,NA,NA,NA,FALSE,NA,NA,NA
 lost,lost,lose,lose,part,NA,FALSE,NA,NA,NA
 lost,lost,lose,lose,v,NA,FALSE,NA,NA,NA
 lost,lost,lost,lost,n,prop,FALSE,NA,NA,NA
+alot,lot,lot,lot,n,NA,FALSE,NA,NA,NA
 lot,lot,lot,lot,n,NA,FALSE,NA,NA,NA
 lotion,lotion,lotion,lotion,n,NA,FALSE,NA,NA,NA
 lots,lots,lots,lots,qn,NA,FALSE,NA,NA,NA
 lot's,lot's,lot,lot,n,NA,FALSE,NA,NA,NA
 lots_of,lots_of,lots,lots,qn,NA,FALSE,NA,NA,NA
+lotsof,lots_of,lots,lots,qn,NA,FALSE,NA,NA,NA
 lottie,lottie,lottie,lottie,n,prop,FALSE,NA,NA,NA
 lotus,lotus,lotus,lotus,n,NA,FALSE,NA,NA,NA
 lou,lou,lou,lou,sing,NA,FALSE,NA,NA,NA
@@ -5640,6 +5684,7 @@ mammals,mammals,mammal,mammal,n,NA,FALSE,NA,NA,NA
 mammoth,mammoth,mammoth,mammoth,adj,NA,FALSE,NA,NA,NA
 mammoth,mammoth,mammoth,mammoth,n,NA,FALSE,NA,NA,NA
 man,man,man,man,n,NA,TRUE,25,people,other
+mans,man,man,man,n,NA,TRUE,25,people,other
 manana,manana,manana,manana,L2,NA,FALSE,NA,NA,NA
 manchego,manchego,manchego,manchego,L2,NA,FALSE,NA,NA,NA
 manchego,manchego,manchego,manchego,n,prop,FALSE,NA,NA,NA
@@ -5895,6 +5940,7 @@ milk,milk,milk,milk,v,NA,TRUE,18,food_drink,nouns
 milk,milk,milk,milk,adj,NA,TRUE,18,food_drink,nouns
 milk,milk,milk,milk,part,NA,TRUE,18,food_drink,nouns
 milk+shake,milk+shake,milk shake,milk+shake,n,prop,FALSE,NA,NA,NA
+milkshake,milk+shake,milk shake,milk+shake,n,prop,FALSE,NA,NA,NA
 milked,milked,milk,milk,n,NA,TRUE,18,food_drink,nouns
 milked,milked,milk,milk,v,NA,TRUE,18,food_drink,nouns
 milked,milked,milk,milk,adj,NA,TRUE,18,food_drink,nouns
@@ -6001,15 +6047,19 @@ mole_man,mole_man,mole man,mole+man,n,prop,FALSE,NA,NA,NA
 mollusks,mollusks,mollusk,mollusk,n,NA,FALSE,NA,NA,NA
 mollusks,mollusks,mollusks,NA,NA,NA,FALSE,NA,NA,NA
 moly,moly,moly,NA,NA,NA,FALSE,NA,NA,NA
-mom,mom,mom,mom,n,prop,FALSE,NA,NA,NA
-moma,moma,moma,moma,chi,NA,FALSE,NA,NA,NA
-momma,momma,momma,momma,n,prop,FALSE,NA,NA,NA
-momma's,momma's,momma,momma,n,prop,FALSE,NA,NA,NA
+mom,mommy,mommy,mommy,n,prop,TRUE,16,people,other
+moma,mommy,mommy,mommy,n,prop,TRUE,16,people,other
+momma,mommy,mommy,mommy,n,prop,TRUE,16,people,other
+momma's,mommy,mommy,mommy,n,prop,TRUE,16,people,other
+mommas,mommy,mommy,mommy,n,prop,TRUE,16,people,other
 mommies,mommy,mommy,mommy,n,prop,TRUE,16,people,other
 mommily,mommily,mommily,mommily,wp,NA,FALSE,NA,NA,NA
 mommy,mommy,mommy,mommy,n,prop,TRUE,16,people,other
-mommy's,mommy's,Mommy,NA,NA,NA,FALSE,NA,NA,NA
+mommys,mommy,mommy,mommy,n,prop,TRUE,16,people,other
+mommyll,mommy,mommy,mommy,n,prop,TRUE,16,people,other
 mommy's,mommy,mommy,mommy,n,prop,TRUE,16,people,other
+mommy's,mommy,mommy,mommy,n,prop,TRUE,16,people,other
+mommys,mommy,mommy,mommy,n,prop,TRUE,16,people,other
 monday,monday,monday,monday,n,prop,FALSE,NA,NA,NA
 money,money,money,money,n,NA,TRUE,23,household,nouns
 money's,money,money,money,n,NA,TRUE,23,household,nouns
@@ -6133,8 +6183,9 @@ mum,mum,mum,mum,adj,NA,FALSE,NA,NA,NA
 mumba,mumba,mumba,mumba,chi,NA,FALSE,NA,NA,NA
 mumbudy,mumbudy,mumbudy,mumbudy,chi,NA,FALSE,NA,NA,NA
 mumma,mumma,mumma,mumma,n,prop,FALSE,NA,NA,NA
-mummy,mummy,mummy,mummy,n,NA,FALSE,NA,NA,NA
-mummy's,mummy's,mummy,mummy,n,NA,FALSE,NA,NA,NA
+mummy,mommy,mommy,mommy,n,prop,TRUE,16,people,other
+mummys,mommy,mommy,mommy,n,prop,TRUE,16,people,other
+mummy's,mommy,mommy,mommy,n,prop,TRUE,16,people,other
 mumommy,mumommy,mumommy,mumommy,wp,NA,FALSE,NA,NA,NA
 munch,munch,munch,munch,v,NA,FALSE,NA,NA,NA
 munsty,munsty,munsty,munsty,chi,NA,FALSE,NA,NA,NA
@@ -6548,6 +6599,7 @@ ourselves,ourselves,ourselves,ourselves,pro,refl,FALSE,NA,NA,NA
 out,out,out,out,adv,NA,TRUE,22,locations,function_words
 out,out,out,out,prep,NA,TRUE,22,locations,function_words
 out,out,out,out,n,NA,TRUE,22,locations,function_words
+outta,out,out,out,n,NA,TRUE,22,locations,function_words
 outages,outages,outage,out+age,v,out,FALSE,NA,NA,NA
 outdoors,outdoors,outdoors,outdoors,adv,NA,FALSE,NA,NA,NA
 outdoors,outdoors,outdoors,outdoors,n,NA,FALSE,NA,NA,NA
@@ -7050,6 +7102,7 @@ play+ground,play+ground,play ground,play+ground,n,NA,FALSE,NA,NA,NA
 play+group,play+group,play group,play+group,n,NA,FALSE,NA,NA,NA
 playdoh,playdoh,playdoh,playdoh,n,NA,FALSE,NA,NA,NA
 playdohs,playdohs,playdoh,playdoh,n,NA,FALSE,NA,NA,NA
+playdough,playdohs,playdoh,playdoh,n,NA,FALSE,NA,NA,NA
 played,played,play,play,n,NA,TRUE,23,action_words,verbs
 played,played,play,play,v,NA,TRUE,23,action_words,verbs
 played,played,play,play,part,NA,TRUE,23,action_words,verbs
@@ -7422,7 +7475,9 @@ puppet,puppet,puppet,puppet,n,NA,FALSE,NA,NA,NA
 puppets,puppets,puppet,puppet,n,NA,FALSE,NA,NA,NA
 puppies,puppy,puppy,puppy,n,NA,TRUE,21,animals,nouns
 puppy,puppy,puppy,puppy,n,NA,TRUE,21,animals,nouns
+puppys,puppy,puppy,puppy,n,NA,TRUE,21,animals,nouns
 puppy+dog,puppy+dog,dog,dog,n,NA,TRUE,16,animals,nouns
+puppydog,puppy+dog,dog,dog,n,NA,TRUE,16,animals,nouns
 puppy's,puppy,puppy,puppy,n,NA,TRUE,21,animals,nouns
 purple,purple,purple,purple,adj,NA,FALSE,NA,NA,NA
 purple,purple,purple,purple,n,NA,FALSE,NA,NA,NA
@@ -8195,6 +8250,7 @@ secret,secret,secret,secret,n,NA,FALSE,NA,NA,NA
 see,see,see,see,v,NA,TRUE,23,action_words,verbs
 see,see,see,see,co,NA,TRUE,23,action_words,verbs
 see,see,see,see,part,NA,TRUE,23,action_words,verbs
+seein,see,see,see,part,NA,TRUE,23,action_words,verbs
 seed,seed,seed,seed,n,NA,FALSE,NA,NA,NA
 seed,seed,seed,seed,v,NA,FALSE,NA,NA,NA
 seeds,seeds,seed,seed,n,NA,FALSE,NA,NA,NA
@@ -8334,6 +8390,7 @@ shelly,shelly,shelly,shelly,n,prop,FALSE,NA,NA,NA
 shelves,shelves,shelf,shelf,n,NA,FALSE,NA,NA,NA
 shelves,shelves,shelve,shelve,v,NA,FALSE,NA,NA,NA
 she's,she's,she,she,pro,sub,TRUE,29,pronouns,function_words
+shes,she's,she,she,pro,sub,TRUE,29,pronouns,function_words
 shew,shew,shew,NA,NA,NA,FALSE,NA,NA,NA
 shh,shh,shh,shh,co,NA,TRUE,19,games_routines,other
 shimmy,shimmy,shimmy,shimmy,v,NA,FALSE,NA,NA,NA
@@ -8399,6 +8456,7 @@ should,should,should,should,mod,NA,FALSE,NA,NA,NA
 shoulder,shoulder,shoulder,shoulder,n,NA,TRUE,27,body_parts,nouns
 shoulders,shoulder,shoulder,shoulder,n,NA,TRUE,27,body_parts,nouns
 shouldn't,shouldn't,should,should,mod,NA,FALSE,NA,NA,NA
+shouldnt,shouldn't,should,should,mod,NA,FALSE,NA,NA,NA
 shout,shout,shout,shout,n,NA,FALSE,NA,NA,NA
 shout,shout,shout,shout,v,NA,FALSE,NA,NA,NA
 shout,shout,shout,shout,part,NA,FALSE,NA,NA,NA
@@ -8809,6 +8867,7 @@ snowing,snowing,snow,snow,part,NA,TRUE,25,outside,nouns
 snowing,snowing,snow,snow,adj,NA,TRUE,25,outside,nouns
 snowman,snowman,snowman,snow+man,n,NA,TRUE,27,outside,nouns
 snowman's,snowman,snowman,snow+man,n,NA,TRUE,27,outside,nouns
+snowmans,snowman,snowman,snow+man,n,NA,TRUE,27,outside,nouns
 snowmen,snowman,snowman,snow+man,n,NA,TRUE,27,outside,nouns
 snowplow,snowplow,snowplow,snowplow,n,NA,FALSE,NA,NA,NA
 snowshoeing,snowshoeing,snowshoe,NA,NA,NA,FALSE,NA,NA,NA
@@ -8859,6 +8918,7 @@ sold,sold,sell,sell,part,NA,FALSE,NA,NA,NA
 sold,sold,sold,NA,NA,NA,FALSE,NA,NA,NA
 some,some,some,some,qn,NA,TRUE,26,quantifiers,function_words
 some,some,some,some,pro,indef,TRUE,26,quantifiers,function_words
+somes,some,some,some,pro,indef,TRUE,26,quantifiers,function_words
 somebody,somebody,somebody,somebody,pro,indef,FALSE,NA,NA,NA
 somebody's,somebody's,somebody,somebody,pro,indef,FALSE,NA,NA,NA
 someone,someone,someone,someone,pro,indef,FALSE,NA,NA,NA
@@ -9828,6 +9888,7 @@ thank,thank,thank,thank,v,NA,FALSE,NA,NA,NA
 thank,thank,thank,thank,co,NA,FALSE,NA,NA,NA
 thank,thank,thank,thank,n,NA,FALSE,NA,NA,NA
 thank_you,thank_you,thank you,thankyou,co,NA,TRUE,18,games_routines,other
+thankyou,thank_you,thank you,thankyou,co,NA,TRUE,18,games_routines,other
 thanks,thanks,thanks,thanks,co,NA,FALSE,NA,NA,NA
 thanks,thanks,thank,thank,v,NA,FALSE,NA,NA,NA
 thanks,thanks,thank,thank,co,NA,FALSE,NA,NA,NA
@@ -9838,6 +9899,7 @@ that,that,that,that,det,dem,TRUE,24,pronouns,function_words
 that+away,that+away,that,that,det,NA,TRUE,24,pronouns,function_words
 that's,that,that,that,pro,dem,TRUE,24,pronouns,function_words
 that's,that,that,that,det,dem,TRUE,24,pronouns,function_words
+thats,that,that,that,pro,dem,TRUE,24,pronouns,function_words
 thayer,thayer,thayer,thayer,n,prop,FALSE,NA,NA,NA
 the,the,the,the,det,art,TRUE,27,quantifiers,function_words
 the,the,the,the,n,prop,TRUE,27,quantifiers,function_words
@@ -9867,6 +9929,7 @@ thermos,thermos,thermos,thermos,n,NA,FALSE,NA,NA,NA
 these,these,these,these,pro,dem,TRUE,29,pronouns,function_words
 these,these,these,these,det,dem,TRUE,29,pronouns,function_words
 they,they,they,they,pro,sub,TRUE,30,pronouns,function_words
+theys,they,they,they,pro,sub,TRUE,30,pronouns,function_words
 they'll,they,they,they,pro,NA,TRUE,30,pronouns,function_words
 they're,they,they,they,pro,NA,TRUE,30,pronouns,function_words
 thick,thick,thick,thick,adj,NA,FALSE,NA,NA,NA
@@ -9900,6 +9963,7 @@ thirteen,thirteen,thirteen,thirteen,det,num,FALSE,NA,NA,NA
 thirty,thirty,thirty,thirty,det,num,FALSE,NA,NA,NA
 this,this,this,this,pro,dem,TRUE,25,pronouns,function_words
 this,this,this,this,det,dem,TRUE,25,pronouns,function_words
+thisll,this,this,this,det,NA,TRUE,25,pronouns,function_words
 this'll,this,this,this,det,NA,TRUE,25,pronouns,function_words
 thistle,thistle,thistle,thistle,n,NA,FALSE,NA,NA,NA
 thomas,thomas,thomas,thomas,n,prop,FALSE,NA,NA,NA
@@ -10068,6 +10132,7 @@ toby,toby,toby,toby,wp,NA,FALSE,NA,NA,NA
 tock,tock,tock,tock,on,NA,FALSE,NA,NA,NA
 today,today,today,today,adv,tem,TRUE,29,time_words,other
 today's,today,today,today,adv,tem,TRUE,29,time_words,other
+todays,today,today,today,adv,tem,TRUE,29,time_words,other
 toddler,toddler,toddler,toddler,n,prop,FALSE,NA,NA,NA
 toding,toding,toding,toding,chi,NA,FALSE,NA,NA,NA
 toe,toe,toe,toe,n,NA,TRUE,21,body_parts,nouns
@@ -10101,6 +10166,7 @@ took,took,take,take,part,NA,TRUE,27,action_words,verbs
 took,took,take,take,n,gerund,TRUE,27,action_words,verbs
 tool,tool,tool,tool,n,NA,FALSE,NA,NA,NA
 tool,tool,tool,tool,adj,NA,FALSE,NA,NA,NA
+toolbox,tool+box,box,box,n,NA,TRUE,22,household,nouns
 tool+box,tool+box,box,box,n,NA,TRUE,22,household,nouns
 tools,tools,tool,tool,n,NA,FALSE,NA,NA,NA
 tools,tools,tool,tool,adj,NA,FALSE,NA,NA,NA
@@ -10151,6 +10217,7 @@ town,town,town,town,n,NA,FALSE,NA,NA,NA
 towns,towns,town,town,n,NA,FALSE,NA,NA,NA
 toy,toy,toy,toy,n,NA,FALSE,NA,NA,NA
 toy,toy,toy,toy,v,NA,FALSE,NA,NA,NA
+toybox,toy+box,box,box,n,NA,TRUE,22,household,nouns
 toy+box,toy+box,box,box,n,NA,TRUE,22,household,nouns
 toys,toys,toy,toy,n,NA,FALSE,NA,NA,NA
 toys,toys,toy,toy,v,NA,FALSE,NA,NA,NA
@@ -10738,6 +10805,7 @@ washing,washing,wash,wash,adj,NA,TRUE,23,action_words,verbs
 washington,washington,washington,washington,n,prop,FALSE,NA,NA,NA
 washy_washy_scene_wishy_washy_scene,washy_washy_scene_wishy_washy_scene,washy washy scene wishy washy scene,washy_washy_scene_wishy_washy_scene,singing,NA,FALSE,NA,NA,NA
 wasn't,wasn't,is,is,aux,NA,TRUE,28,helping_verbs,function_words
+wasnt,wasn't,is,is,aux,NA,TRUE,28,helping_verbs,function_words
 wasp,wasp,wasp,wasp,n,NA,FALSE,NA,NA,NA
 waste,waste,waste,waste,n,NA,FALSE,NA,NA,NA
 watch,watch,watch,watch,n,NA,FALSE,NA,NA,NA
@@ -10888,11 +10956,13 @@ what,what,what,what,pro,int,TRUE,24,question_words,function_words
 what,what,what,what,det,int,TRUE,24,question_words,function_words
 whatchamacallits,whatchamacallits,whatchamacallits,whatchamacallits,n,NA,FALSE,NA,NA,NA
 what'd,what'd,what,what,det,NA,TRUE,24,question_words,function_words
+whatd,what'd,what,what,det,NA,TRUE,24,question_words,function_words
 whatever,whatever,whatever,whatever,pro,int,FALSE,NA,NA,NA
 whatever,whatever,whatever,whatever,det,int,FALSE,NA,NA,NA
 what're,what're,what,what,det,NA,TRUE,24,question_words,function_words
 what's,what's,what,what,pro,int,TRUE,24,question_words,function_words
 what's,what's,what,what,det,int,TRUE,24,question_words,function_words
+whats,what's,what,what,det,int,TRUE,24,question_words,function_words
 wheat,wheat,wheat,wheat,n,NA,FALSE,NA,NA,NA
 wheatie,wheatie,wheatie,wheatie,n,prop,FALSE,NA,NA,NA
 whee,whee,whee,whee,co,NA,FALSE,NA,NA,NA
@@ -10934,12 +11004,14 @@ whites,white,white,white,adj,NA,TRUE,27,descriptive_words,adjectives
 whites,white,white,white,n,NA,TRUE,27,descriptive_words,adjectives
 whites,whites,whites,NA,NA,NA,FALSE,NA,NA,NA
 who,who,who,who,pro,int,TRUE,28,question_words,function_words
+whos,who,who,who,pro,int,TRUE,28,question_words,function_words
 whoa,whoa,whoa,whoa,co,NA,FALSE,NA,NA,NA
 whoever,whoever,whoever,whoever,pro,int,FALSE,NA,NA,NA
 whole,whole,whole,whole,adj,NA,FALSE,NA,NA,NA
 whole,whole,whole,whole,n,NA,FALSE,NA,NA,NA
 whole,whole,whole,whole,adv,NA,FALSE,NA,NA,NA
 who'll,who'll,who,who,pro,NA,TRUE,28,question_words,function_words
+wholl,who'll,who,who,pro,NA,TRUE,28,question_words,function_words
 whoop,whoop,whoop,whoop,co,NA,FALSE,NA,NA,NA
 whoop,whoop,whoop,whoop,n,NA,FALSE,NA,NA,NA
 whoops,whoops,whoop,whoop,co,NA,FALSE,NA,NA,NA
@@ -10947,12 +11019,15 @@ whoops,whoops,whoop,whoop,n,NA,FALSE,NA,NA,NA
 whoops,whoops,whoops,whoops,co,NA,FALSE,NA,NA,NA
 whoopsie,whoopsie,whoops,whoops,co,NA,FALSE,NA,NA,NA
 who's,who's,who,who,pro,int,TRUE,28,question_words,function_words
+whos,who's,who,who,pro,int,TRUE,28,question_words,function_words
 whose,whose,whose,whose,pro,rel,FALSE,NA,NA,NA
 whuh,whuh,whuh,whuh,on,NA,FALSE,NA,NA,NA
 why,why,why,why,adv,int,TRUE,28,question_words,function_words
 why'd,why'd,why,why,adv,int,TRUE,28,question_words,function_words
+whyd,why'd,why,why,adv,int,TRUE,28,question_words,function_words
 whydally,whydally,whydally,whydally,chi,NA,FALSE,NA,NA,NA
 why's,why's,why,why,adv,int,TRUE,28,question_words,function_words
+whys,why's,why,why,adv,int,TRUE,28,question_words,function_words
 wicked,wicked,wicked,wicked,adj,NA,FALSE,NA,NA,NA
 wide,wide,wide,wide,adj,NA,FALSE,NA,NA,NA
 wider,wider,wide,wide,adj,NA,FALSE,NA,NA,NA
@@ -11053,6 +11128,7 @@ woke,woke,wake,wake,n,NA,TRUE,26,action_words,verbs
 woke,woke,wake,wake,part,NA,TRUE,26,action_words,verbs
 wolf,wolf,wolf,wolf,n,NA,TRUE,28,animals,nouns
 wolf's,wolf,wolf,wolf,n,NA,TRUE,28,animals,nouns
+wolfs,wolf,wolf,wolf,n,NA,TRUE,28,animals,nouns
 wolk,wolk,wolk,wolk,wp,NA,FALSE,NA,NA,NA
 wolves,wolf,wolf,wolf,n,NA,TRUE,28,animals,nouns
 woman,woman,woman,woman,n,NA,FALSE,NA,NA,NA
@@ -11129,6 +11205,7 @@ worse,worse,bad,bad,adj,NA,TRUE,25,descriptive_words,adjectives
 worse,worse,worse,NA,NA,NA,FALSE,NA,NA,NA
 would,would,would,NA,NA,NA,TRUE,NA,helping_verbs,function_words
 wouldn't,wouldn't,will,will,mod,NA,TRUE,30,helping_verbs,function_words
+wouldnt,wouldn't,will,will,mod,NA,TRUE,30,helping_verbs,function_words
 wow,wow,wow,wow,co,NA,FALSE,NA,NA,NA
 wow,wow,wow,wow,on,NA,FALSE,NA,NA,NA
 wrap,wrap,wrap,wrap,v,NA,FALSE,NA,NA,NA
@@ -11205,7 +11282,9 @@ yawns,yawns,yawn,yawn,part,NA,FALSE,NA,NA,NA
 yay,yay,yay,yay,co,NA,FALSE,NA,NA,NA
 yaya,yaya,yaya,yaya,n,prop,FALSE,NA,NA,NA
 yaya's,yaya's,Yaya,NA,NA,NA,FALSE,NA,NA,NA
-yeah,yeah,yeah,yeah,co,NA,FALSE,NA,NA,NA
+yeah,yes,yes,yes,co,NA,TRUE,18,games_routines,other
+yeh,yes,yes,yes,co,NA,TRUE,18,games_routines,other
+yeeah,yes,yes,yes,co,NA,TRUE,18,games_routines,other
 year,year,year,year,n,NA,FALSE,NA,NA,NA
 years,years,year,year,n,NA,FALSE,NA,NA,NA
 yeddy,yeddy,yeddy,yeddy,chi,NA,FALSE,NA,NA,NA
@@ -11260,12 +11339,14 @@ yolky,yolky,yolky,NA,NA,NA,FALSE,NA,NA,NA
 york,york,york,york,n,prop,FALSE,NA,NA,NA
 you,you,you,you,pro,per,TRUE,24,pronouns,function_words
 you'll,you'll,you,you,pro,NA,TRUE,24,pronouns,function_words
+youll,you'll,you,you,pro,NA,TRUE,24,pronouns,function_words
 young,young,young,young,adj,NA,FALSE,NA,NA,NA
 your,your,your,your,det,poss,TRUE,29,pronouns,function_words
 you're,you're,you,you,pro,NA,TRUE,24,pronouns,function_words
 yours,yours,yours,yours,pro,poss,FALSE,NA,NA,NA
 yourself,yourself,yourself,yourself,pro,refl,TRUE,NA,pronouns,function_words
 you've,you've,you,you,pro,NA,TRUE,24,pronouns,function_words
+youve,you've,you,you,pro,NA,TRUE,24,pronouns,function_words
 yoyo,yoyo,yo yo,NA,NA,NA,FALSE,NA,NA,NA
 yuck,yuck,yuck,yuck,adj,NA,FALSE,NA,NA,NA
 yuck,yuck,yuck,yuck,co,NA,FALSE,NA,NA,NA

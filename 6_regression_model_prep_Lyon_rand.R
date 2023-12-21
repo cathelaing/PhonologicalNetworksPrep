@@ -2,14 +2,14 @@
 
 # need to start with full list of all words by age, global_network$gloss1
 
-global_distance_lyon <- feather::read_feather("Data/globaldistance_lyon.feather")
+global_distance_lyon <- feather::read_feather("Data/globaldistance_lyon_rand.feather")
 
-globalthresholds_lyon <- feather::read_feather("Data/globalthresholds_lyon.feather")
+globalthresholds_lyon <- feather::read_feather("Data/globalthresholds_lyon_rand.feather")
 
-globalthresholds_AOP_lyon <- feather::read_feather("Data/globalthresholds_AOP_lyon.feather") %>% 
+globalthresholds_AOP_lyon <- feather::read_feather("Data/globalthresholds_AOP_lyon_rand.feather") %>% 
   filter(threshold == 0.25)
 
-vocabsize_lyon <- feather::read_feather("Data/globalthresholds_AOP_lyon.feather") %>% 
+vocabsize_lyon <- feather::read_feather("Data/globalthresholds_AOP_lyon_rand.feather") %>% 
   filter(threshold == 0.99, data_type == "target") %>%  # use 0.99 as threshold to make sure all new words are incorporated.
   #filter(age == 30) %>%
   group_by(Speaker, AOP) %>%
@@ -103,7 +103,7 @@ connected_words_melted_actual <- melt(connected_words_red_actual) %>%
   filter(variable == "distance_norm") %>%
   mutate(age = as.numeric(age))
 
-feather::write_feather(connected_words_melted_actual, "Data/connected_words_melted_actual_lyon.feather")
+feather::write_feather(connected_words_melted_actual, "Data/connected_words_melted_actual_lyon_rand.feather")
 
 #connected_words_melted_actual <- feather::read_feather("Data/connected_words_melted_actual_lyon.feather") %>% mutate(age = as.numeric(age))
 
@@ -142,8 +142,7 @@ connected_degree_actual_melted <- melt(connected_degree_actual) %>%
   dplyr::select(-keep_meA, -keep_meB, -variable, -L2) %>%
   mutate(age = as.numeric(age))
 
-feather::write_feather(connected_degree_actual_melted, "Data/connected_degree_actual_melted_lyon.feather")
-#connected_degree_actual_melted <- feather::read_feather("Data/connected_degree_actual_melted_lyon.feather")
+feather::write_feather(connected_degree_actual_melted, "Data/connected_degree_actual_melted_lyon_rand.feather")
 
 actual_global_degree <- globalthresholds_lyon %>% 
   filter(data_type == "actual") %>%
@@ -207,7 +206,7 @@ mean_degree_full_actual <- bind_rows(all_mean_degree_data_actual) %>%
   dplyr::select(-remove) %>%
   mutate(data_type = "actual")
 
-feather::write_feather(mean_degree_full_actual, "Data/mean_degree_full_actual_lyon.feather")
+feather::write_feather(mean_degree_full_actual, "Data/mean_degree_full_actual_lyon_rand.feather")
 
 ## TARGET DATA
 
@@ -272,9 +271,8 @@ connected_words_melted_target <- melt(connected_words_red_target) %>%
   filter(variable == "distance_norm") %>%
   mutate(age = as.numeric(age))
 
-feather::write_feather(connected_words_melted_target, "Data/connected_words_melted_target_lyon.feather")
+feather::write_feather(connected_words_melted_target, "Data/connected_words_melted_target_lyon_rand.feather")
 
-#connected_words_melted_target <- feather::read_feather("Data/connected_words_melted_target_lyon.feather") %>% mutate(age = as.numeric(age))
 
 # Mean degree of each word in terms of all the words that it connects to
 
@@ -311,8 +309,7 @@ connected_degree_target_melted <- melt(connected_degree_target) %>%
   dplyr::select(-keep_meA, -keep_meB, -variable, -L2) %>%
   mutate(age = as.numeric(age))
 
-feather::write_feather(connected_degree_target_melted, "Data/connected_degree_target_melted_lyon.feather")
-#connected_degree_target_melted <- feather::read_feather("Data/connected_degree_target_melted_lyon.feather")
+feather::write_feather(connected_degree_target_melted, "Data/connected_degree_target_melted_lyon_rand.feather")
 
 
 target_global_degree <- globalthresholds_lyon %>% 
@@ -377,7 +374,7 @@ mean_degree_full_target <- bind_rows(all_mean_degree_data_target) %>%
   dplyr::select(-remove) %>%
   mutate(data_type = "target")
 
-feather::write_feather(mean_degree_full_target, "Data/mean_degree_full_target_lyon.feather")
+feather::write_feather(mean_degree_full_target, "Data/mean_degree_full_target_lyon_rand.feather")
 
 #mean_degree_full_target <- feather::read_feather("Data/mean_degree_full_target_lyon.feather")
 #mean_degree_full_actual <- feather::read_feather("Data/mean_degree_full_actual_lyon.feather")
@@ -421,12 +418,12 @@ regression_data <- mean_degree_full %>% left_join(global_network_split) %>%
 
 #regression_data %>% filter(is.na(PAQ_target))
 
-session_data <- read_csv("Data/comparison_data_lyon.csv") %>%    # need to add ordinal session numbers for GAMMs
-  group_by(Speaker, age) %>%
+session_data <- read_csv("Data/first_instance_Lyon_rand.csv") %>%    # need to add ordinal session numbers for GAMMs
+  group_by(Speaker, AOP) %>%
   tally() %>%
   filter(n > 1) %>%
-  dplyr::select(Speaker, age) %>%
-  group_by(Speaker, age) %>% 
+  dplyr::select(Speaker, AOP) %>%
+  group_by(Speaker, AOP) %>% 
   tally() %>%
   mutate(session_ordinal = row_number()) %>%
   dplyr::select(-n)
@@ -473,5 +470,5 @@ regression_data <- regression_data %>%
 
 regression_data$category = relevel(regression_data$category, ref="object_word")
 
-feather::write_feather(regression_data, "Data/regression_data_lyon.feather")
+feather::write_feather(regression_data, "Data/regression_data_lyon_rand.feather")
 

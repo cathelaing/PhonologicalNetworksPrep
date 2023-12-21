@@ -6,35 +6,35 @@ source("0_prelims.R")
 
 # global thresholds
 
-globalthresholds_AOP_lyon <- feather::read_feather("Data/globalthresholds_AOP_lyon.feather") %>% 
+globalthresholds_AOP_lyon <- feather::read_feather("Data/globalthresholds_AOP_lyon_rand.feather") %>% 
   filter(threshold == 0.25)
-globalthresholds_AOP_providence <- feather::read_feather("Data/globalthresholds_AOP_providence.feather") %>% 
+globalthresholds_AOP_providence <- feather::read_feather("Data/globalthresholds_AOP_providence_rand.feather") %>% 
   filter(threshold == 0.25) %>% 
   mutate(corpus = "English")  ## added to prep data, re-run and then remove in final script (don't remove threshold filter)
 globalthresholds_AOP <- rbind(globalthresholds_AOP_lyon, globalthresholds_AOP_providence)
 
-feather::write_feather(globalthresholds_AOP, "Data/repofiles/globalthresholds_AOP.feather")
+feather::write_feather(globalthresholds_AOP, "Data/repofiles/globalthresholds_AOP_rand.feather")
 
-full_lyon <- feather::read_feather("Data/globalthresholds_AOP_lyon.feather") %>% 
+full_lyon <- feather::read_feather("Data/globalthresholds_AOP_lyon_rand.feather") %>% 
   filter(threshold == .99)
-full_providence <- feather::read_feather("Data/globalthresholds_AOP_providence.feather") %>% 
+full_providence <- feather::read_feather("Data/globalthresholds_AOP_providence_rand.feather") %>% 
   filter(threshold == .99)
 full_thresholds <- rbind(full_lyon, full_providence)
 
-feather::write_feather(full_thresholds, "Data/repofiles/full_thresholds.feather")
+feather::write_feather(full_thresholds, "Data/repofiles/full_thresholds_rand.feather")
 
 # correlation data for establishing connectivity
 
-globalthresholds_corr_lyon <- feather::read_feather("Data/globalthresholds_corr_lyon.feather") %>% 
+globalthresholds_corr_lyon <- feather::read_feather("Data/globalthresholds_corr_lyon_rand.feather") %>% 
   mutate(corpus = "French")
-globalthresholds_corr_providence <- feather::read_feather("Data/globalthresholds_corr_providence.feather") %>% 
+globalthresholds_corr_providence <- feather::read_feather("Data/globalthresholds_corr_providence_rand.feather") %>% 
   mutate(corpus = "English")
 globalthresholds_corr <- rbind(globalthresholds_corr_lyon, globalthresholds_corr_providence) %>%
-  write_csv("Data/repofiles/globalthresholds_corr.csv")
+  write_csv("Data/repofiles/globalthresholds_corr_rand.csv")
 
-all_distances_P <- feather::read_feather("Data/globaldistance_Providence.feather") %>% 
+all_distances_P <- feather::read_feather("Data/globaldistance_Providence_rand.feather") %>% 
   mutate(corpus = "English")
-all_distances_L <- feather::read_feather("Data/globaldistance_Lyon.feather") %>% 
+all_distances_L <- feather::read_feather("Data/globaldistance_Lyon_rand.feather") %>% 
   mutate(corpus = "French")
 
 ## too big to save on repo so create a small DF instead
@@ -57,7 +57,7 @@ all_distances <- rbind(all_distances_L, all_distances_P) %>%
             med_dist = median(distance_norm)) %>%
   mutate(Q1 = mean_dist-sd_dist) %>%
   rbind(all_distances_ungrouped) %>%
-  write_csv("Data/repofiles/all_distances.csv")
+  write_csv("Data/repofiles/all_distances_rand.csv")
 
 ## data is too big to include in main repo so generate it here and save as an image
 

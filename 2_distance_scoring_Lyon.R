@@ -1,4 +1,4 @@
-# Updated 10th March 2023
+# Updated 20th November 2023
 # This data takes the sample generated in data_cleaning.R and creates a series of phonetic distance values for each word in the dataframe
 
 #############################
@@ -7,10 +7,27 @@ FULLsample_Lyon <- feather::read_feather("Data/FULLsample_Lyon.feather") %>%
   mutate(IPAtarget = ifelse(Gloss == "appareil photo", "apaʁɛjfoto", IPAtarget),
          IPAtarget= ifelse(Gloss == "bébé", "bebe", IPAtarget),
          IPAtarget = ifelse(Gloss == "hélicoptère", "elikɔptɛʁ", IPAtarget),
+         IPAtarget = ifelse(Gloss == "froid", "fRwa", IPAtarget), # some weird issue with the /ʁw/ cluster, fix below
+         IPAtarget = ifelse(IPAtarget == "gard", "ʁəgaʁd", IPAtarget),
+         IPAtarget = ifelse(IPAtarget == "ɡaʁd", "ʁəgaʁd", IPAtarget),
          Gloss = ifelse(IPAtarget == "ʒaʁiv", "arriver", Gloss),
          # IPAtarget = ifelse(Gloss == "regarder", "ʁəgaʁd", IPAtarget),
          IPAtarget = ifelse(Gloss == "argent", "laʁʒɑ", IPAtarget),
-         IPAtarget = ifelse(Gloss == "au revoir", "avwaʁ", IPAtarget))
+         IPAtarget = ifelse(Gloss == "au revoir", "avwaʁ", IPAtarget),
+         IPAactual= ifelse(IPAactual == "kʀwa", "kRwa", IPAactual),     # the following won't render
+         IPAactual = ifelse(IPAactual == "fʀwa", "fRwa", IPAactual),    # fix below
+         IPAactual = ifelse(IPAactual == "kʀɥijɛ", "kRɥijɛ", IPAactual),
+         IPAactual = ifelse(IPAactual == "dʒwez", "dZwez", IPAactual),
+         IPAactual = ifelse(IPAactual == "bʀwa", "bRwa", IPAactual),
+         IPAactual = ifelse(IPAactual == "tʃje", "tSje", IPAactual),
+         IPAactual = ifelse(IPAactual == "lotʀl", "lotRl", IPAactual),
+         IPAactual = ifelse(IPAactual == "øfʀwa", "øfRwa", IPAactual),
+         IPAactual = ifelse(IPAactual == "brrr", "brr", IPAactual)) %>% # recoding this as it's the only word with 4 Cs at onset
+  filter(IPAactual != "mmmmama") %>%
+  mutate( across(
+    .cols = everything(),
+    ~str_replace( ., "ɥ", "H" )   # this is messy but this segment won't render either and it crops up a lot - fix below
+  ) )
 
 
 FULLsample_Lyon$Session <- gsub("^[^.]*.", "", FULLsample_Lyon$Session) # create variable to show session number in only numeric form
@@ -65,11 +82,11 @@ sample_IPAtarget_Lyon <- sample_IPAtarget_Lyon %>% mutate(nsyl_actual = stringr:
 # Now split data by syllable structures since difference structures need treating differently when running a segment-by-segment comparison
 # Create a new dataframe to gather this info, to be joined to sample_IPAtarget_Lyonlater
 
+sample_IPAtarget_Lyon$TargetCV <- as.factor(sample_IPAtarget_Lyon$TargetCV)
 target_structures_sample <- as.data.frame(levels(sample_IPAtarget_Lyon$TargetCV)) # list all structures in the data
 
 target_structures_sample <- target_structures_sample %>%
   rename("TargetCV" = `levels(sample_IPAtarget_Lyon$TargetCV)`)
-
 
 # Create a new column that simplifies each structure by its 'core' syllabic properties
 
@@ -91,6 +108,7 @@ target_structures_sample <- target_structures_sample %>%
 
 # Do the same for actual syllabic structure. This will allow for comparison of targetlikeness later on
 
+sample_IPAtarget_Lyon$ActualCV <- as.factor(sample_IPAtarget_Lyon$ActualCV)
 actual_structures_sample <- as.data.frame(levels(sample_IPAtarget_Lyon$ActualCV)) # list all structures in the data
 
 actual_structures_sample <- actual_structures_sample %>%
@@ -151,8 +169,6 @@ vremoved <- sample_IPAtarget_Lyon %>% dplyr::select(Gloss, Vremoved_target) %>%f
 split_clust_base <- split_clust_base %>% left_join(vremoved)
 
 split_clust_base$Vremoved_target
-
-
 
 split_clust <- data.frame(Gloss, Vremoved_target_new)
 
@@ -243,8 +259,11 @@ target_list_complex <- do.call(rbind.data.frame, sample_IPAtarget_loop_complex) 
 # base <- data.frame(names(target_list_base))
 # complex <- data.frame(names(target_list_complex))
 
-target_sample <- rbind(target_list_base, target_list_complex)
-
+target_sample <- rbind(target_list_base, target_list_complex) %>%
+  mutate(TS1C2 = fct_recode(TS1C2,
+                            "ʁ" = "R"),
+         IPAtarget = fct_recode(IPAtarget,
+                                "fʁwa" = "fRwa"))
 
 # Now add segmental info re infants' actual productions to each DF
 
@@ -254,40 +273,106 @@ Cinitial <- sample_IPAtarget_Lyon%>% filter(stringr::str_detect(ActualCV, "^C")|
 nsyl_actual_list <- sample_IPAtarget_Lyon %>%
   split(., f = .$nsyl_actual)
 
-# Remember to merge these subsets together once DF is organized
-
 sample_IPAactual_loop <- lapply(nsyl_actual_list, FUN = function(element) {
   split_syl_Cinit <- element %>% filter(ActualCV %in% Cinitial$ActualCV) %>%
     separate(Vremoved_actual, c("S1C1_actual", "S2C1_actual", "S3C1_actual", "S4C1_actual", "S5C1_actual", "S5CF_actual"), "V")
-  split_clust_Cinit <- split_syl_Cinit %>% separate(S1C1_actual, c("AS1C1", "AS1C2", "AS1C3", "AS1C4"), sep = "(?<=.)") %>%
+  split_sylCinit2 <- split_syl_Cinit %>%
+        mutate(SFC1_actual = ifelse(nsyl_actual == 1 & !is.na(S2C1_actual), S2C1_actual, 0),     # create a category that is just codas
+               S2C1_actual = ifelse(nsyl_actual == 1 & !is.na(SFC1_actual), 0, S2C1_actual),     # codas will always be aligned with codas
+               SFC1_actual = ifelse(nsyl_actual == 2 & !is.na(S3C1_actual), S3C1_actual, SFC1_actual),
+               S3C1_actual = ifelse(nsyl_actual == 2 & !is.na(SFC1_actual), 0, S3C1_actual),
+               SFC1_actual = ifelse(nsyl_actual == 3 & !is.na(S4C1_actual), S4C1_actual, SFC1_actual),
+               S4C1_actual = ifelse(nsyl_actual == 3 & !is.na(SFC1_actual), 0, S4C1_actual),
+               SFC1_actual = ifelse(nsyl_actual == 4 & !is.na(S5C1_actual), S5C1_actual, SFC1_actual),
+               S5C1_actual = ifelse(nsyl_actual == 4 & !is.na(SFC1_actual), 0, S5C1_actual))
+  split_clust_Cinit_final <- split_sylCinit2 %>% separate(S1C1_actual, c("AS1C1", "AS1C2", "AS1C3", "AS1C4"), sep = "(?<=.)") %>%
     separate(S2C1_actual, c("AS2C1", "AS2C2", "AS2C3", "AS2C4"), sep = "(?<=.)") %>%
     separate(S3C1_actual, c("AS3C1", "AS3C2", "AS3C3", "AS3C4"), sep = "(?<=.)") %>%
     separate(S4C1_actual, c("AS4C1", "AS4C2", "AS4C3", "AS4C4"), sep = "(?<=.)") %>%
     separate(S5C1_actual, c("AS5C1", "AS5C2", "AS5C3", "AS5C4"), sep = "(?<=.)") %>%
-    separate(S5CF_actual, c("ASFC1", "ASFC2", "ASFC3", "ASFC4"), sep = "(?<=.)")
+    separate(SFC1_actual, c("ASFC1", "ASFC2", "ASFC3", "ASFC4"), sep = "(?<=.)")
   split_syl_Vinit <- element %>% filter(ActualCV %in% Vinitial$ActualCV) %>%
     separate(Vremoved_actual, c("S1C1_actual", "S2C1_actual", "S3C1_actual", "S4C1_actual", "S5C1_actual", "S5CF_actual"), "V")
-  split_clust_Vinit <- split_syl_Vinit %>% separate(S1C1_actual, c("AS1C1", "AS1C2", "AS1C3", "AS1C4"), sep = "(?<=.)") %>%
+  split_sylVinit2 <- split_syl_Vinit %>%
+    mutate(SFC1_actual = ifelse(nsyl_actual == 1 & !is.na(S2C1_actual), S2C1_actual, 0),     # create a category that is just codas
+           S2C1_actual = ifelse(nsyl_actual == 1 & !is.na(SFC1_actual), 0, S2C1_actual),     # codas will always be aligned with codas
+           SFC1_actual = ifelse(nsyl_actual == 2 & !is.na(S3C1_actual), S3C1_actual, SFC1_actual),
+           S3C1_actual = ifelse(nsyl_actual == 2 & !is.na(SFC1_actual), 0, S3C1_actual),
+           SFC1_actual = ifelse(nsyl_actual == 3 & !is.na(S4C1_actual), S4C1_actual, SFC1_actual),
+           S4C1_actual = ifelse(nsyl_actual == 3 & !is.na(SFC1_actual), 0, S4C1_actual),
+           SFC1_actual = ifelse(nsyl_actual == 4 & !is.na(S5C1_actual), S5C1_actual, SFC1_actual),
+           S5C1_actual = ifelse(nsyl_actual == 4 & !is.na(SFC1_actual), 0, S5C1_actual))
+  split_clust_Vinit_final <- split_sylVinit2 %>% separate(S1C1_actual, c("AS1C1", "AS1C2", "AS1C3", "AS1C4"), sep = "(?<=.)") %>%
     separate(S2C1_actual, c("AS2C1", "AS2C2", "AS2C3", "AS2C4"), sep = "(?<=.)") %>%
     separate(S3C1_actual, c("AS3C1", "AS3C2", "AS3C3", "AS3C4"), sep = "(?<=.)") %>%
     separate(S4C1_actual, c("AS4C1", "AS4C2", "AS4C3", "AS4C4"), sep = "(?<=.)") %>%
     separate(S5C1_actual, c("AS5C1", "AS5C2", "AS5C3", "AS5C4"), sep = "(?<=.)") %>%
-    separate(S5CF_actual, c("ASFC1", "ASFC2", "ASFC3", "ASFC4"), sep = "(?<=.)")
-  sample_IPA_CVinit <- rbind(split_clust_Vinit, split_clust_Cinit)
+    separate(SFC1_actual, c("ASFC1", "ASFC2", "ASFC3", "ASFC4"), sep = "(?<=.)")
+  sample_IPA_CVinit <- rbind(split_clust_Vinit_final, split_clust_Cinit_final)
 })
 
 actual_sample <- do.call(rbind.data.frame, sample_IPAactual_loop) %>% mutate(AS1CF1 = "",
-                                                                             AS1CF2 = "",
-                                                                             AS1CF3 = "",
-                                                                             AS2CF1 = "",
-                                                                             AS2CF2 = "",
-                                                                             AS2CF3 = "",
-                                                                             AS3CF1 = "",
-                                                                             AS3CF2 = "",
-                                                                             AS3CF3 = "")
+                   AS1CF2 = "",
+                   AS1CF3 = "",
+                   AS2CF1 = "",
+                   AS2CF2 = "",
+                   AS2CF3 = "",
+                   AS3CF1 = "",
+                   AS3CF2 = "",
+                   AS3CF3 = "",
+                   nsyl_actual = as.numeric(nsyl_actual))
 
-actual_target_IPA_FULL_Lyon <- target_sample %>% left_join(actual_sample)
+actual_target_IPA_FULL_Lyon <- target_sample %>% left_join(actual_sample)  %>%
+  mutate( across(
+    .cols = TS1C1:AS3CF3,
+    ~str_replace( ., "H", "ɥ" )   # fixing segments that were replaced above
+  ) ,
+  across(
+    .cols = IPAtarget:IPAactual,
+    ~str_replace( ., "H", "ɥ" )
+  ) ,
+  across(
+    .cols = TS1C1:AS3CF3,
+    ~str_replace( ., "R", "ʀ" )   # fixing segments that were replaced above
+  ) ,
+  across(
+    .cols = IPAtarget:IPAactual,
+    ~str_replace( ., "R", "ʀ" )
+  ) ,
+  across(
+    .cols = TS1C1:AS3CF3,
+    ~str_replace( ., "S", "ʃ" )   # fixing segments that were replaced above
+  ) ,
+  across(
+    .cols = IPAtarget:IPAactual,
+    ~str_replace( ., "S", "ʃ" )
+  ) ,
+  across(
+    .cols = TS1C1:AS3CF3,
+    ~str_replace( ., "Z", "ʒ" )   # fixing segments that were replaced above
+  ) ,
+  across(
+    .cols = IPAtarget:IPAactual,
+    ~str_replace( ., "Z", "ʒ" )
+  )) %>%
+  mutate(across(everything(), ~replace(., . %in% c(" ", "", 0), NA)))
 
+# NA.checks <- actual_target_IPA_FULL_Lyon %>%
+#   summarise_all(~all(is.na(.))) %>%
+#   dplyr::select_if(~ any(. == TRUE))
+# 
+# colnames(NA.checks)
+
+# "TS1C4", "AS1C4"     
+# "TS2C3"       "TS2C4"       
+# "TS3C3"       "TS3C4", "AS3C4"       
+# "TS4C3"       "TS4C4", "AS4C4"      
+# "TS5C2" 
+#                      "AS5C2"       "AS5C3"       "AS5C4"       "S5CF_actual" "AS1CF1"
+# [1]      
+# [9] "TS5C3"       "TS5C4"       "TSFC4"       "TS1CF3"      "TS2CF2"      "TS2CF3"      "TS3CF2"      "TS3CF3"     
+# [17]      
+# [25] "AS1CF2"      "AS1CF3"      "AS2CF1"      "AS2CF2"      "AS2CF3"      "AS3CF1"      "AS3CF2"      "AS3CF3"  
 
 #########
 
@@ -316,14 +401,15 @@ feather::write_feather(actual_target_IPA_FULL_Lyon, "Data/actual_target_IPA_FULL
 
 # Extra French segments:
 
-# ʀ +1 Sonorant, +1 Consonantal, +1 Voice, -1 Nasal,  -1 Degree, -1 Labial, -1 Palatal, -1 Pharyngeal, -1 Round, 0 Tongue, -1 Radical,
-# ɲ +1 Sonorant, +1 Consonantal, +1 Voice, +1 Nasal,  +1 Degree, -1 Labial, +1 Palatal, -1 Pharyngeal, -1 Round, +1 Tongue, 0 Radical,
-# r  +1 Sonorant, +1 Consonantal, +1 Voice, -1 Nasal,  -1 Degree, -1 Labial, -1 Palatal, -1 Pharyngeal, 0 Round, 0 Tongue, -1 Radical,
+# ʀ -0.5 Sonorant, +1 Consonantal, +1 Voice, -1 Nasal,  -1 Degree, -1 Labial, -1 Palatal, -1 Pharyngeal, -1 Round, 0 Tongue, -1 Radical,
+# ɲ +0.5 Sonorant, +1 Consonantal, +1 Voice, +1 Nasal,  +1 Degree, -1 Labial, +1 Palatal, -1 Pharyngeal, -1 Round, +1 Tongue, 0 Radical,
+# r  +0.5 Sonorant, +1 Consonantal, +1 Voice, -1 Nasal,  -1 Degree, -1 Labial, -1 Palatal, -1 Pharyngeal, 0 Round, 0 Tongue, -1 Radical,
 # ɣ -0.5 Sonorant, +1 Consonantal, +1 Voice, 0 Nasal,  0 Degree, -1 Labial, -1 Palatal, -1 Pharyngeal, 0 Round, 0 Tongue, -1 Radical,
-# ɱ +1 Sonorant, +1 Consonantal, +1 Voice, +1 Nasal,  1 Degree, +1 Labial, -1 Palatal, -1 Pharyngeal, -1 Round, 0 Tongue, 0 Radical,
+# ɱ +0.5 Sonorant, +1 Consonantal, +1 Voice, +1 Nasal,  1 Degree, +1 Labial, -1 Palatal, -1 Pharyngeal, -1 Round, 0 Tongue, 0 Radical,
 # x -0.5 Sonorant, +1 Consonantal, -1 Voice, 0 Nasal,  0 Degree, -1 Labial, -1 Palatal, -1 Pharyngeal, 0 Round, 0 Tongue -1 Radical,
 # ʁ -0.5 Sonorant, +1 Consonantal, -1 Voice, 0 Nasal,  0 Degree, -1 Labial, -1 Palatal, +1 Pharyngeal, 0 Round, 0 Tongue -1 Radical,
 # ç -0.5 Sonorant, +1 Consonantal, -1 Voice, 0 Nasal,  0 Degree, -1 Labial, +1 Palatal, -1 Pharyngeal, 0 Round, 0 Tongue -1 Radical,
+# ɥ +0.8 Sonorant, +1 Consonantal, +1 Voice, 0 Nasal,  0 Degree, +1 Labial, +1 Palatal, -1 Pharyngeal, 0 Round, 0 Tongue -1 Radical
 
 # All derived from Phoible
 
@@ -355,20 +441,23 @@ distinctive.feature.matrix <- tribble(~Symbol, ~Sonorant, ~Consonantal, ~Voice, 
                                       "j", 0.8, 0, 1, 0, 0, -1, 0, -1, -1, 0, 1,
                                       "ɾ", 0.5, 1, 1, 0, -1, -1, -1, 1, -1, 1, 0,
                                       "ʙ", -0.5, 1, 0, -1, 1, 1, 0, -1, 1, 0, 0,
-                                      "ʀ", 1, 1, 1, -1, -1, -1, -1, -1, -1, 0, -1,
-                                      "ɲ", 1, 1, 1, 1, 1, -1, 1, -1, -1, 1, 0,
-                                      "r",  1, 1, 1, -1, -1, -1, -1, -1, 0, 0, -1,
+                                      "ʀ", -0.5, 1, 1, -1, -1, -1, -1, -1, -1, 0, -1,
+                                      "ɲ", 0, 1, 1, 1, 1, -1, 1, -1, -1, 1, 0,
+                                      "r",  0.5, 1, 1, -1, -1, -1, -1, -1, 0, 0, -1,
                                       "ɣ", -0.5 , 1, 1, 0,  0, -1, -1, -1, 0, 0, -1,
-                                      "ɱ", 1, 1, 1, 1,  1, 1, -1, -1, -1, 0, 0,
+                                      "ɱ", 0, 1, 1, 1,  1, 1, -1, -1, -1, 0, 0,
                                       "x", -0.5, 1, -1, 0,  0, -1, -1, -1, 0, 0,  -1,
                                       "ʁ", -0.5, 1, -1, 0,  0, -1, -1, 1, 0, 0,  -1,
                                       "ç", -0.5, 1, -1, 0,  0, -1, 1, -1, 0, 0,  -1,
-                                      "ɲ", 1, 1, 1, 1, 1, -1, 1, -1, -1, +1, 0,
-                                      "ʔ", -1, 0, 0, -1, 0, -1, -1, 1, -1, 1, 0)    # added manually as not defined in original. Drew from Cambridge Handbook of Phonology and
-# similarities with /h/
-
-# check that /g/ of regarder has been coded properly
-
+                                      "ɲ", 0, 1, 1, 1, 1, -1, 1, -1, -1, +1, 0,
+                                      # added manually as not defined in original. 
+                                      #Drew from Cambridge Handbook of Phonology and
+                                      # similarities with /h/
+                                      "ʔ", -1, 0, 0, -1, 0, -1, -1, 1, -1, 1, 0,
+                                      # added manually as not defined in original. 
+                                      #Drew from Phoible and
+                                      # similarities with /j/
+                                      "ɥ", 0.8, 0, 1, 0, 0, 1, 0, -1, -1, 0, 1)    
 
 colnames_target <- actual_target_IPA_FULL_Lyon %>% dplyr::select(ID, starts_with("TS"))
 colnames(colnames_target) <- sub("T","",colnames(colnames_target))
@@ -484,3 +573,19 @@ distance_full <- distance_full_df %>% dplyr::select(unique, -ends_with("data_typ
          "data_type" = "data") %>%
   left_join(comparison_data) %>%
   feather::write_feather("Data/distance_full_Lyon.feather")
+
+lyon_dist <- feather::read_feather("Data/distance_full_Lyon.feather")
+
+dist_checks_L <- lyon_dist %>% dplyr::select(-contains(c("Sonorant",
+                                                         "Consonantal",
+                                                         "Voice",
+                                                         "Nasal",
+                                                         "Degree",
+                                                         "Labial",
+                                                         "Palatal",
+                                                         "Pharyngeal",
+                                                         "Round",
+                                                         "Tongue",
+                                                         "Radical"))) %>%
+  dplyr::select(Gloss, IPAtarget, IPAactual, Speaker, age, data_type, 
+                2,4:6, 27:29, 7:10, 30:32, 11:14, 33:35, 15:18, 19:26)

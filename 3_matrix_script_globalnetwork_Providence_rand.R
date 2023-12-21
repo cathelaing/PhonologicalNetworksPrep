@@ -2,18 +2,26 @@
 
 #source("0_prelims.R")
 
+set.seed(24)
+
 distance_full <- feather::read_feather("Data/distance_full_Providence.feather")
 
-first_instance_base <- distance_full %>%
-  dplyr::select(Speaker, Session, Gloss, age) %>%
-  group_by(Speaker, Gloss) %>% 
+first_instance_Actual <- distance_full %>%     # figure out which month each word was first produced
+  group_by(Speaker, Gloss)  %>%
+  filter(data_type == "Actual") %>% 
   filter(age == min(age)) %>% 
-  slice(1) %>% 
+  summarise_if(is.numeric, mean) %>% # for instances where a word is produced more than once, take mean value of each distinctive feature
+  #slice(1) %>% # takes the first occurrence if there is a tie
   ungroup() %>%
-  mutate(subj_session = paste(Speaker, age, sep="_")) %>%
+  group_by(Speaker) %>%
+  mutate(age = sample(age)) %>%
+  mutate(subj_session = paste(Speaker, age, sep="_"))
+
+first_instance_base <- first_instance_Actual %>%
+  dplyr::select(Speaker, subj_session, Gloss, age) %>%
   rename("AOP" = "age",
          "gloss1" = "Gloss") %>%
-  write_csv("Data/first_instance_Providence.csv")
+  write_csv("Data/first_instance_Providence_rand.csv")
 
 # Actual data
 
@@ -26,7 +34,10 @@ first_instance_Actual <- distance_full %>%     # figure out which month each wor
   summarise_if(is.numeric, mean) %>% # for instances where a word is produced more than once, take mean value of each distinctive feature
   #slice(1) %>% # takes the first occurrence if there is a tie
   ungroup() %>%
-  mutate(subj_session = paste(Speaker, age, sep="_"))
+  group_by(Speaker) %>%
+  mutate(age = sample(age)) %>%
+  mutate(subj_session = paste(Speaker, age, sep="_")) %>%
+  write_csv("Data/first_instance_Providence_rand.csv")
 
 ###### CREATE A SET OF LISTS THAT ARE GROUPED BY SPEAKER
 
@@ -835,6 +846,8 @@ first_instance_Target <- distance_full %>%     # figure out which month each wor
   summarise_if(is.numeric, mean) %>%
   #slice(1) %>% # takes the first occurrence if there is a tie
   ungroup() %>%
+  group_by(Speaker) %>%
+  mutate(age = sample(age)) %>%
   mutate(subj_session = paste(Speaker, age, sep="_"))
 
 ###### CREATE A SET OF LISTS THAT ARE GROUPED BY SPEAKER
@@ -1630,7 +1643,7 @@ globaldistance_target <- melt(globaldistance_target_list) %>%
   dplyr::select(-L1, -L2)
 
 globaldistance_Providence <- rbind(globaldistance_target, globaldistance_actual)
-feather::write_feather(globaldistance_Providence, "Data/globaldistance_Providence.feather")
+feather::write_feather(globaldistance_Providence, "Data/globaldistance_Providence_rand.feather")
 
 
 

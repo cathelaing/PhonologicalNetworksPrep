@@ -143,20 +143,13 @@ thresholds_output_actual <- purrr::map_df(thresholds_output, ~as.data.frame(.x),
 
 # Mean degree of each word in terms of all the words that it connects to
 
-# gloss_summ <- globalthresholds_AOP_providence %>%
-#   filter(data_type == "actual") %>%
-#   mutate(Speaker_gloss_threshold = paste(Speaker, gloss1, threshold, sep="_"))
-# 
-# gloss_list <- gloss_summ %>%        # create a list of all words connected to the speaker who produces them
-#   split(., f = .$Speaker_gloss_threshold)
-
-
 gloss_summ <- globalthresholds_AOP_providence %>%
   filter(data_type == "actual") %>%
-  mutate(Speaker_gloss = paste(Speaker, gloss1, sep="_"))
+  mutate(Speaker_gloss_threshold = paste(Speaker, gloss1, threshold, sep="_")) %>%
+  mutate(threshold = as.numeric(threshold))
 
 gloss_list <- gloss_summ %>%        # create a list of all words connected to the speaker who produces them
-  split(., f = .$Speaker_gloss)
+  split(., f = .$Speaker_gloss_threshold)
 
 connected_degree_list <- vector("list", length(gloss_list))
 
@@ -164,60 +157,165 @@ connected_degree_list <- vector("list", length(gloss_list))
 # # 867628 word pairs won't be counted at max threshold value - can discard these
 # 
 global_distance_providence_subset <- global_distance_providence %>% filter(distance_norm <=.5)
-
-start <- Sys.time()
-connected_degree_actual <-lapply(gloss_list[1], FUN = function(element) {
-  AOP_data <- AOP_summ %>% filter(Speaker == element$Speaker & gloss1 == element$gloss1)  # select each word produced by each speaker
-  first_prod <- AOP_data$AOP                                                              # select the age at which it was first produced
-  connections <- global_distance_providence_subset %>%                                          # select every word pair that contains the selected word
-    filter(Speaker == element$Speaker  & data_type == "actual" &
-             (gloss1  == element$gloss1 | gloss2 == element$gloss1) &
+element <- gloss_list[[530]]
+# start <- Sys.time()
+connected_degree_actual <-lapply(gloss_list[75], FUN = function(element) {
+  AOP_data <- AOP_summ %>% filter(Speaker %in% element$Speaker& gloss1 %in% element$gloss1)  # select each word produced by each speaker
+  first_prod <- subset(AOP_data, threshold == element$threshold)$AOP                                                              # select the age at which it was first produced
+  connections <- global_distance_providence %>%                                          # select every word pair that contains the selected word
+    filter(Speaker %in% element$Speaker, data_type %in% "actual",
+             (gloss1 %in% element$gloss1 | gloss2 %in% element$gloss1),
              distance_norm <= element$threshold) %>%
     mutate(keep_meA = ifelse(gloss1 != element$gloss1 & (gloss1 %in% AOP_summ$gloss1[which(AOP_summ$AOP < first_prod)]),"y", "n")) %>%
     mutate(keep_meB = ifelse(gloss2 != element$gloss1 & (gloss2 %in% AOP_summ$gloss1[which(AOP_summ$AOP < first_prod)]),"y", "n")) %>%
     filter(keep_meA == "y" | keep_meB == "y") %>%
     distinct(word_pair, Speaker, distance, .keep_all = T) %>%
-    mutate(known_word = ifelse(gloss1 == element$gloss1, gloss2, gloss1))
+    mutate(known_word = ifelse(gloss1 %in% element$gloss1, gloss2, gloss1))
   connected_degree_list <- list(connections)
 })
-end <- Sys.time()
+# end <- Sys.time()
 
 # ------------------------------------------- SL EDIT
 connected_degree_list <- bind_rows(gloss_list)
-results_gloss1 <- connected_degree_list |> 
-  # CHECK IF NEEDED!!! inner_join(AOP_summ, by=c("Speaker", "gloss1", "threshold")) |>
-  mutate(threshold = as.numeric(threshold)) |>
-  select(Speaker, gloss1, threshold, AOP, Speaker_gloss) |>
-  inner_join(global_distance_providence |> #filter(data_type == 'actual') |> # unfilter later when code works!
-               mutate(match="gloss1"),
-             by=join_by(
-               Speaker == Speaker,
-               gloss1 == gloss1,
-               threshold >= distance_norm
-             ))# |>
-#select(-gloss2)
-results_gloss2 <- connected_degree_list |> 
-  # CHECK IF NEEDED!!! inner_join(AOP_summ, by=c("Speaker", "gloss1", "threshold")) |>
-  mutate(threshold = as.numeric(threshold)) |>
-  select(Speaker, gloss2=gloss1, threshold, AOP, Speaker_gloss) |>
-  inner_join(global_distance_providence |> #filter(data_type == 'actual') |> 
-               mutate(match="gloss2"),
-             by=join_by(
-               Speaker == Speaker,
-               gloss2 == gloss2,
-               threshold >= distance_norm
-             )) #|>
-#select(-gloss1)
-results_both <- rbind(results_gloss1, results_gloss2) %>%
-  mutate(known_word = ifelse(match == "gloss1", gloss1, gloss2)) %>%
-distinct(word_pair, Speaker, distance, threshold, data_type, .keep_all = T) %>%
-  dplyr::select(threshold, gloss1, gloss2, Speaker, age, 
-                word_pair, data_type, known_word, 
-                distance_norm, Speaker_gloss) %>%
-  mutate(age = as.numeric(age))
+# results_gloss1 <- connected_degree_list |> 
+#   # CHECK IF NEEDED!!! inner_join(AOP_summ, by=c("Speaker", "gloss1", "threshold")) |>
+#   mutate(threshold = as.numeric(threshold)) |>
+#   select(Speaker, gloss1, threshold, AOP, Speaker_gloss) |>
+#   inner_join(global_distance_providence |> #filter(data_type == 'actual') |> # unfilter later when code works!
+#                mutate(match="gloss1"),
+#              by=join_by(
+#                Speaker == Speaker,
+#                gloss1 == gloss1,
+#                threshold >= distance_norm
+#              ))# |>
+# #select(-gloss2)
+
+# results_gloss2 <- connected_degree_list |> 
+#   # CHECK IF NEEDED!!! inner_join(AOP_summ, by=c("Speaker", "gloss1", "threshold")) |>
+#   mutate(threshold = as.numeric(threshold)) |>
+#   select(Speaker, gloss2=gloss1, threshold, AOP, Speaker_gloss) |>
+#   inner_join(global_distance_providence |> #filter(data_type == 'actual') |> 
+#                mutate(match="gloss2"),
+#              by=join_by(
+#                Speaker == Speaker,
+#                gloss2 == gloss2,
+#                threshold >= distance_norm
+#              )) #|>
+# #select(-gloss1)
+# results_both <- rbind(results_gloss1, results_gloss2) %>%
+#   mutate(known_word = ifelse(match == "gloss1", gloss1, gloss2)) %>%
+# distinct(word_pair, Speaker, distance, threshold, data_type, .keep_all = T) %>%
+#   dplyr::select(threshold, gloss1, gloss2, Speaker, age, 
+#                 word_pair, data_type, known_word, 
+#                 distance_norm, Speaker_gloss) %>%
+#   mutate(age = as.numeric(age))
 
 #check <- results_both %>% filter(Speaker == "Alex" & age == 17)
 # -------------------------------------------------------------
+
+#-------------------------------- NEW CODE: 2024-01-16
+
+results_gloss_NEW <- rbind(
+  # Find matches on gloss1
+  connected_degree_list |> 
+    mutate(threshold = as.numeric(threshold)) |>
+    distinct(Speaker, target=gloss1, threshold) |>
+    inner_join(global_distance_providence |> filter(data_type == 'actual'),  # unfilter later when code works!
+               by=join_by(
+                 Speaker == Speaker,
+                 target == gloss1,
+                 threshold >= distance_norm
+               )) |>
+    rename(connected = gloss2),
+  # Find matches on gloss2
+  connected_degree_list |> 
+    mutate(threshold = as.numeric(threshold)) |>
+    distinct(Speaker, target=gloss1, threshold) |>
+    inner_join(global_distance_providence |> filter(data_type == 'actual'),  # unfilter later when code works!
+               by=join_by(
+                 Speaker == Speaker,
+                 target == gloss2,
+                 threshold >= distance_norm
+               )) |>
+    rename(connected = gloss1)
+) |> 
+  distinct(Speaker, threshold, age, word_pair, .keep_all = TRUE) |>
+  # Find AOP for target
+  inner_join(AOP_summ |> mutate(threshold = as.numeric(threshold)) |> select(Speaker, threshold, gloss1, AOP_target=AOP), 
+             by=c("Speaker", "threshold", "target"="gloss1")) |>
+  # Find AOP for connected
+  inner_join(AOP_summ |> mutate(threshold = as.numeric(threshold)) |> select(Speaker, threshold, gloss1, AOP_connected=AOP), 
+             by=c("Speaker", "threshold", "connected"="gloss1")) |>
+  filter(AOP_connected < AOP_target)
+
+# Add degrees
+degrees_target <- results_gloss_NEW |>
+  count(Speaker, threshold, age, word=target)
+degrees_connected <- results_gloss_NEW |>
+  count(Speaker, threshold, age, word=connected)
+degrees_both <- rbind(
+  degrees_target,
+  degrees_connected
+) |>
+  group_by(Speaker, threshold, age, word) |>
+  summarise(degrees = sum(n)) |>
+  ungroup() |>
+  arrange(Speaker, threshold, word, age)
+
+## CL investigations
+
+#connected_degree_actual_melted <- feather::read_feather("Data/connected_degree_actual_melted_providence.feather")
+
+#connected_degree_actual_melted %>% filter(Speaker_gloss == "Alex_elephant") # 194
+
+# results_gloss_NEW %>% filter(age < AOP_target) # 154
+# connected_degree_actual_melted %>% filter(age < AOP_target) # 154
+# connected_degree_actual_melted %>% filter(Speaker == "Alex", known_word == "a")
+
+actual_global_degree <- globalthresholds_providence %>% 
+  filter(data_type == "actual") %>%
+  dplyr::select(Speaker, age, gloss1, degree, threshold) %>%
+  mutate(age = as.numeric(age),
+         threshold = as.numeric(threshold)) %>%
+  mutate(Speaker_gloss = paste(Speaker, gloss1, sep="_"))
+
+degrees <- results_gloss_NEW %>%
+  filter(data_type == "actual") %>%
+  select(Speaker, connected, target, AOP_connected, AOP_target, distance_norm, threshold) |>
+  distinct(Speaker, connected, target, AOP_connected, AOP_target, distance_norm, threshold) %>%
+  inner_join(actual_global_degree, #|> filter(data_type == 'actual'), 
+             # mutate(target="gloss1",
+             #        AOP_connected = "age"),
+             by=join_by(
+               Speaker == Speaker,
+               target == gloss1,
+               threshold == threshold,
+               AOP_connected < age
+             )) %>%
+  filter(AOP_target == age)%>%
+  group_by(Speaker, age, threshold) %>%
+  summarise(PAT_val = median(degree),
+            PAT_val_m = mean(degree))
+
+# element <- gloss_list[[275]]
+# 
+# known_words_degree_actual <-lapply(gloss_list, FUN = function(element) {        
+#   connections <- results_gloss_NEW %>%                       
+#     filter(Speaker %in% element$Speaker, target %in% element$gloss1, threshold %in% element$threshold)
+#   #min_age <- ages %>% filter(Speaker == element$Speaker & age == min(age))
+#   degrees_test <- actual_global_degree %>%
+#     filter(gloss1 %in% connections$connected & (age < element$AOP) & Speaker %in% element$Speaker) %>%  ### WHY IS THIS ZERO? START FROM HERE NEXT
+#     group_by(Speaker, age) %>%
+#     summarise(PAT_val = median(degree),
+#               PAT_val_m = mean(degree))
+#   known_degree_list <- list(degrees)    # should be degrees
+# })
+
+#####
+
+#-------------------------------------------
+
+
 
 # next need to compute degree of each word in the known lexicon at each time point
 
@@ -234,44 +332,32 @@ distinct(word_pair, Speaker, distance, threshold, data_type, .keep_all = T) %>%
 # actual_global_degree <- feather::read_feather("Data/actual_globaldistance_list_degree_providence.feather") %>%
 #   mutate(age = as.numeric(age))
 
-actual_global_degree <- globalthresholds_providence %>% 
-  filter(data_type == "actual") %>%
-  dplyr::select(Speaker, age, gloss1, degree) %>%
-  mutate(age = as.numeric(age)) %>%
-  mutate(Speaker_gloss = paste(Speaker, gloss1, sep="_"))
+# known_degree_list <- vector("list", length(gloss_list)) 
+# 
+# element <- gloss_list[[200]]
+# 
+# known_words_degree_actual <-lapply(gloss_list[1], FUN = function(element) {  
+#   # DEBUG - REMOVE LATER
+#   element <- element[1, ]
+#   # END DEBUG
+#   connections <- results_gloss_NEW %>%                       
+#     filter(Speaker %in% element$Speaker, target %in% element$gloss1 & data_type == "actual" & threshold %in% element$threshold)
+#  # min_age <- ages %>% filter(Speaker %in% element$Speaker) %>% mutate(age = as.numeric(age)) %>% filter(age == min(age))
+#   degrees <- actual_global_degree %>%
+#     filter(gloss1 %in% connections$connected & (age < element$AOP) & Speaker %in% element$Speaker) %>%
+#     group_by(Speaker, age) %>%
+#     summarise(PAT_val = median(degree),
+#               PAT_val_m = mean(degree))
+#   known_degree_list <- list(degrees)    
+# })
 
-known_degree_list <- vector("list", length(gloss_list)) 
-
-element <- gloss_list[[1]]
-
-known_words_degree_actual <-lapply(gloss_list[[1]], FUN = function(element) {        
-  connections <- results_both %>%                       
-    filter(Speaker_gloss %in% element$Speaker_gloss & data_type %in% c("actual"))
-  min_age <- ages %>% filter(Speaker == element$Speaker & age == min(age))
-  degrees <- actual_global_degree %>%
-    filter(gloss1 %in% connections$known_word & (age < element$AOP) & Speaker == element$Speaker) %>%
-    group_by(Speaker, age) %>%
-    summarise(PAT_val = median(degree),
-              PAT_val_m = mean(degree))
-  known_degree_list <- list(degrees)    
-})
+# for each new word, identify the already-known words that it would connect to at each threshold
 
 #connected_degree_list <- bind_rows(gloss_list)
 #connections_actual <- results_both
-degrees <- actual_global_degree %>%
-  select(Speaker, gloss1, age, Speaker_gloss, degree) |>
-  inner_join(results_both |> filter(data_type == 'actual'), 
-             #mutate(match="gloss1"),
-             by=join_by(
-               Speaker == Speaker,
-               Speaker_gloss == Speaker_gloss,
-               age > age
-             ))# %>%
-  # group_by(Speaker, age) %>%
-  # summarise(PAT_val = median(degree),
-  #           PAT_val_m = mean(degree))
 
-check <- degrees %>% filter(Speaker_gloss == "Alex_baby")
+
+#check <- degrees %>% filter(Speaker_gloss == "Alex_baby")
 
 
 AOP_summ_red <- AOP_summ %>% dplyr::select(Speaker, gloss1, AOP)
@@ -574,3 +660,4 @@ regression_data <- regression_data %>%
 regression_data$category = relevel(regression_data$category, ref="object_word")
 
 feather::write_feather(regression_data, "Data/regression_data_providence.feather")
+final_data <- feather::read_feather("Data/regression_data_providence.feather")

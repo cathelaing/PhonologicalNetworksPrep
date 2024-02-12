@@ -151,16 +151,17 @@ actual_global_degree <- globalthresholds_lyon %>%
   mutate(age = as.numeric(age))
 
 known_degree_list <- vector("list", length(gloss_list))
+#element <- gloss_list[[18]]
 
 known_words_degree_actual <-lapply(gloss_list, FUN = function(element) {        
   connections <- connected_degree_actual_melted %>%                       
     filter(Speaker_gloss == element$Speaker_gloss)
-  min_age <- ages %>% filter(Speaker == element$Speaker & age == min(age))
+  #min_age <- ages %>% filter(Speaker == element$Speaker & age == min(age))
   degrees <- actual_global_degree %>%
     filter(gloss1 %in% connections$known_word & (age < element$AOP) & Speaker == element$Speaker) %>%
     group_by(Speaker, age) %>%
-    summarise(PAT_val = median(degree),
-              PAT_val_m = mean(degree))
+    summarise(INT_val = median(degree),
+              INT_val_m = mean(degree))
   known_degree_list <- list(degrees)    # should be degrees
 })
 
@@ -194,8 +195,8 @@ for (i in unique(mean_degree_full_actual_init$Speaker)) {
     mutate(remove = ifelse(!(age %in% AOP_summ$AOP[which(AOP_summ$Speaker == i)]), T, F)) %>% # remove ages that don't have recordings
     filter(remove != T) %>%
     ungroup() %>%
-    mutate(PAT_val = ifelse(is.na(PAT_val), 0, PAT_val),                            # create PAT vals for these missing data points
-           PAT_val_m = ifelse(is.na(PAT_val_m), 0, PAT_val_m)) %>%                  # these are 0 by default as they don't connect to anything
+    mutate(INT_val = ifelse(is.na(INT_val), 0, INT_val),                            # create INT vals for these missing data points
+           INT_val_m = ifelse(is.na(INT_val_m), 0, INT_val_m)) %>%                  # these are 0 by default as they don't connect to anything
     fill(Speaker, .direction = "down") %>%                                          # fill in the Speaker info
     fill(age, .direction = "up") %>%                                          # fill in the Speaker info
     fill(Speaker, .direction = "up")
@@ -329,8 +330,8 @@ known_words_degree_target <-lapply(gloss_list, FUN = function(element) {
   degrees <- target_global_degree %>%
     filter(gloss1 %in% connections$known_word & (age < element$AOP) & Speaker == element$Speaker) %>%
     group_by(Speaker, age) %>%
-    summarise(PAT_val = median(degree),
-              PAT_val_m = mean(degree))
+    summarise(INT_val = median(degree),
+              INT_val_m = mean(degree))
   known_degree_list <- list(degrees)    # should be degrees
 })
 
@@ -364,8 +365,8 @@ for (i in unique(mean_degree_full_target_init$Speaker)) {
     mutate(remove = ifelse(!(age %in% AOP_summ$AOP[which(AOP_summ$Speaker == i)]), T, F)) %>% # remove ages that don't have recordings
     filter(remove != T) %>%
     ungroup() %>%
-    mutate(PAT_val = ifelse(is.na(PAT_val), 0, PAT_val),                            # create PAT vals for these missing data points
-           PAT_val_m = ifelse(is.na(PAT_val_m), 0, PAT_val_m)) %>%                  # these are 0 by default as they don't connect to anything
+    mutate(INT_val = ifelse(is.na(INT_val), 0, INT_val),                            # create INT vals for these missing data points
+           INT_val_m = ifelse(is.na(INT_val_m), 0, INT_val_m)) %>%                  # these are 0 by default as they don't connect to anything
     fill(Speaker, .direction = "down") %>%                                          # fill in the Speaker info
     fill(age, .direction = "up") %>%                                          # fill in the Speaker info
     fill(Speaker, .direction = "up")
@@ -383,7 +384,7 @@ feather::write_feather(mean_degree_full_target, "Data/mean_degree_full_target_ly
 #mean_degree_full_actual <- feather::read_feather("Data/mean_degree_full_actual_lyon.feather")
 
 global_network <- globalthresholds_AOP_lyon %>% 
-  rename("PAQ_val" = "degree") %>%
+  rename("EXT_val" = "degree") %>%
   dplyr::select(-age, -threshold)
 
 mean_degree_full <- rbind(mean_degree_full_actual, mean_degree_full_target)
@@ -394,13 +395,15 @@ comparison_data <- read_csv("Data/comparison_data_lyon.csv") %>%
   rename("gloss1" = "Gloss")
 
 global_network_split <- global_network %>%
-  pivot_wider(names_from = data_type, values_from = PAQ_val) %>%
-  rename("PAQ_target" = "target",
-         "PAQ_actual" = "actual")
+  pivot_wider(names_from = data_type, values_from = EXT_val) %>%
+  rename("EXT_target" = "target",
+         "EXT_actual" = "actual")
 
-# global_network_split %>% filter(is.na(PAQ_actual) | is.na(PAQ_target))  # 30 datapoints
+# global_network_split %>% filter(is.na(EXT_actual) | is.na(EXT_target))  # 30 datapoints
 
 regression_data <- mean_degree_full %>% left_join(global_network_split) %>%
+  rename("INT_val" = "PAT_val",
+         "INT_val_m" = "PAT_val_m") %>%
   group_by(Speaker, gloss1, data_type) %>%
   mutate(learned_next = ifelse(age == AOP-1, 1, 0)) %>%
   filter(age != AOP) %>%
@@ -409,17 +412,18 @@ regression_data <- mean_degree_full %>% left_join(global_network_split) %>%
   ungroup() %>%
   mutate(AOP_scaled = c(scale(AOP, center = TRUE, scale = TRUE)),    
          length_scaled = c(scale(Targetphon, center = TRUE, scale = TRUE)),
-         PAT_weighted = PAT_val/vocab_agg,
-         PAQ_weighted = PAQ_target/vocab_agg) %>%
-  group_by(Speaker) %>%
-  mutate(PAT_scaled = c(scale(PAT_val, center = TRUE, scale = TRUE)),
-         PAT_scaled_m = c(scale(PAT_val_m, center = TRUE, scale = TRUE)),
-         PAT_vocab_scaled = c(scale(PAT_weighted, center = TRUE, scale = TRUE)),
-         PAQ_vocab_scaled = c(scale(PAQ_weighted, center = T, scale = T)),
-         PAQ_scaled_target = c(scale(PAQ_target, center = TRUE, scale = TRUE)),
-         PAQ_scaled_actual = c(scale(PAQ_actual, center = TRUE, scale = TRUE)))
+         INT_weighted = INT_val/vocab_agg,
+         EXT_weighted = EXT_target/vocab_agg) %>%
+  group_by(Speaker, age) %>%
+  mutate(INT_scaled = c(scale(INT_val, center = TRUE, scale = TRUE)),
+         INT_scaled_m = c(scale(INT_val_m, center = TRUE, scale = TRUE)),
+         INT_vocab_scaled = c(scale(INT_weighted, center = TRUE, scale = TRUE)),
+         EXT_vocab_scaled = c(scale(EXT_weighted, center = T, scale = T)),
+         EXT_scaled_target = c(scale(EXT_target, center = TRUE, scale = TRUE)),
+         EXT_scaled_actual = c(scale(EXT_actual, center = TRUE, scale = TRUE))) %>%
+  ungroup()
 
-#regression_data %>% filter(is.na(PAQ_target))
+#regression_data %>% filter(is.na(EXT_target))
 
 session_data <- read_csv("Data/comparison_data_lyon.csv") %>%    # need to add ordinal session numbers for GAMMs
   group_by(Speaker, age) %>%
@@ -473,5 +477,5 @@ regression_data <- regression_data %>%
 
 regression_data$category = relevel(regression_data$category, ref="object_word")
 
-feather::write_feather(regression_data, "Data/regression_data_lyon.feather")
+feather::write_feather(regression_data, "Data/repofiles/regression_data_lyon.feather")
 

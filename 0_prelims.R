@@ -18,6 +18,7 @@
 #install.packages("wesanderson")
 # install.packages("effects")
 # install.packages("reshape2")
+#install.packages("tidytable")
 
 library(tidyverse)
 library(stringi)
@@ -47,6 +48,7 @@ library(wesanderson)
 library(igraph)
 library(reshape2)
 library(tidyr)
+library(tidytable)
 
 options("encoding" = "UTF-8")
 

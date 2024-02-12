@@ -1,7 +1,7 @@
 # Updated 30th April 2021
 
 # This script prepares the data for analysis from each of the global distance matrices
-# It calculates the degree for each word pair across a set of thresholds from E=0.1-1 in relation to age, vocab size, and age of production (global network)
+# It calculates the degree for each word pair across a set of thresholds from E=0.1-1 in relation to months, vocab size, and months of production (global network)
 # It then runs correlations between degree and AOP
 
 globaldistance_providence_actual <- feather::read_feather("Data/globaldistance_Providence_rand.feather") %>% 
@@ -17,7 +17,7 @@ names(thresholds) <- paste("threshold", thresholds, sep ="_") # name list object
 
 globaldistance_list_providence_actual <- lapply(thresholds, function(t) {
   filter(globaldistance_providence_actual, distance_norm < t) %>%
-    group_by(Speaker, age, gloss1) %>%                     # for gloss1 side of the data, otherwise 50% of data is missed (oops)
+    group_by(Speaker, months, gloss1) %>%                     # for gloss1 side of the data, otherwise 50% of data is missed (oops)
     tally()
 })
 
@@ -31,14 +31,14 @@ globaldistance_list_providence_actual_degree <- globaldistance_list_providence_a
 
 #feather::write_feather(globaldistance_list_providence_actual_degree, "Data/actual_globaldistance_list_degree_providence.feather")
 
-#globaldistance_list_providence_actual_degree %>% filter(Speaker == "Alex" & age == 16) %>% distinct(gloss1)
+#globaldistance_list_providence_actual_degree %>% filter(Speaker == "Alex" & months == 16) %>% distinct(gloss1)
 
 actual_globalthresholds_base_providence <- globaldistance_list_providence_actual_melted %>%
   rename("degree" = "value") %>%
   separate(L1, c("l1", "threshold"), sep = "_") %>%
   dplyr::select(-l1, -variable) %>%
   mutate(data_type = "actual",
-         age = as.numeric(age))
+         months = as.numeric(months))
 
 first_instance_base_Providence <- read_csv("Data/first_instance_Providence_rand.csv")
 
@@ -52,7 +52,7 @@ actual_globalthresholds_providence <- actual_globalthresholds_base_providence %>
 actual_globalthresholds_AOP_providence <- actual_globalthresholds_base_providence %>%
   left_join(first_instance_base_Providence)  %>%
   group_by(Speaker) %>%
-  filter(age == max(age))
+  filter(months == max(months))
 
 ##### ACTUAL GLOBAL NETWORK: degree ~ AOP correlations across thresholds ########
 
@@ -108,13 +108,13 @@ names(thresholds) <- paste("threshold", thresholds, sep ="_") # name list object
 
 target_globaldistance_providence_list <- lapply(thresholds, function(t) {
   filter(globaldistance_providence_target, distance_norm < t) %>%
-    group_by(Speaker, age, gloss1) %>%                     # for gloss1 side of the data, otherwise 50% of data is missed (oops)
+    group_by(Speaker, months, gloss1) %>%                     # for gloss1 side of the data, otherwise 50% of data is missed (oops)
     tally()
 })
 
 target_globaldistance_providence_list_melted <- melt(target_globaldistance_providence_list)
 
-#target_globaldistance_providence_list_melted %>% filter(Speaker == "Alex" & age == 17) %>% distinct(gloss1)
+#target_globaldistance_providence_list_melted %>% filter(Speaker == "Alex" & months == 17) %>% distinct(gloss1)
 
 target_globalthresholds_providence_base <- target_globaldistance_providence_list_melted %>%
   rename("degree" = "value") %>%
@@ -132,8 +132,8 @@ target_globalthresholds_providence <- target_globalthresholds_providence_base %>
 target_globalthresholds_AOP_providence <- target_globalthresholds_providence_base %>%
   left_join(first_instance_base_Providence)  %>%
   group_by(Speaker) %>%
-  filter(age == max(age)) %>%
-  mutate(age = as.numeric(age))
+  filter(months == max(months)) %>%
+  mutate(months = as.numeric(months))
 
 ##### target GLOBAL NETWORK: degree ~ AOP correlations across thresholds ########
 
@@ -187,6 +187,6 @@ globalthresholds_AOP_providence <- rbind(target_globalthresholds_AOP_providence,
   mutate(corpus = "French")
 
 feather::write_feather(globalthresholds_corr_providence, "Data/globalthresholds_corr_providence_rand.feather") # correlation output data
-feather::write_feather(globalthresholds_providence, "Data/globalthresholds_providence_rand.feather") # all types at all ages, plus AOP data
+feather::write_feather(globalthresholds_providence, "Data/globalthresholds_providence_rand.feather") # all types at all monthss, plus AOP data
 feather::write_feather(globalthresholds_AOP_providence, "Data/globalthresholds_AOP_providence_rand.feather") # AOP for full network, taken at last month of data (30 months)
 

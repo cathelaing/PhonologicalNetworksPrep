@@ -39,25 +39,25 @@ all_distances_L <- feather::read_feather("Data/globaldistance_Lyon_rand.feather"
 
 ## too big to save on repo so create a small DF instead
 
-all_distances_ungrouped <- rbind(all_distances_L, all_distances_P) %>% 
-  dplyr::select(Speaker, age, data_type, distance_norm, corpus) %>% 
-  #group_by(corpus, data_type) %>%
-  summarise(mean_dist = mean(distance_norm),
-            sd_dist = sd(distance_norm),
-            med_dist = median(distance_norm)) %>%
-  mutate(Q1 = mean_dist-sd_dist,
-         corpus = "all",
-         data_type = "all") 
-
-all_distances <- rbind(all_distances_L, all_distances_P) %>% 
-  dplyr::select(Speaker, age, data_type, distance_norm, corpus) %>% 
-  group_by(corpus, data_type) %>%
-  summarise(mean_dist = mean(distance_norm),
-            sd_dist = sd(distance_norm),
-            med_dist = median(distance_norm)) %>%
-  mutate(Q1 = mean_dist-sd_dist) %>%
-  rbind(all_distances_ungrouped) %>%
-  write_csv("Data/repofiles/all_distances_rand.csv")
+# all_distances_ungrouped <- rbind(all_distances_L, all_distances_P) %>% 
+#   dplyr::select(Speaker, age, data_type, distance_norm, corpus) %>% 
+#   #group_by(corpus, data_type) %>%
+#   summarise(mean_dist = mean(distance_norm),
+#             sd_dist = sd(distance_norm),
+#             med_dist = median(distance_norm)) %>%
+#   mutate(Q1 = mean_dist-sd_dist,
+#          corpus = "all",
+#          data_type = "all") 
+# 
+# all_distances <- rbind(all_distances_L, all_distances_P) %>% 
+#   dplyr::select(Speaker, age, data_type, distance_norm, corpus) %>% 
+#   group_by(corpus, data_type) %>%
+#   summarise(mean_dist = mean(distance_norm),
+#             sd_dist = sd(distance_norm),
+#             med_dist = median(distance_norm)) %>%
+#   mutate(Q1 = mean_dist-sd_dist) %>%
+#   rbind(all_distances_ungrouped) %>%
+#   write_csv("Data/repofiles/all_distances_rand.csv")
 
 ## data is too big to include in main repo so generate it here and save as an image
 
@@ -75,3 +75,9 @@ distance_density_plot <- ggplot(all_distances, aes(x = distance_norm, fill = dat
   theme_bw() +
   theme(legend.title = element_blank())
 
+regression_data_P <- feather::read_feather("Data/regression_data_providence_rand.feather")
+regression_data_L <- feather::read_feather("Data/regression_data_lyon_rand.feather")
+regression_data_rand <- rbind(regression_data_L, regression_data_P) %>%
+  write_feather("Data/repofiles/regression_data_rand.feather")
+
+regression_data_L %>% filter(is.na(PAQ_scaled_target))

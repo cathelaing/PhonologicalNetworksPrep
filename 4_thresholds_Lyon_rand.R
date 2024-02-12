@@ -17,7 +17,7 @@ names(thresholds) <- paste("threshold", thresholds, sep ="_") # name list object
 
 globaldistance_list_lyon_actual <- lapply(thresholds, function(t) {
   filter(globaldistance_lyon_actual, distance_norm < t) %>%
-    group_by(Speaker, age, gloss1) %>%                     # for gloss1 side of the data, otherwise 50% of data is missed (oops)
+    group_by(Speaker, months, gloss1) %>%                     # for gloss1 side of the data, otherwise 50% of data is missed (oops)
     tally()
 })
 
@@ -31,14 +31,14 @@ globaldistance_list_lyon_actual_degree <- globaldistance_list_lyon_actual_melted
 
 #feather::write_feather(globaldistance_list_lyon_actual_degree, "Data/actual_globaldistance_list_degree_lyon.feather")
 
-#globaldistance_list_lyon_actual_degree %>% filter(Speaker == "Alex" & age == 16) %>% distinct(gloss1)
+#globaldistance_list_lyon_actual_degree %>% filter(Speaker == "Alex" & months == 16) %>% distinct(gloss1)
 
 actual_globalthresholds_base_lyon <- globaldistance_list_lyon_actual_melted %>%
   rename("degree" = "value") %>%
   separate(L1, c("l1", "threshold"), sep = "_") %>%
   dplyr::select(-l1, -variable) %>%
   mutate(data_type = "actual",
-         age = as.numeric(age))
+         months = as.numeric(months))
 
 first_instance_base_Lyon <- read_csv("Data/first_instance_Lyon_rand.csv")
 
@@ -52,7 +52,7 @@ actual_globalthresholds_lyon <- actual_globalthresholds_base_lyon %>%
 actual_globalthresholds_AOP_lyon <- actual_globalthresholds_base_lyon %>%
   left_join(first_instance_base_Lyon)  %>%
   group_by(Speaker) %>%
-  filter(age == max(age))
+  filter(months == max(months))
 
 ##### ACTUAL GLOBAL NETWORK: degree ~ AOP correlations across thresholds ########
 
@@ -108,13 +108,13 @@ names(thresholds) <- paste("threshold", thresholds, sep ="_") # name list object
 
 target_globaldistance_lyon_list <- lapply(thresholds, function(t) {
   filter(globaldistance_lyon_target, distance_norm < t) %>%
-    group_by(Speaker, age, gloss1) %>%                     # for gloss1 side of the data, otherwise 50% of data is missed (oops)
+    group_by(Speaker, months, gloss1) %>%                     # for gloss1 side of the data, otherwise 50% of data is missed (oops)
     tally()
 })
 
 target_globaldistance_lyon_list_melted <- melt(target_globaldistance_lyon_list)
 
-#target_globaldistance_lyon_list_melted %>% filter(Speaker == "Alex" & age == 17) %>% distinct(gloss1)
+#target_globaldistance_lyon_list_melted %>% filter(Speaker == "Alex" & months == 17) %>% distinct(gloss1)
 
 target_globalthresholds_lyon_base <- target_globaldistance_lyon_list_melted %>%
   rename("degree" = "value") %>%
@@ -132,8 +132,8 @@ target_globalthresholds_lyon <- target_globalthresholds_lyon_base %>%
 target_globalthresholds_AOP_lyon <- target_globalthresholds_lyon_base %>%
   left_join(first_instance_base_Lyon)  %>%
   group_by(Speaker) %>%
-  filter(age == max(age)) %>%
-  mutate(age = as.numeric(age))
+  filter(months == max(months)) %>%
+  mutate(months = as.numeric(months))
 
 ##### target GLOBAL NETWORK: degree ~ AOP correlations across thresholds ########
 
@@ -189,4 +189,3 @@ globalthresholds_AOP_lyon <- rbind(target_globalthresholds_AOP_lyon, actual_glob
 feather::write_feather(globalthresholds_corr_lyon, "Data/globalthresholds_corr_lyon_rand.feather") # correlation output data
 feather::write_feather(globalthresholds_lyon, "Data/globalthresholds_lyon_rand.feather") # all types at all ages, plus AOP data
 feather::write_feather(globalthresholds_AOP_lyon, "Data/globalthresholds_AOP_lyon_rand.feather") # AOP for full network, taken at last month of data (30 months)
-

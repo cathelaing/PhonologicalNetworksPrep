@@ -4,26 +4,34 @@ set.seed(24)
 
 distance_full <- feather::read_feather("Data/distance_full_Lyon.feather")
 
-# Actual data
+distance_full_red <- distance_full %>% group_by(Gloss, data_type) %>% slice(1) %>% ungroup()
 
-# Figure out the first production of each word in each infant's data
+#distance_full_red %>% group_by(Gloss) %>% tally() %>% filter(n<2)
 
-first_instance_Actual <- distance_full %>%     # figure out which month each word was first produced
+rand.df <- data.frame(months = rep(1:24, times=5, each=1),
+                      vocab_size = (sample(c(0:25), 120, replace = T)),
+                      Speaker = rep(c("F", "G", "H", "I", "J"), times = 1, each = 24))
+
+new_rand_data_A <- rand.df %>% 
+  rowwise() %>% 
+  mutate(all_vocab = list(slice_sample(subset(distance_full_red, data_type == "Actual"), 
+                                       n=vocab_size, replace = FALSE))) %>% 
+  ungroup()
+
+random_df_A <- unnest(new_rand_data_A)
+
+first_instance_Actual <- random_df_A %>%     # figure out which month each word was first produced
   group_by(Speaker, Gloss)  %>%
-  filter(data_type == "Actual") %>% 
-  filter(age == min(age)) %>% 
+  filter(months == min(months)) %>% 
   summarise_if(is.numeric, mean) %>% # for instances where a word is produced more than once, take mean value of each distinctive feature
   #slice(1) %>% # takes the first occurrence if there is a tie
   ungroup() %>%
-  group_by(Speaker) %>%
-  mutate(age = sample(age)) %>%
-  mutate(subj_session = paste(Speaker, age, sep="_"))
+  mutate(subj_session = paste(Speaker, months, sep="_"))
 
-first_instance_base <- first_instance_Actual %>%
-  dplyr::select(Speaker, subj_session, Gloss, age) %>%
-  rename("AOP" = "age",
-         "gloss1" = "Gloss") %>%
-  write_csv("Data/first_instance_Lyon_rand.csv")
+first_instance_base_A <- first_instance_Actual %>%
+  dplyr::select(Speaker, subj_session, Gloss, months) %>%
+  rename("AOP" = "months",
+         "gloss1" = "Gloss")
 
 ###### CREATE A SET OF LISTS THAT ARE GROUPED BY SPEAKER, OR SIMILAR
 
@@ -32,7 +40,7 @@ data_list_A <- first_instance_Actual %>%     ## Need to filter by speaker otherw
 
 first_instance_list_A <- lapply(data_list_A, FUN = function(element) {
   cumulative_vocab <- first_instance_Actual %>%
-  filter(Speaker == element$Speaker & age <= element$age)
+  filter(Speaker == element$Speaker & months <= element$months)
 })
 
 
@@ -1672,7 +1680,7 @@ globaldistance_actual_melted <- melt(global_matrix_actual) %>%   # turn list int
          "gloss2" = "Var2",
          "distance" = "value") %>%
   #filter(gloss1 != gloss2) %>%
-  separate(L1, into = c("Speaker", "age"), sep = "_")%>% 
+  separate(L1, into = c("Speaker", "months"), sep = "_")%>% 
   mutate(gloss1 = as.character(gloss1),
          gloss2 = as.character(gloss2))
 
@@ -1696,7 +1704,7 @@ globaldistance_actual_list <- lapply(globaldistance_Lyon_list_A, FUN = function(
            distance_norm = distance/maxdist,    # analysis is within-subject, so ensure that distance metric is also within-subject
            data_type = "actual") %>%    
     dplyr::select(-maxdist)  %>%
-    distinct(gloss1, Speaker, distance, age, .keep_all = TRUE) 
+    distinct(gloss1, Speaker, distance, months, .keep_all = TRUE) 
   actual_globaldistance_final <- list(actual_globaldistance)
 })
 
@@ -1707,18 +1715,33 @@ globaldistance_Lyon_actual <- melt(globaldistance_actual_list) %>%
 ## Target data
 
 
+
 # Figure out the first production of each word in each infant's data
 
-first_instance_Target <- distance_full %>%     # figure out which month each word was first produced
+new_rand_data_T <- rand.df %>% 
+  rowwise() %>% 
+  mutate(all_vocab = list(slice_sample(subset(distance_full_red, data_type == "Target"), 
+                                       n=vocab_size, replace = FALSE))) %>% 
+  ungroup()
+
+random_df_T <- unnest(new_rand_data_T)
+
+first_instance_Target <- random_df_T %>%     # figure out which month each word was first produced
   group_by(Speaker, Gloss)  %>%
-  filter(data_type == "Target") %>% 
-  filter(age == min(age)) %>% 
+  filter(months == min(months)) %>% 
   summarise_if(is.numeric, mean) %>% # for instances where a word is produced more than once, take mean value of each distinctive feature
   #slice(1) %>% # takes the first occurrence if there is a tie
   ungroup() %>%
-  group_by(Speaker) %>%
-  mutate(age = sample(age)) %>%
-  mutate(subj_session = paste(Speaker, age, sep="_"))
+  mutate(subj_session = paste(Speaker, months, sep="_"))
+
+first_instance_base_T <- first_instance_Target %>%
+  dplyr::select(Speaker, subj_session, Gloss, months) %>%
+  rename("AOP" = "months",
+         "gloss1" = "Gloss") 
+
+first_instance_base <- rbind(first_instance_base_A, first_instance_base_T) %>%
+  distinct(Speaker, subj_session, gloss1, AOP, .keep_all=T) %>%
+  write_csv("Data/first_instance_Lyon_rand.csv")
 
 ###### CREATE A SET OF LISTS THAT ARE GROUPED BY SPEAKER, OR SIMILAR
 
@@ -1727,7 +1750,7 @@ data_list_T <- first_instance_Target %>%     ## Need to filter by speaker otherw
 
 first_instance_list_T <- lapply(data_list_T, FUN = function(element) {
   cumulative_vocab <- first_instance_Target %>%
-    filter(Speaker == element$Speaker & age <= element$age)
+    filter(Speaker == element$Speaker & months <= element$months)
 })
 
 
@@ -3367,7 +3390,7 @@ globaldistance_target_melted <- melt(global_matrix_target) %>%   # turn list int
          "gloss2" = "Var2",
          "distance" = "value") %>%
   #filter(gloss1 != gloss2) %>%
-  separate(L1, into = c("Speaker", "age"), sep = "_")%>% 
+  separate(L1, into = c("Speaker", "months"), sep = "_")%>% 
   mutate(gloss1 = as.character(gloss1),
          gloss2 = as.character(gloss2))
 
@@ -3391,7 +3414,7 @@ globaldistance_target_list <- lapply(globaldistance_Lyon_list_T, FUN = function(
            distance_norm = distance/maxdist,    # analysis is within-subject, so ensure that distance metric is also within-subject
            data_type = "target") %>%    
     dplyr::select(-maxdist)  %>%
-    distinct(gloss1, Speaker, distance, age, .keep_all = TRUE) 
+    distinct(gloss1, Speaker, distance, months, .keep_all = TRUE) 
   target_globaldistance_final <- list(target_globaldistance)
 })
 

@@ -421,9 +421,29 @@ regression_data <- mean_degree_full %>% left_join(global_network_split) %>%
          EXT_vocab_scaled = c(scale(EXT_weighted, center = T, scale = T)),
          EXT_scaled_target = c(scale(EXT_target, center = TRUE, scale = TRUE)),
          EXT_scaled_actual = c(scale(EXT_actual, center = TRUE, scale = TRUE))) %>%
-  ungroup()
+  ungroup() %>%
+  mutate(gloss1 = str_trim(gloss1),
+         gloss1 = ifelse(gloss1 == "balanàçoire", "balançoire", gloss1))
 
 #regression_data %>% filter(is.na(EXT_target))
+
+aoa_comp <- read_csv("additional_files/wordbank_item_data_comp_fr.csv") %>%
+  select(-downloaded, -item_id) %>%
+  pivot_longer(cols = `8`:`16`, names_to = "age", values_to = "prop") %>%
+  filter(prop >= .5) %>%
+  group_by(item_definition) %>% # for homophones, pick the earliest-acquired version
+  filter(age == min(age)) %>%
+  rename(gloss1 = item_definition,
+         aoa_comp = age) %>%
+  select(-prop, -category) %>%
+  mutate(gloss1 = str_trim(gloss1)) %>%
+  distinct(gloss1, .keep_all = T) # parc and poisson occur twice with the same
+
+input_freq <- read_csv("additional_files/childes_french.csv") %>%
+  mutate(gloss1 = tolower(word)) %>%
+  select(gloss1, word_count) %>%
+  group_by(gloss1) %>%
+  filter(word_count == max(word_count))
 
 session_data <- read_csv("Data/comparison_data_lyon.csv") %>%    # need to add ordinal session numbers for GAMMs
   group_by(Speaker, age) %>%
@@ -436,8 +456,8 @@ session_data <- read_csv("Data/comparison_data_lyon.csv") %>%    # need to add o
   dplyr::select(-n)
 
 
-freq_lyon <- read_csv("Data/freq_lyon.csv") %>% 
-  mutate(Speaker = ifelse(Speaker == "Theotime", "Tim", Speaker))
+# freq_lyon <- read_csv("Data/freq_lyon.csv") %>% 
+#   mutate(Speaker = ifelse(Speaker == "Theotime", "Tim", Speaker))
 # chi_freq_bychi <- read_csv("Data/chi_freq_bychi.csv")
 # chi_freq_byword <- read_csv("Data/chi_freq_byword.csv")
 
@@ -460,14 +480,16 @@ FULLsample_var <- feather::read_feather("Data/FULLsample_Lyon.feather") %>%
   
 
 regression_data <- regression_data %>%
-  left_join(freq_lyon) %>%
+  left_join(input_freq, by = "gloss1") %>%
   left_join(word_cat) %>%
+  left_join(aoa_comp, by = "gloss1") %>%
   left_join(FULLsample_var) %>%
   left_join(session_data) %>%
-  mutate(total_freq = ifelse(is.na(total_freq), 0, total_freq)) %>%
-  mutate(freq_scaled = c(scale(total_freq, center = TRUE, scale = TRUE)),
+  mutate(aoa_comp = as.numeric(aoa_comp),
+         freq_scaled = c(scale(word_count, center = TRUE, scale = TRUE)),
          vocab_scaled = c(scale(vocab_agg, center = TRUE, scale = TRUE)),
-         tokens_scaled = c(scale(n_tokens, center = TRUE, scale = TRUE))) %>%
+         tokens_scaled = c(scale(n_tokens, center = TRUE, scale = TRUE)),
+         aoa_scaled = c(scale(aoa_comp, center= TRUE, scale = TRUE))) %>%
   mutate(corpus = "French", 
          age_scaled = c(scale(age, center = T, scale = T)),
          category = as.factor(category),

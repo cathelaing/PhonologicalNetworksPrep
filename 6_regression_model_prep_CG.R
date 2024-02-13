@@ -202,7 +202,7 @@ mean_degree_full_CG <- bind_rows(all_mean_degree_data_CG) %>%
   filter(age <= AOP)
 
 feather::write_feather(mean_degree_full_CG, "Data/mean_degree_full_CG.feather")
-
+mean_degree_full_CG <- read_feather("Data/mean_degree_full_CG.feather")
 
 global_network <- globalthresholds_AOP_CG %>% 
   rename("EXT_val" = "degree") %>%
@@ -220,7 +220,7 @@ regression_data <- mean_degree_full_CG %>% left_join(global_network) %>%
   left_join(comparison_data) %>%
   ungroup() %>%
   mutate(AOP_scaled = c(scale(AOP, center = TRUE, scale = TRUE))) %>%
-  group_by(Speaker, age) %>%
+  group_by(Speaker, AOP) %>%
   mutate(INT_scaled = c(scale(INT_val, center = TRUE, scale = TRUE)),
          INT_scaled_m = c(scale(INT_val_m, center = TRUE, scale = TRUE)),
          EXT_scaled = c(scale(EXT_val, center = TRUE, scale = TRUE))) %>%

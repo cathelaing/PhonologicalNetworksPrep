@@ -424,21 +424,24 @@ regression_data <- mean_degree_full %>% left_join(global_network_split) %>%
          EXT_scaled_actual = c(scale(EXT_actual, center = TRUE, scale = TRUE))) %>%
   ungroup()
 
-# freq_data_cdi_eng <- as.data.frame(uni_model_data) %>% 
-#   filter(language == "English (American)", measure == "understands",
-#          prop >= .5) %>%
-#   group_by(uni_lemma) %>%
-#   filter(unscaled_age == min(unscaled_age)) %>%
-#   write_csv("Data/cdi_aoa_freq_eng.csv")
-# 
-# freq_data_cdi_fr <- as.data.frame(uni_model_data) %>% 
-#   filter(language == "French (Quebec)", measure == "understands",
-#          prop >= .5) %>%
-#   group_by(uni_lemma) %>%
-#   filter(unscaled_age == min(unscaled_age)) %>%
-#   write_csv("Data/cdi_aoa_freq_fr.csv")
 
-chi_freq <- read_csv("Data/freq_providence.csv")
+aoa_comp <- read_csv("additional_files/wordbank_item_data_comp_eng.csv") %>%
+  select(-downloaded, -item_id) %>%
+  pivot_longer(cols = `8`:`18`, names_to = "age", values_to = "prop") %>%
+  filter(prop >= .5) %>%
+  group_by(item_definition) %>% # for homophones, pick the earliest-acquired version
+  filter(age == min(age)) %>%
+  rename(gloss1 = item_definition,
+         aoa_comp = age) %>%
+  select(-prop)
+
+input_freq <- read_csv("additional_files/childes_english.csv") %>%
+  mutate(gloss1 = tolower(word)) %>%
+  select(gloss1, word_count) %>%
+  group_by(gloss1) %>%
+  filter(word_count == max(word_count))
+
+# chi_freq <- read_csv("Data/freq_providence.csv")
 # chi_freq_bychi <- read_csv("Data/chi_freq_bychi.csv")
 # chi_freq_byword <- read_csv("Data/chi_freq_byword.csv")
 
@@ -469,14 +472,16 @@ FULLsample_var <- feather::read_feather("Data/FULLsample_Providence.feather") %>
          "n_tokens" = "n")   # how many tokens of each word included in the data
 
 regression_data <- regression_data %>%
-  left_join(chi_freq) %>%
+  left_join(input_freq, by = "gloss1") %>%
   left_join(word_cat) %>%
+  left_join(aoa_comp, by = "gloss1") %>%
   left_join(FULLsample_var) %>%
   left_join(session_data) %>%
-  mutate(total_freq = ifelse(is.na(total_freq), 0, total_freq)) %>%
-  mutate(freq_scaled = c(scale(total_freq, center = TRUE, scale = TRUE)),
+  mutate(aoa_comp = as.numeric(aoa_comp),
+         freq_scaled = c(scale(word_count, center = TRUE, scale = TRUE)),
          vocab_scaled = c(scale(vocab_agg, center = TRUE, scale = TRUE)),
-         tokens_scaled = c(scale(n_tokens, center = TRUE, scale = TRUE))) %>%
+         tokens_scaled = c(scale(n_tokens, center = TRUE, scale = TRUE)),
+         aoa_scaled = c(scale(aoa_comp, center= TRUE, scale = TRUE))) %>%
   mutate(corpus = "English", 
          age_scaled = c(scale(age, center = T, scale = T)),
          category = as.factor(category),

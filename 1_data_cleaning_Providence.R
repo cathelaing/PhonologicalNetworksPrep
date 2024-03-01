@@ -10,7 +10,8 @@ source("0_prelims.R")
 
 lexicon <- read_csv("additional_files/english_CDI.csv") %>%
   rename("Gloss" = "word") %>%
-  distinct(Gloss, .keep_all = TRUE)
+  distinct(Gloss, .keep_all = TRUE) %>%
+  select(-mor, -mor2, -aoa)
 
 # This script takes the .csv files generated in Phon and cleans up the data to include only the words used in the analysis
 
@@ -126,42 +127,5 @@ FULLsample <- FULLsample %>% left_join(lexicon, by = "Gloss") %>%
     filter(inCDI == TRUE) %>%
   dplyr::select(-Gloss) %>%
   rename("Gloss" = "gloss1")
-
-### ADD COMPREHENSIVE VOCAB
-
-# when there are 2 variable definitions of a word, remove the one that is acquired later
-# because from the prod data we don't know which is which
-remove_words <- c("water (not beverage)", "swing (action)", "drink (beverage)", "chicken (food)")
-
-comp_vocab_eng <- read_csv("Data/wordbank_item_data_eng.csv") %>%
-  dplyr::select(-downloaded, -category, -item_id) %>%
-  pivot_longer(!item_definition, names_to = "age", values_to = "proportion") %>%
-  group_by(item_definition) %>%
-  filter(proportion >= .5) %>%
-  slice(1) %>%
-  filter(!(item_definition %in% remove_words),
-         item_definition != "child's own name") %>%
-  mutate(item_definition = fct_recode(item_definition,
-                                      "chicken" = "chicken (animal)",
-                                      "clean" = "clean (action)",
-                                      #"daddy" = "daddy*",
-                                      "drink" = "drink (action)",
-                                      "fish" = "fish (animal)",
-                                      "orange" = "orange (food)",
-                                      "slide" = "slide (object)",
-                                      "swing" = "swing (object)",
-                                      "toy" = "toy (object)",
-                                      "water" = "water (beverage)"
-  ))
-
-# figure out what to do with repetitions
-# add_owie <- comp_vocab_eng %>% filter(item_definition == "owie/boo boo")
-# add_shh <- comp_vocab_eng %>% filter(item_definition == "shh/shush/hush")
-# add_wanna <- comp_vocab_eng %>% filter(item_definition == "wanna/want to")
-# 
-# comp_vocab_eng <- bind_rows(comp_vocab_eng, add_owie, add_shh, add_shh, add_wanna)
-
-comp_vocab_eng$item_definition <- gsub("[[:punct:]]", " ", comp_vocab_eng$item_definition)
-
 
 feather::write_feather(FULLsample, "Data/FULLsample_Providence.feather")

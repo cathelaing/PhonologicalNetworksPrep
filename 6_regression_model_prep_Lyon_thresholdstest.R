@@ -2,15 +2,15 @@
 
 # thresholds = .15, .5, .19, .24, .18, .21, .33 (.33 is the mean distance)
 
-global_distance_providence <- feather::read_feather("Data/globaldistance_Providence.feather")
+global_distance_lyon <- feather::read_feather("Data/globaldistance_Lyon.feather")
 
-globalthresholds_providence <- feather::read_feather("Data/globalthresholds_providence_subset.feather") %>%
+globalthresholds_lyon <- feather::read_feather("Data/globalthresholds_lyon_subset.feather") %>%
   filter(threshold %in% c(.15, .5, .19, .24, .18, .21, .33))
 
-globalthresholds_AOP_providence <- feather::read_feather("Data/globalthresholds_AOP_providence_subset.feather") %>%
+globalthresholds_AOP_lyon <- feather::read_feather("Data/globalthresholds_AOP_lyon_subset.feather") %>%
   filter(threshold %in% c(.15, .5, .19, .24, .18, .21, .33))
 
-vocabsize_providence <- feather::read_feather("Data/globalthresholds_AOP_providence.feather") %>% 
+vocabsize_lyon <- feather::read_feather("Data/globalthresholds_AOP_lyon.feather") %>% 
   filter(threshold == 0.99, data_type == "target") %>%  # use 0.99 as threshold to make sure all new words are incorporated.
   #filter(age == 30) %>%
   group_by(Speaker, AOP) %>%
@@ -20,14 +20,14 @@ vocabsize_providence <- feather::read_feather("Data/globalthresholds_AOP_provide
 
 # need to start with full list of all words by age, global_network$gloss1
 
-ages <- global_distance_providence %>% filter(data_type == "target") %>% distinct(Speaker, gloss1, age)
+ages <- global_distance_lyon %>% filter(data_type == "target") %>% distinct(Speaker, gloss1, age)
 
-AOP_summ_actual <- globalthresholds_AOP_providence %>%
+AOP_summ_actual <- globalthresholds_AOP_lyon %>%
   mutate(Speaker_AOP_threshold = paste(Speaker, AOP, threshold, sep="_"),
          AOP = as.numeric((AOP))) %>%
   filter(data_type == "actual")
 
-AOP_summ_target <- globalthresholds_AOP_providence %>%
+AOP_summ_target <- globalthresholds_AOP_lyon %>%
   mutate(Speaker_AOP_threshold = paste(Speaker, AOP, threshold, sep="_"),
          AOP = as.numeric((AOP))) %>%
   filter(data_type == "target")
@@ -39,7 +39,7 @@ target_actual_diff <- rbind(AOP_summ_actual, AOP_summ_target) %>% group_by(Speak
 AOP_list <- AOP_summ %>%
   split(., f = .$Speaker_AOP_threshold)
 
-global_distance_summ <- global_distance_providence %>%
+global_distance_summ <- global_distance_lyon %>%
   mutate(Speaker_AOP = paste(Speaker, age, sep="_"))
 
 ## ACTUAL DATA
@@ -53,7 +53,7 @@ for(i in seq_along(1:length(AOP_list))){
   
   element <- AOP_list[[i]]
   # you got a vector as output as element$Speaker: we assume it is always made of equal elements
-  data <- globalthresholds_AOP_providence %>% filter(data_type %in% "actual" & 
+  data <- globalthresholds_AOP_lyon %>% filter(data_type %in% "actual" & 
                                                        Speaker %in% element$Speaker[1] &
                                                        threshold %in% element$threshold)
   # you got a vector as output: we assume it is always made of equal elements with [1]
@@ -109,7 +109,7 @@ for (i in unique(known_actual$Speaker_AOP)) {
   known_list_actual[[i]] <- connected_words
 }
 
-connected_words_red_actual <- known_list_actual[c(2:81)]
+connected_words_red_actual <- known_list_actual[c(2:70)]
 connected_words_melted_actual <- melt(connected_words_red_actual) %>%
   filter(variable == "distance_norm") %>%
   mutate(age = as.numeric(age))
@@ -130,7 +130,7 @@ thresholds_output_actual <- purrr::map_df(thresholds_output_actual, ~as.data.fra
 
 # Mean degree of each word in terms of all the words that it connects to
 
-gloss_summ_actual <- globalthresholds_AOP_providence %>%
+gloss_summ_actual <- globalthresholds_AOP_lyon %>%
   filter(data_type == "actual") %>%
   mutate(Speaker_gloss_threshold = paste(Speaker, gloss1, threshold, sep="_")) %>%
   mutate(threshold = as.numeric(threshold))
@@ -145,23 +145,23 @@ results_gloss_actual <- rbind(
   connected_degree_list_actual |> 
     mutate(threshold = as.numeric(threshold)) |>
     distinct(Speaker, target=gloss1, threshold) |>
-    dplyr::inner_join(global_distance_providence |> filter(data_type == 'actual'),  # unfilter later when code works!
-               by=join_by(
-                 Speaker == Speaker,
-                 target == gloss1,
-                 threshold >= distance_norm
-               )) |>
+    dplyr::inner_join(global_distance_lyon |> filter(data_type == 'actual'),  # unfilter later when code works!
+                      by=join_by(
+                        Speaker == Speaker,
+                        target == gloss1,
+                        threshold >= distance_norm
+                      )) |>
     rename(connected = gloss2),
   # Find matches on gloss2
   connected_degree_list_actual |> 
     mutate(threshold = as.numeric(threshold)) |>
     distinct(Speaker, target=gloss1, threshold) |>
-    dplyr::inner_join(global_distance_providence |> filter(data_type == 'actual'),  # unfilter later when code works!
-               by=join_by(
-                 Speaker == Speaker,
-                 target == gloss2,
-                 threshold >= distance_norm
-               )) |>
+    dplyr::inner_join(global_distance_lyon |> filter(data_type == 'actual'),  # unfilter later when code works!
+                      by=join_by(
+                        Speaker == Speaker,
+                        target == gloss2,
+                        threshold >= distance_norm
+                      )) |>
     rename(connected = gloss1)
 ) |> 
   distinct(Speaker, threshold, age, word_pair, .keep_all = TRUE) |>
@@ -173,7 +173,7 @@ results_gloss_actual <- rbind(
              by=c("Speaker", "threshold", "connected"="gloss1")) |>
   filter(AOP_connected < AOP_target)
 
-actual_global_degree <- globalthresholds_providence %>% 
+actual_global_degree <- globalthresholds_lyon %>% 
   filter(data_type == "actual") %>%
   dplyr::select(Speaker, age, gloss1, degree, threshold) %>%
   mutate(age = as.numeric(age),
@@ -184,12 +184,12 @@ degrees_actual <- results_gloss_actual %>%
   select(Speaker, connected, target, AOP_connected, AOP_target, distance_norm, threshold) |>
   distinct(Speaker, connected, target, AOP_connected, AOP_target, distance_norm, threshold) %>%
   dplyr::inner_join(actual_global_degree, 
-             by=join_by(
-               Speaker == Speaker,
-               target == gloss1,
-               threshold == threshold,
-               AOP_connected < age
-             )) %>%
+                    by=join_by(
+                      Speaker == Speaker,
+                      target == gloss1,
+                      threshold == threshold,
+                      AOP_connected < age
+                    )) %>%
   filter(AOP_target == age)%>%
   group_by(Speaker, age, threshold) %>%
   summarise(INT_val = median(degree),
@@ -212,7 +212,7 @@ known_words_degree_actual <-lapply(gloss_list_actual, FUN = function(element) {
 
 AOP_summ_red <- AOP_summ %>% dplyr::select(Speaker, gloss1, AOP) %>% distinct(Speaker, gloss1, AOP) ## AOP of each word in the data
 
-vocabsize_sub <- vocabsize_providence %>% distinct(Speaker, AOP, vocab_month) ## vocabsize for each month in the data
+vocabsize_sub <- vocabsize_lyon %>% distinct(Speaker, AOP, vocab_month) ## vocabsize for each month in the data
 
 min_ages <- ages %>% group_by(Speaker) %>% summarise(min_age = min(age)) %>%    # establish minimum age for each infant in the dataset
   mutate(min_age = as.numeric(min_age))
@@ -253,7 +253,8 @@ missing_checks_actual <-lapply(speaker_threshold_list, FUN = function(element) {
     fill(Speaker, .direction = "down") %>%                                          # fill in the Speaker info
     fill(age, .direction = "up") %>%                                          # fill in the Speaker info
     fill(Speaker, .direction = "up") %>%
-    fill(threshold, .direction = "down")
+    fill(threshold, .direction = "down") %>%
+    fill(threshold, .direction = "up")
   missing_list <- list(mean_degree_full_actual_missing)
 })
 
@@ -263,7 +264,7 @@ mean_degree_full_actual <- bind_rows(missing_checks_actual) %>%
   mutate(data_type = "actual") %>%
   filter(age <= AOP)
 
-feather::write_feather(mean_degree_full_actual, "Data/mean_degree_full_actual_providence_thresholdstest.feather")
+feather::write_feather(mean_degree_full_actual, "Data/mean_degree_full_actual_lyon_thresholdstest.feather")
 
 ## TARGET DATA
 
@@ -276,7 +277,7 @@ for(i in seq_along(1:length(AOP_list))){
   
   element <- AOP_list[[i]]
   # you got a vector as output as element$Speaker: we assume it is always made of equal elements
-  data <- globalthresholds_AOP_providence %>% filter(data_type %in% "target" & 
+  data <- globalthresholds_AOP_lyon %>% filter(data_type %in% "target" & 
                                                        Speaker %in% element$Speaker[1] &
                                                        threshold %in% element$threshold)
   # you got a vector as output: we assume it is always made of equal elements with [1]
@@ -332,7 +333,7 @@ for (i in unique(known_target$Speaker_AOP)) {
   known_list_target[[i]] <- connected_words
 }
 
-connected_words_red_target <- known_list_target[c(2:81)]
+connected_words_red_target <- known_list_target[c(2:70)]
 connected_words_melted_target <- melt(connected_words_red_target) %>%
   filter(variable == "distance_norm") %>%
   mutate(age = as.numeric(age))
@@ -353,7 +354,7 @@ thresholds_output_target <- purrr::map_df(thresholds_output_target, ~as.data.fra
 
 # Mean degree of each word in terms of all the words that it connects to
 
-gloss_summ_target <- globalthresholds_AOP_providence %>%
+gloss_summ_target <- globalthresholds_AOP_lyon %>%
   filter(data_type == "target") %>%
   mutate(Speaker_gloss_threshold = paste(Speaker, gloss1, threshold, sep="_")) %>%
   mutate(threshold = as.numeric(threshold))
@@ -368,7 +369,7 @@ results_gloss_target <- rbind(
   connected_degree_list_target |> 
     mutate(threshold = as.numeric(threshold)) |>
     distinct(Speaker, target=gloss1, threshold) |>
-    dplyr::inner_join(global_distance_providence |> filter(data_type == 'target'),  # unfilter later when code works!
+    dplyr::inner_join(global_distance_lyon |> filter(data_type == 'target'),  # unfilter later when code works!
                       by=join_by(
                         Speaker == Speaker,
                         target == gloss1,
@@ -379,7 +380,7 @@ results_gloss_target <- rbind(
   connected_degree_list_target |> 
     mutate(threshold = as.numeric(threshold)) |>
     distinct(Speaker, target=gloss1, threshold) |>
-    dplyr::inner_join(global_distance_providence |> filter(data_type == 'target'),  # unfilter later when code works!
+    dplyr::inner_join(global_distance_lyon |> filter(data_type == 'target'),  # unfilter later when code works!
                       by=join_by(
                         Speaker == Speaker,
                         target == gloss2,
@@ -396,7 +397,7 @@ results_gloss_target <- rbind(
              by=c("Speaker", "threshold", "connected"="gloss1")) |>
   filter(AOP_connected < AOP_target)
 
-target_global_degree <- globalthresholds_providence %>% 
+target_global_degree <- globalthresholds_lyon %>% 
   filter(data_type == "target") %>%
   dplyr::select(Speaker, age, gloss1, degree, threshold) %>%
   mutate(age = as.numeric(age),
@@ -468,7 +469,8 @@ missing_checks_target <-lapply(speaker_threshold_list, FUN = function(element) {
     fill(Speaker, .direction = "down") %>%                                          # fill in the Speaker info
     fill(age, .direction = "up") %>%                                          # fill in the Speaker info
     fill(Speaker, .direction = "up") %>%
-    fill(threshold, .direction = "down")
+    fill(threshold, .direction = "down") %>%
+    fill(threshold, .direction = "up")
   missing_list <- list(mean_degree_full_target_missing)
 })
 
@@ -478,18 +480,18 @@ mean_degree_full_target <- bind_rows(missing_checks_target) %>%
   mutate(data_type = "target") %>%
   filter(age <= AOP)
 
-feather::write_feather(mean_degree_full_target, "Data/mean_degree_full_target_providence_thresholdstest.feather")
+feather::write_feather(mean_degree_full_target, "Data/mean_degree_full_target_lyon_thresholdstest.feather")
 
-#mean_degree_full_target <- feather::read_feather("Data/mean_degree_full_target_providence.feather")
-#mean_degree_full_actual <- feather::read_feather("Data/mean_degree_full_actual_providence.feather")
+#mean_degree_full_target <- feather::read_feather("Data/mean_degree_full_target_lyon.feather")
+#mean_degree_full_actual <- feather::read_feather("Data/mean_degree_full_actual_lyon.feather")
 
-global_network <- globalthresholds_AOP_providence %>% 
+global_network <- globalthresholds_AOP_lyon %>% 
   rename("EXT_val" = "degree") %>%
   dplyr::select(-age)
 
 mean_degree_full <- rbind(mean_degree_full_actual, mean_degree_full_target)
 
-comparison_data <- read_csv("Data/comparison_data_providence.csv") %>%
+comparison_data <- read_csv("Data/comparison_data_lyon.csv") %>%
   distinct(Gloss, Speaker, .keep_all=T) %>%
   dplyr::select(Gloss, Speaker, Targetphon, nsyl_target) %>%
   rename("gloss1" = "Gloss")
@@ -507,7 +509,7 @@ regression_data_thresholdstest <- mean_degree_full %>% left_join(global_network_
   mutate(learned_next = ifelse(age == AOP-1, 1, 0)) %>%
   filter(age != AOP) %>%
   left_join(comparison_data) %>%
-  left_join(vocabsize_providence) %>%
+  left_join(vocabsize_lyon) %>%
   ungroup() %>%
   mutate(AOP_scaled = c(scale(AOP, center = TRUE, scale = TRUE)),    
          length_scaled = c(scale(Targetphon, center = TRUE, scale = TRUE))) %>%
@@ -516,28 +518,30 @@ regression_data_thresholdstest <- mean_degree_full %>% left_join(global_network_
          INT_scaled_m = c(scale(INT_val_m, center = TRUE, scale = TRUE)),
          EXT_scaled_target = c(scale(EXT_target, center = TRUE, scale = TRUE)),
          EXT_scaled_actual = c(scale(EXT_actual, center = TRUE, scale = TRUE)))
-  
-  aoa_comp <- read_csv("additional_files/wordbank_item_data_comp_eng.csv") %>%
-    select(-downloaded, -item_id) %>%
-    pivot_longer(cols = `8`:`18`, names_to = "age", values_to = "prop") %>%
-    filter(prop >= .5) %>%
-    group_by(item_definition) %>% # for homophones, pick the earliest-acquired version
-    filter(age == min(age)) %>%
-    rename(gloss1 = item_definition,
-           aoa_comp = age) %>%
-    select(-prop, -category)
-  
-  input_freq <- read_csv("additional_files/childes_english.csv") %>%
-    mutate(gloss1 = tolower(word)) %>%
-    select(gloss1, word_count) %>%
-    group_by(gloss1) %>%
-    filter(word_count == max(word_count))
 
-# chi_freq <- read_csv("Data/freq_providence.csv")
+aoa_comp <- read_csv("additional_files/wordbank_item_data_comp_fr.csv") %>%
+  select(-downloaded, -item_id) %>%
+  pivot_longer(cols = `8`:`16`, names_to = "age", values_to = "prop") %>%
+  filter(prop >= .5) %>%
+  group_by(item_definition) %>% # for homophones, pick the earliest-acquired version
+  filter(age == min(age)) %>%
+  rename(gloss1 = item_definition,
+         aoa_comp = age) %>%
+  select(-prop, -category) %>%
+  mutate(gloss1 = str_trim(gloss1)) %>%
+  distinct(gloss1, .keep_all = T) # parc and poisson occur twice with the same
+
+input_freq <- read_csv("additional_files/childes_french.csv") %>%
+  mutate(gloss1 = tolower(word)) %>%
+  select(gloss1, word_count) %>%
+  group_by(gloss1) %>%
+  filter(word_count == max(word_count))
+
+# chi_freq <- read_csv("Data/freq_lyon.csv")
 # chi_freq_bychi <- read_csv("Data/chi_freq_bychi.csv")
 # chi_freq_byword <- read_csv("Data/chi_freq_byword.csv")
 
-session_data <- read_csv("Data/comparison_data_providence.csv") %>%    # need to add ordinal session numbers for GAMMs
+session_data <- read_csv("Data/comparison_data_lyon.csv") %>%    # need to add ordinal session numbers for GAMMs
   group_by(Speaker, age) %>%
   tally() %>%
   filter(n > 1) %>%
@@ -547,7 +551,7 @@ session_data <- read_csv("Data/comparison_data_providence.csv") %>%    # need to
   mutate(session_ordinal = row_number()) %>%
   dplyr::select(-n)
 
-word_cat <- feather::read_feather("Data/FULLsample_Providence.feather") %>% 
+word_cat <- feather::read_feather("Data/FULLsample_lyon.feather") %>% 
   distinct(Gloss, .keep_all = T) %>%
   dplyr::select(Gloss, category) %>%
   rename("gloss1" = "Gloss") %>%
@@ -557,7 +561,7 @@ word_cat <- feather::read_feather("Data/FULLsample_Providence.feather") %>%
                                                  "household", "people", "outside", "places", "toys", "vehicles"),
                                  verbs = c("action_words", "helping_verbs")))
 
-FULLsample_var <- feather::read_feather("Data/FULLsample_Providence.feather") %>% 
+FULLsample_var <- feather::read_feather("Data/FULLsample_lyon.feather") %>% 
   group_by(Speaker, Gloss) %>% 
   tally() %>%
   rename("gloss1" = "Gloss",
@@ -574,7 +578,7 @@ regression_data_thresholdstest <- regression_data_thresholdstest %>%
          vocab_scaled = c(scale(vocab_agg, center = TRUE, scale = TRUE)),
          tokens_scaled = c(scale(n_tokens, center = TRUE, scale = TRUE)),
          aoa_scaled = c(scale(aoa_comp, center= TRUE, scale = TRUE))) %>%
-  mutate(corpus = "English", 
+  mutate(corpus = "French", 
          age_scaled = c(scale(age, center = T, scale = T)),
          category = as.factor(category),
          data_type = as.factor(data_type),
@@ -583,4 +587,4 @@ regression_data_thresholdstest <- regression_data_thresholdstest %>%
 
 regression_data_thresholdstest$category = relevel(regression_data_thresholdstest$category, ref="object_word")
 
-feather::write_feather(regression_data_thresholdstest, "Data/regression_data_providence_thresholdstest.feather")
+feather::write_feather(regression_data_thresholdstest, "Data/regression_data_lyon_thresholdstest.feather")

@@ -414,11 +414,10 @@ regression_data <- mean_degree_full %>% left_join(global_network_split) %>%
          length_scaled = c(scale(Targetphon, center = TRUE, scale = TRUE)),
          INT_weighted = INT_val/vocab_agg,
          EXT_weighted = EXT_target/vocab_agg) %>%
-  group_by(Speaker, age) %>%
+  group_by(Speaker#, age
+           ) %>%
   mutate(INT_scaled = c(scale(INT_val, center = TRUE, scale = TRUE)),
          INT_scaled_m = c(scale(INT_val_m, center = TRUE, scale = TRUE)),
-         INT_vocab_scaled = c(scale(INT_weighted, center = TRUE, scale = TRUE)),
-         EXT_vocab_scaled = c(scale(EXT_weighted, center = T, scale = T)),
          EXT_scaled_target = c(scale(EXT_target, center = TRUE, scale = TRUE)),
          EXT_scaled_actual = c(scale(EXT_actual, center = TRUE, scale = TRUE))) %>%
   ungroup() %>%
@@ -456,7 +455,7 @@ session_data <- read_csv("Data/comparison_data_lyon.csv") %>%    # need to add o
   dplyr::select(-n)
 
 
-# freq_lyon <- read_csv("Data/freq_lyon.csv") %>% 
+# freq_lyon <- read_csv("Data/freq_lyon.csv") %>%
 #   mutate(Speaker = ifelse(Speaker == "Theotime", "Tim", Speaker))
 # chi_freq_bychi <- read_csv("Data/chi_freq_bychi.csv")
 # chi_freq_byword <- read_csv("Data/chi_freq_byword.csv")
@@ -500,4 +499,4 @@ regression_data <- regression_data %>%
 regression_data$category = relevel(regression_data$category, ref="object_word")
 
 feather::write_feather(regression_data, "Data/repofiles/regression_data_lyon.feather")
-
+  

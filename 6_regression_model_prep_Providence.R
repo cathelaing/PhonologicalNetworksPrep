@@ -380,8 +380,8 @@ mean_degree_full_target <- bind_rows(all_mean_degree_data_target) %>%
 
 feather::write_feather(mean_degree_full_target, "Data/mean_degree_full_target_providence.feather")
 
-#mean_degree_full_target <- feather::read_feather("Data/mean_degree_full_target_providence.feather")
-#mean_degree_full_actual <- feather::read_feather("Data/mean_degree_full_actual_providence.feather")
+mean_degree_full_target <- feather::read_feather("Data/mean_degree_full_target_providence.feather")
+mean_degree_full_actual <- feather::read_feather("Data/mean_degree_full_actual_providence.feather")
 
 global_network <- globalthresholds_AOP_providence %>% 
   rename("EXT_val" = "degree") %>%
@@ -412,14 +412,11 @@ regression_data <- mean_degree_full %>% left_join(global_network_split) %>%
   left_join(vocabsize_providence) %>%
   ungroup() %>%
   mutate(AOP_scaled = c(scale(AOP, center = TRUE, scale = TRUE)),    
-         length_scaled = c(scale(Targetphon, center = TRUE, scale = TRUE)),
-         INT_weighted = INT_val/vocab_agg,
-         EXT_weighted = EXT_target/vocab_agg) %>%
-  group_by(Speaker, age) %>%
+         length_scaled = c(scale(Targetphon, center = TRUE, scale = TRUE))) %>%
+  group_by(Speaker
+           ) %>%
   mutate(INT_scaled = c(scale(INT_val, center = TRUE, scale = TRUE)),
          INT_scaled_m = c(scale(INT_val_m, center = TRUE, scale = TRUE)),
-         INT_vocab_scaled = c(scale(INT_weighted, center = TRUE, scale = TRUE)),
-         EXT_vocab_scaled = c(scale(EXT_weighted, center = T, scale = T)),
          EXT_scaled_target = c(scale(EXT_target, center = TRUE, scale = TRUE)),
          EXT_scaled_actual = c(scale(EXT_actual, center = TRUE, scale = TRUE))) %>%
   ungroup()
@@ -433,7 +430,7 @@ aoa_comp <- read_csv("additional_files/wordbank_item_data_comp_eng.csv") %>%
   filter(age == min(age)) %>%
   rename(gloss1 = item_definition,
          aoa_comp = age) %>%
-  select(-prop)
+  select(-prop, -category)
 
 input_freq <- read_csv("additional_files/childes_english.csv") %>%
   mutate(gloss1 = tolower(word)) %>%

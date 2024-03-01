@@ -59,6 +59,18 @@ all_distances <- rbind(all_distances_L, all_distances_P) %>%
   rbind(all_distances_ungrouped) %>%
   write_csv("Data/repofiles/all_distances.csv")
 
+FULLsample_P <- feather::read_feather("Data/FULLsample_Providence.feather") %>% mutate(corpus = "English")
+FULLsample_L <- feather::read_feather("Data/FULLsample_Lyon.feather")  %>% mutate(corpus = "French")
+
+FULLsample <- rbind(FULLsample_P, FULLsample_L, fill = TRUE) %>%
+  write_csv("Data/repofiles/FULLsample.csv")
+
+globalthresholds_AOP_lyon_subset <- feather::read_feather("Data/globalthresholds_AOP_lyon_subset.feather")
+globalthresholds_AOP_providence_subset <- feather::read_feather("Data/globalthresholds_AOP_providence_subset.feather")
+globalthresholds_AOP_thresholdstest <- rbind(globalthresholds_AOP_lyon_subset, globalthresholds_AOP_providence_subset)
+
+feather::write_feather(globalthresholds_AOP_thresholdstest, "Data/repofiles/globalthresholds_AOP_thresholdstest.feather")
+
 ## data is too big to include in main repo so generate it here and save as an image
 
 rename_vars <- c(

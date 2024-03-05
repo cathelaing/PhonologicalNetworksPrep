@@ -1,14 +1,14 @@
 # Updated 25th November 2023
 
-# thresholds = .15, .5, .19, .24, .18, .21, .33 (.33 is the mean distance)
+# thresholds = .15, .5, .19, .24, .18, .21, .34 (.34 is the mean distance)
 
 global_distance_providence <- feather::read_feather("Data/globaldistance_Providence.feather")
 
 globalthresholds_providence <- feather::read_feather("Data/globalthresholds_providence_subset.feather") %>%
-  filter(threshold %in% c(.15, .5, .19, .24, .18, .21, .33))
+  filter(threshold %in% c(.15, .5, .19, .24, .18, .21, .34))
 
 globalthresholds_AOP_providence <- feather::read_feather("Data/globalthresholds_AOP_providence_subset.feather") %>%
-  filter(threshold %in% c(.15, .5, .19, .24, .18, .21, .33))
+  filter(threshold %in% c(.15, .5, .19, .24, .18, .21, .34))
 
 vocabsize_providence <- feather::read_feather("Data/globalthresholds_AOP_providence.feather") %>% 
   filter(threshold == 0.99, data_type == "target") %>%  # use 0.99 as threshold to make sure all new words are incorporated.

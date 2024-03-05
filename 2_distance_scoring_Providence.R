@@ -173,16 +173,16 @@ nsyl_target_list <- sample_IPAtarget %>%
 sample_IPAtarget_loop_base <- lapply(nsyl_target_list, FUN = function(element) {
   split_syl <- element %>% separate(Vremoved_target, c("S1C1_target", "S2C1_target", "S3C1_target", "S4C1_target"), "V")
    split_syl2 <- split_syl %>%
-     mutate(SFC1_target = ifelse(nsyl_target == 1 & !is.na(S2C1_target), S2C1_target, 0),     # create a category that is just codas 
+     dplyr::mutate(SFC1_target = ifelse(nsyl_target == 1 & !is.na(S2C1_target), S2C1_target, 0),     # create a category that is just codas 
             S2C1_target = ifelse(nsyl_target == 1 & !is.na(SFC1_target), 0, S2C1_target),     # codas will always be aligned with codas
             SFC1_target = ifelse(nsyl_target == 2 & !is.na(S3C1_target), S3C1_target, SFC1_target),
             S3C1_target = ifelse(nsyl_target == 2 & !is.na(SFC1_target), 0, S3C1_target),
             SFC1_target = ifelse(nsyl_target == 3 & !is.na(S4C1_target), S4C1_target, SFC1_target),
             S4C1_target = ifelse(nsyl_target == 3 & !is.na(SFC1_target), 0, S4C1_target))
-       split_clust <- split_syl2 %>% separate(S1C1_target, c("TS1C1", "TS1C2", "TS1C3"), sep = "(?<=.)") %>%
-         separate(S2C1_target, c("TS2C1", "TS2C2", "TS2C3"), sep = "(?<=.)") %>%
-         separate(S3C1_target, c("TS3C1", "TS3C2", "TS3C3"), sep = "(?<=.)") %>%
-         separate(SFC1_target, c("TSFC1", "TSFC2", "TSFC3"), sep = "(?<=.)") %>%
+       split_clust <- split_syl2 %>% tidyr::separate(S1C1_target, c("TS1C1", "TS1C2", "TS1C3"), sep = "") %>%
+         tidyr::separate(S2C1_target, c("TS2C1", "TS2C2", "TS2C3"), sep = "(?<=.)") %>%
+         tidyr::separate(S3C1_target, c("TS3C1", "TS3C2", "TS3C3"), sep = "(?<=.)") %>%
+         tidyr::separate(SFC1_target, c("TSFC1", "TSFC2", "TSFC3"), sep = "(?<=.)") %>%
          filter(!(Gloss %in% split_clust$Gloss))
   })
 
@@ -192,16 +192,16 @@ nsyl_target_list_complex <- sample_IPAtarget_complex %>%
 sample_IPAtarget_loop_complex <- lapply(nsyl_target_list_complex, FUN = function(element) {
   split_syl <- element %>% separate(Vremoved_target_new, c("S1C1_target", "SI"), "-") %>%
    separate(SI, c("S2C1_target", "S3C1_target",  "S4C1_target"), "V") %>%
-    mutate(SFC1_target = ifelse(nsyl_target == 2 & !is.na(S3C1_target), S3C1_target, 0),
+    dplyr::mutate(SFC1_target = ifelse(nsyl_target == 2 & !is.na(S3C1_target), S3C1_target, 0),
            S3C1_target = ifelse(nsyl_target == 2 & !is.na(SFC1_target), 0, S3C1_target),
            SFC1_target = ifelse(nsyl_target == 3 & !is.na(S4C1_target), S4C1_target, SFC1_target),
            S4C1_target = ifelse(nsyl_target == 3 & !is.na(SFC1_target), 0, S4C1_target)) %>%
     separate(S1C1_target, c("S1C1_target", "S1CF_target"), "V")
-  split_clust <- split_syl %>% separate(S1C1_target, c("TS1C1", "TS1C2", "TS1C3"), sep = "(?<=.)") %>%
-    separate(S1CF_target, c("TS1CF1", "TS1CF2", "TS1CF3"), sep = "(?<=.)") %>%
-    separate(S2C1_target, c("TS2C1", "TS2C2", "TS2C3"), sep = "(?<=.)") %>%
-    separate(S3C1_target, c("TS3C1", "TS3C2", "TS3C3"), sep = "(?<=.)") %>%
-    separate(SFC1_target, c("TSFC1", "TSFC2", "TSFC3"), sep = "(?<=.)")
+  split_clust <- split_syl %>% tidyr::separate(S1C1_target, c("TS1C1", "TS1C2", "TS1C3"), sep = "(?<=.)") %>%
+    tidyr::separate(S1CF_target, c("TS1CF1", "TS1CF2", "TS1CF3"), sep = "(?<=.)") %>%
+    tidyr::separate(S2C1_target, c("TS2C1", "TS2C2", "TS2C3"), sep = "(?<=.)") %>%
+    tidyr::separate(S3C1_target, c("TS3C1", "TS3C2", "TS3C3"), sep = "(?<=.)") %>%
+    tidyr::separate(SFC1_target, c("TSFC1", "TSFC2", "TSFC3"), sep = "(?<=.)")
   })
 
 target_list_base <- do.call(rbind.data.frame, sample_IPAtarget_loop_base) %>% mutate(TS1CF1 = "",
@@ -229,28 +229,28 @@ nsyl_actual_list <- sample_IPAtarget %>%
 sample_IPAactual_loop <- lapply(nsyl_actual_list, FUN = function(element) {
   split_syl_Cinit <- element %>% dplyr::filter(ActualCV %in% Cinitial$ActualCV) %>%
     separate(Vremoved_actual, c("S1C1_actual", "S2C1_actual", "S3C1_actual", "S4C1_actual"), "V") %>%
-  mutate(SFC1_actual = ifelse(nsyl_actual == 1 & !is.na(S2C1_actual), S2C1_actual, 0),     # create a category that is just codas 
+  dplyr::mutate(SFC1_actual = ifelse(nsyl_actual == 1 & !is.na(S2C1_actual), S2C1_actual, 0),     # create a category that is just codas 
          S2C1_actual = ifelse(nsyl_actual == 1 & !is.na(SFC1_actual), 0, S2C1_actual),     # codas will always be aligned with codas
          SFC1_actual = ifelse(nsyl_actual == 2 & !is.na(S3C1_actual), S3C1_actual, SFC1_actual),
          S3C1_actual = ifelse(nsyl_actual == 2 & !is.na(SFC1_actual), 0, S3C1_actual),
          SFC1_actual = ifelse(nsyl_actual == 3 & !is.na(S4C1_actual), S4C1_actual, SFC1_actual),
          S4C1_actual = ifelse(nsyl_actual == 3 & !is.na(SFC1_actual), 0, S4C1_actual))
-  split_clust_Cinit <- split_syl_Cinit %>% separate(S1C1_actual, c("AS1C1", "AS1C2", "AS1C3"), sep = "(?<=.)") %>%
-       separate(S2C1_actual, c("AS2C1", "AS2C2", "AS2C3"), sep = "(?<=.)") %>%
-       separate(S3C1_actual, c("AS3C1", "AS3C2", "AS3C3"), sep = "(?<=.)") %>%
-       separate(SFC1_actual, c("ASFC1", "ASFC2", "ASFC3"), sep = "(?<=.)") 
+  split_clust_Cinit <- split_syl_Cinit %>% tidyr::separate(S1C1_actual, c("AS1C1", "AS1C2", "AS1C3"), sep = "(?<=.)") %>%
+    tidyr::separate(S2C1_actual, c("AS2C1", "AS2C2", "AS2C3"), sep = "(?<=.)") %>%
+    tidyr::separate(S3C1_actual, c("AS3C1", "AS3C2", "AS3C3"), sep = "(?<=.)") %>%
+    tidyr::separate(SFC1_actual, c("ASFC1", "ASFC2", "ASFC3"), sep = "(?<=.)") 
   split_syl_Vinit <- element %>% filter(ActualCV %in% Vinitial$ActualCV) %>%
     separate(Vremoved_actual, c("S1C1_actual", "S2C1_actual", "S3C1_actual", "S4C1_actual"), "V")  %>%
-    mutate(SFC1_actual = ifelse(nsyl_actual == 1 & !is.na(S2C1_actual), S2C1_actual, 0),     # create a category that is just codas 
+    dplyr::mutate(SFC1_actual = ifelse(nsyl_actual == 1 & !is.na(S2C1_actual), S2C1_actual, 0),     # create a category that is just codas 
            S2C1_actual = ifelse(nsyl_actual == 1 & !is.na(SFC1_actual), 0, S2C1_actual),     # codas will always be aligned with codas
            SFC1_actual = ifelse(nsyl_actual == 2 & !is.na(S3C1_actual), S3C1_actual, SFC1_actual),
            S3C1_actual = ifelse(nsyl_actual == 2 & !is.na(SFC1_actual), 0, S3C1_actual),
            SFC1_actual = ifelse(nsyl_actual == 3 & !is.na(S4C1_actual), S4C1_actual, SFC1_actual),
            S4C1_actual = ifelse(nsyl_actual == 3 & !is.na(SFC1_actual), 0, S4C1_actual))
-  split_clust_Vinit <- split_syl_Vinit %>% separate(S1C1_actual, c("AS1C1", "AS1C2", "AS1C3"), sep = "(?<=.)") %>%
-    separate(S2C1_actual, c("AS2C1", "AS2C2", "AS2C3"), sep = "(?<=.)") %>%
-    separate(S3C1_actual, c("AS3C1", "AS3C2", "AS3C3"), sep = "(?<=.)") %>%
-    separate(SFC1_actual, c("ASFC1", "ASFC2", "ASFC3"), sep = "(?<=.)") 
+  split_clust_Vinit <- split_syl_Vinit %>% tidyr::separate(S1C1_actual, c("AS1C1", "AS1C2", "AS1C3"), sep = "(?<=.)") %>%
+    tidyr::separate(S2C1_actual, c("AS2C1", "AS2C2", "AS2C3"), sep = "(?<=.)") %>%
+    tidyr::separate(S3C1_actual, c("AS3C1", "AS3C2", "AS3C3"), sep = "(?<=.)") %>%
+    tidyr::separate(SFC1_actual, c("ASFC1", "ASFC2", "ASFC3"), sep = "(?<=.)") 
   sample_IPA_CVinit <- rbind(split_clust_Vinit, split_clust_Cinit)
 })
 
@@ -318,7 +318,8 @@ distinctive.feature.matrix <- tribble(~Symbol, ~Sonorant, ~Consonantal, ~Voice, 
 
 colnames_target <- actual_target_IPA_FULL %>% dplyr::select(ID, starts_with("TS"))
 colnames(colnames_target) <- sub("T","",colnames(colnames_target))
-target_list <- setNames(lapply(names(colnames_target)[-1], function(x) cbind(colnames_target[1], colnames_target[x])), names(colnames_target)[-1])
+target_list <- setNames(lapply(names(colnames_target)[-1], function(x) cbind(colnames_target[1], 
+                                                                             colnames_target[x])), names(colnames_target)[-1])
 
 output_target <- lapply(target_list, FUN = function(element) {
   target_segment <- data.frame(element,
@@ -436,7 +437,7 @@ distance_table_A <- feather::read_feather("Data/distance_full_Providence.feather
              age == 19) %>%
   group_by(Gloss) %>%
   slice(1) %>%
-  dplyr::select(Gloss, IPAactual, S1C1.S1C1, S1C2.S1C2, S2C1.S2C1, SFC1.SFC1) %>%
+  dplyr::select(Gloss, IPAactual, S1C1.S1C1, S1C2.S1C2, S2C1.S2C1, S2CF.S2CF) %>%
   mutate(S2C1.S2C1 = ifelse(S2C1.S2C1 == "0", "", S2C1.S2C1),
          S1C2.S1C2 = ifelse(S1C2.S1C2 == "0", "", S1C2.S1C2))
 
@@ -447,7 +448,7 @@ distance_table_T <- feather::read_feather("Data/distance_full_Providence.feather
              age == 19) %>%
   group_by(Gloss) %>%
   slice(1) %>%
-  dplyr::select(Gloss, IPAtarget, S1C1.S1C1, S1C2.S1C2, S2C1.S2C1, SFC1.SFC1) %>%
+  dplyr::select(Gloss, IPAtarget, S1C1.S1C1, S1C2.S1C2, S2C1.S2C1, S2CF.S2CF) %>%
   mutate(S1C2.S1C2 = ifelse(S1C2.S1C2 == "0", "", S1C2.S1C2),
          S2C1.S2C1 = ifelse(S2C1.S2C1 == "0", "", S2C1.S2C1))
 
@@ -496,7 +497,7 @@ distance_table_step1 <- feather::read_feather("Data/distance_full_Providence.fea
         S2C1.Tongue,
         S2C1.Radical,
         sep = ",", remove = TRUE) %>%
-  unite(SFC1.Features,
+  unite(S2CF.Features,
         SFC1.Sonorant, 
         SFC1.Consonantal, 
         SFC1.Voice, 
@@ -512,7 +513,7 @@ distance_table_step1 <- feather::read_feather("Data/distance_full_Providence.fea
   dplyr::select(Gloss, IPAtarget, S1C1.S1C1, S1C1.Features, 
                 S1C2.S1C2, S1C2.Features, 
                 S2C1.S2C1, S2C1.Features, 
-                SFC1.SFC1, SFC1.Features)
+                SFC1.SFC1, S2CF.Features)
 
 distance_table_baby.S1 <- distance_table_step1 %>% 
   filter(Gloss == "baby") %>% 
@@ -528,7 +529,7 @@ distance_table_baby.S2 <- distance_table_step1 %>%
          "features" = "S2C1.Features")
 
 baby_dummy1 <- data.frame("", "", "", "", "S1C2")
-baby_dummy2 <- data.frame("", "", "", "", "SFC1")
+baby_dummy2 <- data.frame("", "", "", "", "S2CF")
 names(baby_dummy1) <- c("Gloss", "IPAtarget", "consonant", "features", "word_pos")
 names(baby_dummy2) <- c("Gloss", "IPAtarget", "consonant", "features", "word_pos")
 
@@ -551,10 +552,10 @@ distance_table_balloon.S2 <- distance_table_step1 %>%
          "features" = "S2C1.Features")
 distance_table_balloon.SF <- distance_table_step1 %>% 
   filter(Gloss == "balloon") %>% 
-  dplyr::select(Gloss, IPAtarget, SFC1.SFC1, SFC1.Features) %>%
-  mutate(word_pos = "SFC1") %>%
+  dplyr::select(Gloss, IPAtarget, SFC1.SFC1, S2CF.Features) %>%
+  mutate(word_pos = "S2CF") %>%
   rename("consonant" = "SFC1.SFC1",
-         "features" = "SFC1.Features")
+         "features" = "S2CF.Features")
 
 balloon_dummy <- data.frame("", "", "", "", "S1C2")
 names(balloon_dummy) <- c("Gloss", "IPAtarget", "consonant", "features", "word_pos")
@@ -579,7 +580,7 @@ distance_table_sky.S1C2 <- distance_table_step1 %>%
 
 sky_dummy1 <- data.frame("", "", "", "", "S2C1")
 names(sky_dummy1) <- c("Gloss", "IPAtarget", "consonant", "features", "word_pos")
-sky_dummy2 <- data.frame("", "", "", "", "SFC1")
+sky_dummy2 <- data.frame("", "", "", "", "S2CF")
 names(sky_dummy2) <- c("Gloss", "IPAtarget", "consonant", "features", "word_pos")
 
 distance_table_sky <- rbind(distance_table_sky.S1C1, 
@@ -736,9 +737,17 @@ ssd_line <- ssd_balloon %>%
          features = ""
          ) %>% cbind(ssd_sky)
 
-distance_table_final <- distance_table_step2 %>% rbind(ssd_line) %>% write_csv("Data/repofiles/phon_dist_table.csv")
+distance_table_final <- distance_table_step2 %>% 
+  rbind(ssd_line) %>% 
+  dplyr::mutate(Gloss.x = ifelse(word_pos == "S1C1", Gloss.x, NA),
+                Gloss.y = ifelse(word_pos == "S1C1", Gloss.y, NA),
+                Gloss = ifelse(word_pos == "S1C1", Gloss, NA),
+                IPAtarget.x = ifelse(word_pos == "S1C1", IPAtarget.x, NA),
+                IPAtarget.y = ifelse(word_pos == "S1C1", IPAtarget.y, NA),
+                IPAtarget = ifelse(word_pos == "S1C1", IPAtarget, NA)) %>%
+  write_csv("Data/repofiles/phon_dist_table.csv")
 
-providence_dist <- feather::read_feather("Data/distance_full_Providence.feather")
+# providence_dist <- feather::read_feather("Data/distance_full_Providence.feather")
 
 # dist_checks_E <- providence_dist %>% dplyr::select(-contains(c("Sonorant", 
 #         "Consonantal", 

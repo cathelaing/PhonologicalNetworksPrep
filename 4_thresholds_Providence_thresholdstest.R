@@ -4,7 +4,7 @@
 # It calculates the degree for each word pair across a set of thresholds from E=0.1-1 in relation to age, vocab size, and age of production (global network)
 # It then runs correlations between degree and AOP
 
-# thresholds = .15, .5, .19, .24, .18, .21, .33 (.33 is the mean distance)
+# thresholds = .15, .5, .19, .24, .18, .21, .34 (.34 is the mean distance)
 
 globaldistance_Providence_actual <- feather::read_feather("Data/globaldistance_Providence.feather") %>% filter(data_type == "actual")
 
@@ -12,7 +12,7 @@ globaldistance_Providence_actual <- feather::read_feather("Data/globaldistance_P
  
 # Create a new dataframe to show degree of connectivity for a range of thresholds between 0 and 1, as per Amatuni & Bergelson, 2017
 
-thresholds <- c(.15, .18, .19, .21, .24, .33, .5)  # create empty list
+thresholds <- c(.15, .18, .19, .21, .24, .34, .5)  # create empty list
  
 names(thresholds) <- paste("threshold", thresholds, sep ="_") # name list object
 
@@ -51,7 +51,7 @@ actual_globalthresholds_AOP_providence <- actual_globalthresholds_base_providenc
 
 ##### ACTUAL GLOBAL NETWORK: degree ~ AOP correlations across thresholds ########
 
-threshold_names <- c(.15, .18, .19, .21, .24, .33, .5)
+threshold_names <- c(.15, .18, .19, .21, .24, .34, .5)
 thresholds_corr <- vector("list", length(101)) #Prep a list to store your corr.test results
 names <- names(threshold_names)
 counter = 0 # To store your corr.test into list through iterating
@@ -180,4 +180,5 @@ globalthresholds_AOP_providence <- rbind(target_globalthresholds_AOP_providence,
 feather::write_feather(globalthresholds_corr_providence, "Data/globalthresholds_corr_providence_subset.feather") # correlation output data
 feather::write_feather(globalthresholds_providence, "Data/globalthresholds_providence_subset.feather") # all types at all ages, plus AOP data
 feather::write_feather(globalthresholds_AOP_providence, "Data/globalthresholds_AOP_providence_subset.feather") # AOP for full network, taken at last month of data (30 months)
+
 

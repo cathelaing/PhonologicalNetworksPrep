@@ -430,27 +430,27 @@ distance_full <- distance_full_df %>% dplyr::select(unique, -ends_with("data_typ
   left_join(comparison_data) %>%
   feather::write_feather("Data/distance_full_Providence.feather")
 
-distance_table_A <- feather::read_feather("Data/distance_full_Providence.feather") %>%
-  filter(#Gloss %in% c("bat", "blue", "that", "hello", "baby", "doggy", "towel") & 
-           Speaker == "Alex" & 
-           data_type == "Actual" & 
-             age == 19) %>%
-  group_by(Gloss) %>%
-  slice(1) %>%
-  dplyr::select(Gloss, IPAactual, S1C1.S1C1, S1C2.S1C2, S2C1.S2C1, S2CF.S2CF) %>%
-  mutate(S2C1.S2C1 = ifelse(S2C1.S2C1 == "0", "", S2C1.S2C1),
-         S1C2.S1C2 = ifelse(S1C2.S1C2 == "0", "", S1C2.S1C2))
-
-distance_table_T <- feather::read_feather("Data/distance_full_Providence.feather") %>%
-  filter(#Gloss %in% c("bat", "blue", "that", "hello", "baby", "doggy", "towel") & 
-           Speaker == "Alex" & 
-           data_type == "Target" &
-             age == 19) %>%
-  group_by(Gloss) %>%
-  slice(1) %>%
-  dplyr::select(Gloss, IPAtarget, S1C1.S1C1, S1C2.S1C2, S2C1.S2C1, S2CF.S2CF) %>%
-  mutate(S1C2.S1C2 = ifelse(S1C2.S1C2 == "0", "", S1C2.S1C2),
-         S2C1.S2C1 = ifelse(S2C1.S2C1 == "0", "", S2C1.S2C1))
+# distance_table_A <- feather::read_feather("Data/distance_full_Providence.feather") %>%
+#   filter(#Gloss %in% c("bat", "blue", "that", "hello", "baby", "doggy", "towel") & 
+#            Speaker == "Alex" & 
+#            data_type == "Actual" & 
+#              age == 19) %>%
+#   group_by(Gloss) %>%
+#   slice(1) %>%
+#   dplyr::select(Gloss, IPAactual, S1C1.S1C1, S1C2.S1C2, S2C1.S2C1, S2CF.S2CF) %>%
+#   mutate(S2C1.S2C1 = ifelse(S2C1.S2C1 == "0", "", S2C1.S2C1),
+#          S1C2.S1C2 = ifelse(S1C2.S1C2 == "0", "", S1C2.S1C2))
+# 
+# distance_table_T <- feather::read_feather("Data/distance_full_Providence.feather") %>%
+#   filter(#Gloss %in% c("bat", "blue", "that", "hello", "baby", "doggy", "towel") & 
+#            Speaker == "Alex" & 
+#            data_type == "Target" &
+#              age == 19) %>%
+#   group_by(Gloss) %>%
+#   slice(1) %>%
+#   dplyr::select(Gloss, IPAtarget, S1C1.S1C1, S1C2.S1C2, S2C1.S2C1, S2CF.S2CF) %>%
+#   mutate(S1C2.S1C2 = ifelse(S1C2.S1C2 == "0", "", S1C2.S1C2),
+#          S2C1.S2C1 = ifelse(S2C1.S2C1 == "0", "", S2C1.S2C1))
 
 distance_table_step1 <- feather::read_feather("Data/distance_full_Providence.feather") %>%
   filter(Gloss %in% c("baby", "balloon", "sky") & 
@@ -669,7 +669,7 @@ sum.sq.diff.balloon <- distance_table_init %>%
         round.balloon,
         tongue.balloon,
         rad.balloon,
-        sep = "+", remove = TRUE)
+        sep = " + ", remove = TRUE)
 
 ssd_all_balloon <- sum.sq.diff.balloon %>% dplyr::select(sum_sq_diffs_balloon)
 ssd_balloon <- sum.sq.diff.balloon %>% dplyr::select(Gloss.y, final_dist) %>% slice(1) %>%
@@ -701,7 +701,7 @@ sum.sq.diff.sky <- distance_table_init %>%
         round.sky,
         tongue.sky,
         rad.sky,
-        sep = "+", remove = TRUE)
+        sep = " + ", remove = TRUE)
 
 ssd_all_sky <- sum.sq.diff.sky %>% dplyr::select(sum_sq_diffs_sky)
 ssd_sky <- sum.sq.diff.sky %>% dplyr::select(Gloss, final_dist) %>% slice(1) %>%
@@ -714,7 +714,7 @@ distance_table_step2 <- distance_table_baby  %>%
   cbind(ssd_all_balloon) %>%
   left_join(distance_table_sky, by = "word_pos") %>%
   cbind(ssd_all_sky) %>%
-  mutate(consonant.x = ifelse(consonant.x =="", "-", consonant.x),
+  dplyr::mutate(consonant.x = ifelse(consonant.x =="", "-", consonant.x),
          consonant.y = ifelse(consonant.y =="", "-", consonant.y),
          consonant = ifelse(consonant == "", "-", consonant),
          features.x = ifelse(consonant.x == "-", 0, features.x),
@@ -724,7 +724,7 @@ distance_table_step2 <- distance_table_baby  %>%
          sum_sq_diffs_sky = ifelse(consonant.x == "-" & consonant == "-", "-", sum_sq_diffs_sky))
 
 ssd_line <- ssd_balloon %>% 
-  mutate(word_pos = "Phonological distance (Σ √(sum squared differences))",
+  mutate(word_pos = "Phonological distance",# (Σ √(sum squared differences))",
          Gloss.x = "",
          IPAtarget.x = "",
          consonant.x = "",

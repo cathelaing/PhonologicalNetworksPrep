@@ -65,6 +65,8 @@ FULLsample_L <- feather::read_feather("Data/FULLsample_Lyon.feather")  %>% mutat
 FULLsample <- rbind(FULLsample_P, FULLsample_L, fill = TRUE) %>%
   write_csv("Data/repofiles/FULLsample.csv")
 
+readr::write_excel_csv(FULLsample, "Data/repofiles/FULLsample_withIPA.csv")
+
 globalthresholds_AOP_lyon_subset <- feather::read_feather("Data/globalthresholds_AOP_lyon_subset.feather")
 globalthresholds_AOP_providence_subset <- feather::read_feather("Data/globalthresholds_AOP_providence_subset.feather")
 globalthresholds_AOP_thresholdstest <- rbind(globalthresholds_AOP_lyon_subset, globalthresholds_AOP_providence_subset)

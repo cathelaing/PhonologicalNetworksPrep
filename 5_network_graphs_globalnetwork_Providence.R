@@ -164,7 +164,7 @@ globalpathlength_target_base <- melt(globalpathlength_target) %>%
 globalpathlength <- rbind(globalpathlength_actual_base, globalpathlength_target_base)
 
 globalpathlength <- globalpathlength %>% 
-  #mutate(age = as.numeric(age)) %>%
+  mutate(age = as.numeric(age)) %>%
   left_join(networksize) %>%
   dplyr::select(-L1) %>%
   mutate(lowerCI = NA,
@@ -184,7 +184,8 @@ globalclusteringcoef_actual_global <- lapply(globalgraphdata_actual, FUN = funct
 globalclusteringcoef_actual_global_base <- melt(globalclusteringcoef_actual_global) %>%
   rename("clust_coef_global" = "value") %>%
   separate(L1, into = c("Speaker", "age"), sep = "_") %>%
-  mutate(data_type = "actual")
+  mutate(data_type = "actual",
+         age = as.numeric(age))
 
 globalclusteringcoef_actual_avg <- lapply(globalgraphdata_actual, FUN = function(element) {
   average_clustering_coef <- transitivity(element, type = "average")
@@ -193,7 +194,8 @@ globalclusteringcoef_actual_avg <- lapply(globalgraphdata_actual, FUN = function
 globalclusteringcoef_actual_avg_base <- melt(globalclusteringcoef_actual_avg) %>%
   rename("clust_coef_avg" = "value") %>%
   separate(L1, into = c("Speaker", "age"), sep = "_") %>%
-  mutate(data_type = "actual")
+  mutate(data_type = "actual",
+         age = as.numeric(age))
 
 globalclusteringcoef_target_global <- lapply(globalgraphdata_target, FUN = function(element) {
   global_clustering_coef <- transitivity(element)
@@ -202,7 +204,8 @@ globalclusteringcoef_target_global <- lapply(globalgraphdata_target, FUN = funct
 globalclusteringcoef_target_global_base <- melt(globalclusteringcoef_target_global) %>%
   rename("clust_coef_global" = "value") %>%
   separate(L1, into = c("Speaker", "age"), sep = "_") %>%
-  mutate(data_type = "target")
+  mutate(data_type = "target",
+         age = as.numeric(age))
 
 globalclusteringcoef_target_avg <- lapply(globalgraphdata_target, FUN = function(element) {
   average_clustering_coef <- transitivity(element, type = "average")
@@ -211,8 +214,8 @@ globalclusteringcoef_target_avg <- lapply(globalgraphdata_target, FUN = function
 globalclusteringcoef_target_avg_base <- melt(globalclusteringcoef_target_avg) %>%
   rename("clust_coef_avg" = "value") %>%
   separate(L1, into = c("Speaker", "age"), sep = "_") %>%
-  mutate(data_type = "target")
-        # age = as.numeric(age))
+  mutate(data_type = "target",
+         age = as.numeric(age))
 
 globalclusteringcoef_global <- rbind(globalclusteringcoef_actual_global_base, globalclusteringcoef_target_global_base)
 globalclusteringcoef_avg <- rbind(globalclusteringcoef_actual_avg_base, globalclusteringcoef_target_avg_base)

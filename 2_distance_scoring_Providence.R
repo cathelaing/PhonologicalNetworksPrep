@@ -11,6 +11,7 @@ FULLsample <- feather::read_feather("Data/FULLsample_Providence.feather") %>%
          IPAtarget = ifelse(Gloss == "uhoh", "ʌʔeu", IPAtarget),
          IPAtarget = ifelse(Gloss == "about", "əbaʊt", IPAtarget),
          IPAtarget = ifelse(Gloss == "away", "əweɪ", IPAtarget),
+         IPAtarget = ifelse(Gloss == "duckie", "dʌk", IPAtarget),
          remove = ifelse(Gloss == "baby" & IPAtarget == "bi", T, F),
          remove = ifelse(IPAactual %in% c("wvzæ", "wvz", "wvt", "knt", "wvɾ", "kvps",
                                           "gnŋ", "pwŋ", "bnni", "gwn", "dvki", "mnki", 
@@ -150,12 +151,10 @@ sample_IPAtarget <- sample_IPAtarget %>% filter(nsyl_actual < 4)
 # words with clusters in S2 need to have them split into S1F and S2C1, except for a few complex words:
 
 Gloss <- c("pumpkin", "empty", "penguin", "bathtub", "dancing", "windy", 
-                 "standing", "holding", "sandbox", "sandwich", "candies", "finding", "penguins", "bumping", "dumping", "boxes", "vacuum", "planting", "fixing", "vacuums", "tasted", "planted", 
-                 "camping", "popsicles", "popsicle", "sandwiches", "outside", "into", "outsides")
+                 "standing", "holding", "sandbox", "sandwich", "candies", "finding", "penguins", "bumping", "dumping", "boxes", "vacuum", "planting", "fixing", "vacuums", "tasted", "planted")
 
 Vremoved_target_new <- c("pVmp-kVn", "Vmp-tV", "pVŋg-wVn", "bVθ-tVb", "dVns-Vŋ", "wɪVnd-V", 
-                         "stVnd-Vŋ", "hVld-Vŋ", "sVnd-bVks", "sVnd-wVʧ", "kVnd-iVz", "fVnd-Vŋ", "pVŋg-wVnz", "bVmp-Vŋ", "dVmp-Vŋ", "bVks-əVz", "vV-kjVm", "plVnt-Vŋ", "fVks-Vŋ", "vV-kjVmz", "tVst-Vd", "plVnt-Vd", 
-                         "kVmp-Vŋ", "pVp-sVkVlz", "pVp-sVkVl", "sVnd-wVʧVz", "Vt-sVd", "Vn-tV", "Vt-sVdz")
+                         "stVnd-Vŋ", "hVld-Vŋ", "sVnd-bVks", "sVnd-wVʧ", "kVnd-iVz", "fVnd-Vŋ", "pVŋg-wVnz", "bVmp-Vŋ", "dVmp-Vŋ", "bVks-əVz", "vV-kjVm", "plVnt-Vŋ", "fVks-Vŋ", "vV-kjVmz", "tVst-Vd", "plVnt-Vd")
 
 split_clust <- data.frame(Gloss, Vremoved_target_new)
 
@@ -173,17 +172,17 @@ nsyl_target_list <- sample_IPAtarget %>%
 sample_IPAtarget_loop_base <- lapply(nsyl_target_list, FUN = function(element) {
   split_syl <- element %>% separate(Vremoved_target, c("S1C1_target", "S2C1_target", "S3C1_target", "S4C1_target"), "V")
    split_syl2 <- split_syl %>%
-     dplyr::mutate(SFC1_target = ifelse(nsyl_target == 1 & !is.na(S2C1_target), S2C1_target, 0),     # create a category that is just codas 
+     dplyr::mutate(SFC1_target = ifelse(nsyl_target == 1 & !is.na(S2C1_target), S2C1_target, 0),     # create a category that is just codas
             S2C1_target = ifelse(nsyl_target == 1 & !is.na(SFC1_target), 0, S2C1_target),     # codas will always be aligned with codas
             SFC1_target = ifelse(nsyl_target == 2 & !is.na(S3C1_target), S3C1_target, SFC1_target),
             S3C1_target = ifelse(nsyl_target == 2 & !is.na(SFC1_target), 0, S3C1_target),
             SFC1_target = ifelse(nsyl_target == 3 & !is.na(S4C1_target), S4C1_target, SFC1_target),
             S4C1_target = ifelse(nsyl_target == 3 & !is.na(SFC1_target), 0, S4C1_target))
-       split_clust <- split_syl2 %>% tidyr::separate(S1C1_target, c("TS1C1", "TS1C2", "TS1C3"), sep = "") %>%
+       split_clust <- split_syl2 %>% tidyr::separate(S1C1_target, c("TS1C1", "TS1C2", "TS1C3"), sep = "(?<=.)") %>%
          tidyr::separate(S2C1_target, c("TS2C1", "TS2C2", "TS2C3"), sep = "(?<=.)") %>%
          tidyr::separate(S3C1_target, c("TS3C1", "TS3C2", "TS3C3"), sep = "(?<=.)") %>%
          tidyr::separate(SFC1_target, c("TSFC1", "TSFC2", "TSFC3"), sep = "(?<=.)") %>%
-         filter(!(Gloss %in% split_clust$Gloss))
+        filter(!(Gloss %in% split_clust$Gloss))
   })
 
 nsyl_target_list_complex <- sample_IPAtarget_complex %>%
@@ -319,7 +318,8 @@ distinctive.feature.matrix <- tribble(~Symbol, ~Sonorant, ~Consonantal, ~Voice, 
 colnames_target <- actual_target_IPA_FULL %>% dplyr::select(ID, starts_with("TS"))
 colnames(colnames_target) <- sub("T","",colnames(colnames_target))
 target_list <- setNames(lapply(names(colnames_target)[-1], function(x) cbind(colnames_target[1], 
-                                                                             colnames_target[x])), names(colnames_target)[-1])
+                                                                             colnames_target[x])), 
+                        names(colnames_target)[-1])
 
 output_target <- lapply(target_list, FUN = function(element) {
   target_segment <- data.frame(element,

@@ -12,6 +12,8 @@ first_instance <- read_csv("Data/first_instance_Providence.csv")
 networksize <- globaldistance_providence %>%         # create a mock dataset that imitates the size of the network at each month
   group_by(Speaker, age) %>%
   distinct(gloss1, .keep_all = TRUE) %>%
+  ungroup() %>%
+  group_by(Speaker, age) %>%
   tally() %>%
   rename("numNodes" = "n") %>%
   mutate(age = as.numeric(age)) %>%
@@ -105,8 +107,8 @@ globalnodes_actual <- globaldistance_actual_base %>%     # create nodes
 # in the global network, the data is considered at each month + all previous months, as specified in age <= element$age
 
 globalgraphdata_actual <- lapply(age_list, FUN = function(element) {
-  edges_net <- globaldistance_actual_base %>% filter(Speaker == element$Speaker & age == element$age) %>% distinct(word_pair, distance, .keep_all = TRUE)
-  nodes_net <- globalnodes_actual %>% filter(Speaker == element$Speaker & age == element$age)
+  edges_net <- globaldistance_actual_base %>% filter(Speaker %in% element$Speaker & age %in% element$age) %>% distinct(word_pair, distance, .keep_all = TRUE)
+  nodes_net <- globalnodes_actual %>% filter(Speaker %in% element$Speaker & age %in% element$age)
   net_plot <- graph_from_data_frame(d=edges_net, vertices=nodes_net, directed=F) 
   net_plot_threshold <- delete.edges(net_plot, which(E(net_plot)$weight > cut.off))    # delete edges with a threshold above .25
   })
@@ -114,8 +116,8 @@ globalgraphdata_actual <- lapply(age_list, FUN = function(element) {
 #plot(globalgraphdata_actual$William_18)
 
 globalgraphdata_target <- lapply(age_list, FUN = function(element) {
-  edges_net <- globaldistance_target_base %>% filter(Speaker == element$Speaker & age == element$age) %>% distinct(word_pair, distance, .keep_all = TRUE)
-  nodes_net <- globalnodes_target %>% filter(Speaker == element$Speaker & age == element$age)
+  edges_net <- globaldistance_target_base %>% filter(Speaker %in% element$Speaker & age %in% element$age) %>% distinct(word_pair, distance, .keep_all = TRUE)
+  nodes_net <- globalnodes_target %>% filter(Speaker %in% element$Speaker & age %in% element$age)
   net_plot <- graph_from_data_frame(d=edges_net, vertices=nodes_net, directed=F) 
   net_plot_threshold <- delete.edges(net_plot, which(E(net_plot)$weight > cut.off))    # delete edges with a threshold above .25
 })
@@ -162,7 +164,7 @@ globalpathlength_target_base <- melt(globalpathlength_target) %>%
 globalpathlength <- rbind(globalpathlength_actual_base, globalpathlength_target_base)
 
 globalpathlength <- globalpathlength %>% 
-  mutate(age = as.numeric(age)) %>%
+  #mutate(age = as.numeric(age)) %>%
   left_join(networksize) %>%
   dplyr::select(-L1) %>%
   mutate(lowerCI = NA,
@@ -182,8 +184,7 @@ globalclusteringcoef_actual_global <- lapply(globalgraphdata_actual, FUN = funct
 globalclusteringcoef_actual_global_base <- melt(globalclusteringcoef_actual_global) %>%
   rename("clust_coef_global" = "value") %>%
   separate(L1, into = c("Speaker", "age"), sep = "_") %>%
-  mutate(data_type = "actual",
-         age = as.numeric(age))
+  mutate(data_type = "actual")
 
 globalclusteringcoef_actual_avg <- lapply(globalgraphdata_actual, FUN = function(element) {
   average_clustering_coef <- transitivity(element, type = "average")
@@ -192,8 +193,7 @@ globalclusteringcoef_actual_avg <- lapply(globalgraphdata_actual, FUN = function
 globalclusteringcoef_actual_avg_base <- melt(globalclusteringcoef_actual_avg) %>%
   rename("clust_coef_avg" = "value") %>%
   separate(L1, into = c("Speaker", "age"), sep = "_") %>%
-  mutate(data_type = "actual",
-         age = as.numeric(age))
+  mutate(data_type = "actual")
 
 globalclusteringcoef_target_global <- lapply(globalgraphdata_target, FUN = function(element) {
   global_clustering_coef <- transitivity(element)
@@ -202,8 +202,7 @@ globalclusteringcoef_target_global <- lapply(globalgraphdata_target, FUN = funct
 globalclusteringcoef_target_global_base <- melt(globalclusteringcoef_target_global) %>%
   rename("clust_coef_global" = "value") %>%
   separate(L1, into = c("Speaker", "age"), sep = "_") %>%
-  mutate(data_type = "target",
-         age = as.numeric(age))
+  mutate(data_type = "target")
 
 globalclusteringcoef_target_avg <- lapply(globalgraphdata_target, FUN = function(element) {
   average_clustering_coef <- transitivity(element, type = "average")
@@ -212,8 +211,8 @@ globalclusteringcoef_target_avg <- lapply(globalgraphdata_target, FUN = function
 globalclusteringcoef_target_avg_base <- melt(globalclusteringcoef_target_avg) %>%
   rename("clust_coef_avg" = "value") %>%
   separate(L1, into = c("Speaker", "age"), sep = "_") %>%
-  mutate(data_type = "target",
-         age = as.numeric(age))
+  mutate(data_type = "target")
+        # age = as.numeric(age))
 
 globalclusteringcoef_global <- rbind(globalclusteringcoef_actual_global_base, globalclusteringcoef_target_global_base)
 globalclusteringcoef_avg <- rbind(globalclusteringcoef_actual_avg_base, globalclusteringcoef_target_avg_base)

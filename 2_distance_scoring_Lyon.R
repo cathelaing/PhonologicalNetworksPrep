@@ -189,7 +189,7 @@ nsyl_target_list <- sample_IPAtarget_Lyon %>%
 sample_IPAtarget_loop_base <- lapply(nsyl_target_list, FUN = function(element) {
   split_syl <- element %>% separate(Vremoved_target, c("S1C1_target", "S2C1_target", "S3C1_target", "S4C1_target", "S5C1_target"), "V")
   split_syl2 <- split_syl %>%
-    mutate(SFC1_target = ifelse(nsyl_target == 1 & !is.na(S2C1_target), S2C1_target, 0),     # create a category that is just codas 
+    mutate(SFC1_target = ifelse(nsyl_target == 1 & !is.na(S2C1_target), S2C1_target, 0)),     # create a category that is just codas
            S2C1_target = ifelse(nsyl_target == 1 & !is.na(SFC1_target), 0, S2C1_target),     # codas will always be aligned with codas
            SFC1_target = ifelse(nsyl_target == 2 & !is.na(S3C1_target), S3C1_target, SFC1_target),
            S3C1_target = ifelse(nsyl_target == 2 & !is.na(SFC1_target), 0, S3C1_target),

@@ -23,7 +23,7 @@ first_instance_Actual <- distance_full %>%     # figure out which month each wor
   group_by(Speaker, Gloss)  %>%
   filter(data_type == "Actual") %>% 
   filter(age == min(age)) %>% 
-  summarise_if(is.numeric, mean) %>% # for instances where a word is produced more than once, take mean value of each distinctive feature
+  summarise(across(where(is.numeric), mean)) %>% # for instances where a word is produced more than once, take mean value of each distinctive feature
   #slice(1) %>% # takes the first occurrence if there is a tie
   ungroup() %>%
   mutate(subj_session = paste(Speaker, age, sep="_"))
@@ -783,6 +783,9 @@ global_matrix_actual <- lapply(first_instance_list_A, FUN = function(element) {
 
 })
 
+Lily_example_actual <- global_matrix_actual[["Lily_14"]]
+write.table(Lily_example_actual,file="Data/Lily_example_actual.txt")
+
 # Take Euclidean distances from each infant's data and turn into a single dataframe
 
 # Distance DF -------------------------------------------------------------
@@ -832,7 +835,7 @@ first_instance_Target <- distance_full %>%     # figure out which month each wor
   group_by(Speaker, Gloss)  %>%
   filter(data_type == "Target") %>% 
   filter(age == min(age)) %>% 
-  summarise_if(is.numeric, mean) %>%
+  summarise(across(where(is.numeric), mean)) %>%
   #slice(1) %>% # takes the first occurrence if there is a tie
   ungroup() %>%
   mutate(subj_session = paste(Speaker, age, sep="_"))
@@ -1592,6 +1595,9 @@ global_matrix_target <- lapply(first_instance_list_T, FUN = function(element) {
   
 })
 
+Lily_example_target <- global_matrix_target[["Lily_14"]]
+write.table(Lily_example_target,file="Data/Lily_example_target.txt")
+
 globaldistance_target_melted <- reshape2::melt(global_matrix_target) %>%   # turn list into a df
   rename("gloss1" = "Var1",
          "gloss2" = "Var2",
@@ -1631,6 +1637,4 @@ globaldistance_target <- melt(globaldistance_target_list) %>%
 
 globaldistance_Providence <- rbind(globaldistance_target, globaldistance_actual)
 feather::write_feather(globaldistance_Providence, "Data/globaldistance_Providence.feather")
-
-
 

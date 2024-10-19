@@ -37,6 +37,8 @@ all_distances_P <- feather::read_feather("Data/globaldistance_Providence.feather
 all_distances_L <- feather::read_feather("Data/globaldistance_Lyon.feather") %>% 
   mutate(corpus = "French")
 
+checks <- all_distances_P %>% filter(distance_norm == 0 & data_type == "target") %>% distinct(word_pair, .keep_all = T)
+
 ## too big to save on repo so create a small DF instead
 
 all_distances_ungrouped <- rbind(all_distances_L, all_distances_P) %>% 
